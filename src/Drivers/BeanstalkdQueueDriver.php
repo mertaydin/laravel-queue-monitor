@@ -21,8 +21,7 @@ final class BeanstalkdQueueDriver implements QueueDriver
         private readonly ?string $historyDatabase = null,
         private readonly string $historyTable = 'queue_monitor_jobs',
         private readonly ?PayloadMasker $payloadMasker = null,
-    ) {
-    }
+    ) {}
 
     public function name(): string
     {

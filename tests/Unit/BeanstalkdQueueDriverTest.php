@@ -124,9 +124,7 @@ class FakeBeanstalkdClient
         ];
     }
 
-    public function useTube(object $tube): void
-    {
-    }
+    public function useTube(object $tube): void {}
 
     public function peekReady(): FakeBeanstalkdJob
     {
