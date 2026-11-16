@@ -84,7 +84,9 @@ jobs:
               ->withMiddleware(static function (Middleware $middleware): void {})
               ->withExceptions(static function (Exceptions $exceptions): void {})
               ->create();
-          Gate::before(static fn ($user, string $ability): bool => true);
+          $app->booted(static function (): void {
+              Gate::before(static fn ($user, string $ability): bool => true);
+          });
           return $app;
           PHP
           cat > bootstrap/providers.php <<'PHP'
