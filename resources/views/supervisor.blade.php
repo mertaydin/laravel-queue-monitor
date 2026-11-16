@@ -49,7 +49,7 @@
                                         @foreach (['start' => 'Start', 'stop' => 'Stop', 'restart' => 'Restart'] as $action => $label)
                                             <form method="POST" action="{{ route('queue-monitor.supervisor.action', ['server' => $server, 'process' => $process['name'] ?? '', 'action' => $action]) }}">
                                                 @csrf
-                                                <button type="submit" class="qm-supervisor-button action-{{ $action }}" onclick="return confirm('{{ $label }} {{ $process['name'] ?? 'this process' }}?')">{{ $label }}</button>
+                                                <button type="submit" class="qm-supervisor-button action-{{ $action }}" @disabled(($action === 'start' && ($process['statename'] ?? '') === 'RUNNING') || ($action === 'stop' && ($process['statename'] ?? '') !== 'RUNNING')) onclick="return confirm('{{ $label }} {{ $process['name'] ?? 'this process' }}?')">{{ $label }}</button>
                                             </form>
                                         @endforeach
                                     </div>

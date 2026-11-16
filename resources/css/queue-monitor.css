@@ -324,3 +324,5 @@ a { color: inherit; text-decoration: none; }
 .qm-supervisor-nav { color:#6575df; font-size:11px; font-weight:700; padding:7px 10px; border:1px solid #e5e8ff; border-radius:7px; background:#fafaff; }
 .qm-supervisor-nav:hover { background:#f0f2ff; }
 @media(max-width:760px) { .qm-topbar-meta { gap:6px; } .qm-supervisor-nav { font-size:9px; padding:5px 6px; } }
+
+.qm-supervisor-button:disabled { opacity:.38; cursor:not-allowed; background:#f6f7f9; color:#9ba4b1; }

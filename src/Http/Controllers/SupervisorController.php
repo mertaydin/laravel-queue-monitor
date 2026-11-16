@@ -23,7 +23,7 @@ final class SupervisorController
             $client = new SupervisorClient($configuration);
             $processes = array_values(array_filter(
                 $client->processes(),
-                static fn (array $process): bool => in_array($process['name'] ?? '', $allowedProcesses, true)
+                static fn (array $process): bool => collect($allowedProcesses)->contains(static fn (string $allowed): bool => fnmatch($allowed, (string) ($process['name'] ?? '')))
             ));
         } catch (Throwable $exception) {
             $error = $exception->getMessage();
@@ -41,7 +41,7 @@ final class SupervisorController
         Gate::authorize((string) config('queue-monitor.authorization.manage_gate', 'manageQueueWorkers'));
 
         $configuration = $this->serverConfiguration($server);
-        abort_unless(in_array($process, (array) ($configuration['programs'] ?? []), true), 404);
+        abort_unless(collect((array) ($configuration['programs'] ?? []))->contains(static fn (string $allowed): bool => fnmatch($allowed, $process)), 404);
         abort_unless(in_array($action, ['start', 'stop', 'restart'], true), 404);
 
         $client = new SupervisorClient($configuration);
