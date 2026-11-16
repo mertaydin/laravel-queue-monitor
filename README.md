@@ -20,6 +20,13 @@ Completed jobs are retained only when package history is enabled; Laravel normal
 
 When history is enabled, the dashboard includes 24-hour, 7-day and 30-day activity summaries, average and 95th-percentile completed-job duration, a slowest-jobs list, and a queue-health indicator. Analytics are calculated from recorded history and are intentionally unavailable when history is disabled. Configure health warnings with `health.backlog_warning` and `health.failure_rate_warning` in `config/queue-monitor.php`.
 
+## Requirements
+
+- PHP 8.2 or newer.
+- Laravel 12 or 13.
+
+Laravel 10 and 11 are outside their security support windows. They are not included in the supported version range.
+
 ## Installation
 
 ```bash
