@@ -18,6 +18,7 @@
             </span>
         </a>
         <div class="qm-topbar-meta">
+            <a class="qm-supervisor-nav" href="{{ route('queue-monitor.health') }}">System health</a>
             @foreach ($supervisorServers as $supervisorServer)
                 <a class="qm-supervisor-nav" href="{{ route('queue-monitor.supervisor.index', ['server' => $supervisorServer]) }}">Supervisor · {{ $supervisorServer }}</a>
             @endforeach

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\DashboardController;
+use MertAydin\LaravelQueueMonitor\Http\Controllers\HealthCheckController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\JobActionController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\JobDetailController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\JobCompareController;
@@ -12,6 +13,7 @@ Route::middleware('web')
     ->name('queue-monitor.')
     ->group(function (): void {
         Route::get('/', DashboardController::class)->name('index');
+        Route::get('/health', HealthCheckController::class)->name('health');
         Route::get('/{connection}/jobs/{jobId}', JobDetailController::class)->name('jobs.show');
         Route::post('/{connection}/jobs/{jobId}/retry', [JobActionController::class, 'retry'])->name('jobs.retry');
         Route::delete('/{connection}/jobs/{jobId}', [JobActionController::class, 'delete'])->name('jobs.delete');

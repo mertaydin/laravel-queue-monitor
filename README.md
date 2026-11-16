@@ -15,6 +15,7 @@ A Laravel package for monitoring and managing queues across supported queue conn
 - Queue depth snapshots, payload inspection, retry, and delete operations.
 - Driver-aware adapters and automatic registration of supported Laravel queue connections.
 - Optional lifecycle history and recursive masking of sensitive payload keys.
+- On-demand, read-only diagnostics for database, queue connections, worker storage and configured Supervisor servers.
 
 Completed jobs are retained only when package history is enabled; Laravel normally removes successful jobs after processing.
 
@@ -175,12 +176,10 @@ On a failed queue job, the package dispatches a `QueueAlertTriggered` event for 
 - **Secure by default:** Sensitive payload values are masked by default.
 - **Laravel-native:** Uses Laravel queue events, configuration, and service container.
 
-## Planned driver targets
-
-- Amazon SQS
-- Sync (event-based visibility; no persistent queue depth)
 
 ## More documentation
+
+- [Health checks](docs/health-checks.md)
 
 - [Release checklist](docs/releasing.md)
 
