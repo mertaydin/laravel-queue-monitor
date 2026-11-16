@@ -20,6 +20,7 @@ concurrency:
 jobs:
   capture:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
@@ -115,12 +116,14 @@ jobs:
         working-directory: screenshot-app
         run: |
           php artisan serve --host=127.0.0.1 --port=8000 > /tmp/queue-monitor-server.log 2>&1 &
-          for i in $(seq 1 30); do
-            if curl --max-time 3 -fsS http://127.0.0.1:8000/queue-monitor >/dev/null; then exit 0; fi
-            sleep 2
+          for i in $(seq 1 10); do
+            if curl --max-time 2 -fsS http://127.0.0.1:8000/queue-monitor >/dev/null; then exit 0; fi
+            sleep 1
           done
           cat /tmp/queue-monitor-server.log
           cat storage/logs/laravel.log || true
+          php artisan route:list --path=queue-monitor || true
+          curl --max-time 3 -sS -i http://127.0.0.1:8000/queue-monitor | head -n 80 || true
           exit 1
       - name: Print Laravel exception log
         if: failure()
