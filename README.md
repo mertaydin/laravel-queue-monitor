@@ -113,6 +113,8 @@ Worker heartbeats are stored in the `queue_monitor_workers` table. Configure the
 
 ## Supervisor worker management
 
+The CI pipeline also starts a temporary Supervisor server and runs a live XML-RPC integration test. This verifies process listing, stopping and starting against the actual Supervisor daemon. It does not require access to your production worker hosts.
+
 Supervisor integration is optional. It uses the Supervisor XML-RPC API. Configure each trusted server and explicitly list the process names that the dashboard may display or control:
 
 ```php
@@ -169,6 +171,8 @@ On a failed queue job, the package dispatches a `QueueAlertTriggered` event for 
 - Sync (event-based visibility; no persistent queue depth)
 
 ## More documentation
+
+- [Release checklist](docs/releasing.md)
 
 - [Queue driver capabilities](docs/drivers.md)
 - [Supervisor setup and controls](docs/supervisor.md)

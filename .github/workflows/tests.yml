@@ -25,5 +25,56 @@ jobs:
         run: composer update --prefer-dist --no-interaction --no-progress
       - name: Run tests
         run: composer test
+      - name: Install Supervisor for live XML-RPC integration test
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y supervisor
+          sudo tee /tmp/queue-monitor-supervisord.conf > /dev/null <<'SUPERVISOR'
+          [unix_http_server]
+          file=/tmp/queue-monitor-supervisor.sock
+          chmod=0700
+
+          [inet_http_server]
+          port=127.0.0.1:9001
+          username=queue-monitor
+          password=integration-test-secret
+
+          [supervisord]
+          nodaemon=true
+          logfile=/tmp/queue-monitor-supervisord.log
+          pidfile=/tmp/queue-monitor-supervisord.pid
+          childlogdir=/tmp
+
+          [rpcinterface:supervisor]
+          supervisor.rpcinterface_factory=supervisor.rpcinterface:make_main_rpcinterface
+
+          [supervisorctl]
+          serverurl=http://127.0.0.1:9001
+          username=queue-monitor
+          password=integration-test-secret
+
+          [program:queue-monitor-test]
+          command=/bin/sleep 300
+          autostart=true
+          autorestart=false
+          startsecs=0
+          stopsignal=TERM
+          SUPERVISOR
+          sudo supervisord -c /tmp/queue-monitor-supervisord.conf
+          for attempt in $(seq 1 20); do
+            if sudo supervisorctl -c /tmp/queue-monitor-supervisord.conf status queue-monitor-test | grep -q RUNNING; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/queue-monitor-supervisord.log
+          exit 1
+      - name: Test against live Supervisor server
+        env:
+          QUEUE_MONITOR_SUPERVISOR_INTEGRATION: '1'
+          QUEUE_MONITOR_SUPERVISOR_URL: http://127.0.0.1:9001/RPC2
+          QUEUE_MONITOR_SUPERVISOR_USER: queue-monitor
+          QUEUE_MONITOR_SUPERVISOR_PASSWORD: integration-test-secret
+        run: vendor/bin/phpunit tests/Integration/SupervisorServerIntegrationTest.php
       - name: Check code style
-        run: vendor/bin/pint --test src/QueueLifecycleRecorder.php src/Support/PayloadMasker.php src/QueueMonitorServiceProvider.php src/Drivers/LazyBeanstalkdConnection.php src/Drivers/LazySqsQueueConnection.php src/Drivers/BeanstalkdQueueDriver.php src/Drivers/BeanstalkdQueueDriverFactory.php src/Drivers/DatabaseQueueDriver.php src/Drivers/DatabaseQueueDriverFactory.php src/Drivers/RedisQueueDriver.php src/Drivers/RedisQueueDriverFactory.php src/Drivers/SqsQueueDriver.php src/Drivers/SqsQueueDriverFactory.php src/Drivers/SyncQueueDriver.php src/Drivers/SyncQueueDriverFactory.php src/Drivers/LazyRedisConnection.php src/Http/Controllers/DashboardController.php src/Http/Controllers/JobActionController.php src/Http/Controllers/JobDetailController.php src/Http/Controllers/JobCompareController.php src/WorkerHeartbeatRecorder.php src/Alerts/QueueAlertDispatcher.php src/Events/QueueAlertTriggered.php src/Supervisor/SupervisorClient.php src/Http/Controllers/SupervisorController.php tests/Unit/SupervisorClientTest.php tests/Feature/SupervisorControllerTest.php tests/Feature/DashboardTest.php tests/Feature/JobActionTest.php tests/Unit/BeanstalkdQueueDriverTest.php tests/Unit/DatabaseQueueDriverTest.php tests/Unit/RedisQueueDriverTest.php tests/Unit/SqsQueueDriverTest.php tests/Unit/SyncQueueDriverTest.php database/migrations/2026_11_16_000000_create_queue_monitor_jobs_table.php database/migrations/2026_11_16_000001_create_queue_monitor_workers_table.php
+        run: vendor/bin/pint --test src/QueueLifecycleRecorder.php src/Support/PayloadMasker.php src/QueueMonitorServiceProvider.php src/Drivers/LazyBeanstalkdConnection.php src/Drivers/LazySqsQueueConnection.php src/Drivers/BeanstalkdQueueDriver.php src/Drivers/BeanstalkdQueueDriverFactory.php src/Drivers/DatabaseQueueDriver.php src/Drivers/DatabaseQueueDriverFactory.php src/Drivers/RedisQueueDriver.php src/Drivers/RedisQueueDriverFactory.php src/Drivers/SqsQueueDriver.php src/Drivers/SqsQueueDriverFactory.php src/Drivers/SyncQueueDriver.php src/Drivers/SyncQueueDriverFactory.php src/Drivers/LazyRedisConnection.php src/Http/Controllers/DashboardController.php src/Http/Controllers/JobActionController.php src/Http/Controllers/JobDetailController.php src/Http/Controllers/JobCompareController.php src/WorkerHeartbeatRecorder.php src/Alerts/QueueAlertDispatcher.php src/Events/QueueAlertTriggered.php src/Supervisor/SupervisorClient.php src/Http/Controllers/SupervisorController.php tests/Integration/SupervisorServerIntegrationTest.php tests/Unit/SupervisorClientTest.php tests/Feature/SupervisorControllerTest.php tests/Feature/DashboardTest.php tests/Feature/JobActionTest.php tests/Unit/BeanstalkdQueueDriverTest.php tests/Unit/DatabaseQueueDriverTest.php tests/Unit/RedisQueueDriverTest.php tests/Unit/SqsQueueDriverTest.php tests/Unit/SyncQueueDriverTest.php database/migrations/2026_11_16_000000_create_queue_monitor_jobs_table.php database/migrations/2026_11_16_000001_create_queue_monitor_workers_table.php
