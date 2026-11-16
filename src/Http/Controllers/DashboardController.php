@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
+use Illuminate\Pagination\LengthAwarePaginator;
 use MertAydin\LaravelQueueMonitor\QueueDriverManager;
 use Throwable;
 
@@ -50,7 +51,33 @@ final class DashboardController
                 $snapshot = $driver->snapshot($queue);
 
                 if ($queue !== null) {
-                    $jobs = $driver->jobs($queue, $status, 50);
+                    $allJobs = $driver->jobs($queue, $status, 500);
+                    $search = trim((string) $request->query('search', ''));
+
+                    if ($search !== '') {
+                        $allJobs = array_values(array_filter($allJobs, static function ($job) use ($search): bool {
+                            $haystack = strtolower(implode(' ', [
+                                $job->id,
+                                $job->name ?? '',
+                                $job->status,
+                                json_encode($job->payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '',
+                                $job->exception ?? '',
+                            ]));
+
+                            return str_contains($haystack, strtolower($search));
+                        }));
+                    }
+
+                    $perPage = 25;
+                    $currentPage = max(1, LengthAwarePaginator::resolveCurrentPage());
+                    $pageItems = array_slice($allJobs, ($currentPage - 1) * $perPage, $perPage);
+                    $jobs = new LengthAwarePaginator(
+                        $pageItems,
+                        count($allJobs),
+                        $perPage,
+                        $currentPage,
+                        ['path' => $request->url(), 'query' => $request->query()]
+                    );
                 }
             } catch (Throwable) {
                 $connectionError = true;
@@ -219,6 +246,7 @@ final class DashboardController
             'analytics' => $analytics,
             'health' => $health,
             'period' => $period,
+            'search' => trim((string) $request->query('search', '')),
         ]);
     }
 }

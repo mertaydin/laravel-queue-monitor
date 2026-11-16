@@ -95,6 +95,10 @@
                         @endforeach
                     </select>
                 </label>
+                <label class="qm-search-field">
+                    <span>Search jobs</span>
+                    <input type="search" name="search" value="{{ $search }}" placeholder="Name, ID, payload...">
+                </label>
                 <button class="qm-filter-button" type="submit">Apply filters <span>→</span></button>
             </form>
         </section>
@@ -266,7 +270,7 @@
             <section class="qm-panel qm-jobs-panel">
                 <div class="qm-panel-heading qm-jobs-heading">
                     <div><h3>Recent jobs</h3><p>Inspect payloads and execution details for {{ $queue ?? 'this connection' }}</p></div>
-                    <span class="qm-results-count">{{ count($jobs) }} results <span>·</span> max 50</span>
+                    <span class="qm-results-count">{{ $jobs->total() }} results <span>·</span> {{ $jobs->perPage() }} per page</span>
                 </div>
                 @if ($jobs === [])
                     <div class="qm-empty">
@@ -292,7 +296,7 @@
                                 @endphp
                                 <tr>
                                     <td>
-                                        <div class="qm-job-name">{{ $job->name ?: 'Unnamed job' }}</div>
+                                        <a class="qm-job-name" href="{{ route('queue-monitor.jobs.show', ['connection' => $connection, 'jobId' => $job->id, 'queue' => $queue]) }}">{{ $job->name ?: 'Unnamed job' }}</a>
                                         <code>{{ \Illuminate\Support\Str::limit($job->id, 22) }}</code>
                                     </td>
                                     <td><span class="qm-status status-{{ $jobStatusClass }}"><i></i>{{ ucfirst($job->status) }}</span></td>
@@ -337,6 +341,23 @@
                             </tbody>
                         </table>
                     </div>
+                    @if ($jobs->hasPages())
+                        <nav class="qm-pagination" aria-label="Job pages">
+                            <span>Page {{ $jobs->currentPage() }} of {{ $jobs->lastPage() }}</span>
+                            <div>
+                                @if ($jobs->onFirstPage())
+                                    <span class="is-disabled">Previous</span>
+                                @else
+                                    <a href="{{ $jobs->previousPageUrl() }}">Previous</a>
+                                @endif
+                                @if ($jobs->hasMorePages())
+                                    <a href="{{ $jobs->nextPageUrl() }}">Next</a>
+                                @else
+                                    <span class="is-disabled">Next</span>
+                                @endif
+                            </div>
+                        </nav>
+                    @endif
                 @endif
             </section>
         @else

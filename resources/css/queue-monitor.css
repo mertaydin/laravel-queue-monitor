@@ -235,3 +235,32 @@ a { color: inherit; text-decoration: none; }
 .qm-slowest-jobs b { color:#536174; white-space:nowrap; }
 @media (max-width:850px) { .qm-analytics-grid { grid-template-columns:1fr; } }
 @media (max-width:560px) { .qm-analytics-summary { grid-template-columns:repeat(2,minmax(0,1fr)); row-gap:15px; } .qm-chart-column:nth-child(2n) small { display:none; } }
+
+
+/* Job search and pagination */
+.qm-search-field input { width:100%; min-width:150px; height:36px; padding:0 11px; border:1px solid #e8edf2; border-radius:7px; outline:none; background:#fff; color:#465365; font:inherit; font-size:11px; }
+.qm-search-field input:focus { border-color:#aeb8f4; box-shadow:0 0 0 3px rgba(82,104,232,.08); }
+.qm-job-name { display:inline-block; border:0; background:none; padding:0; text-align:left; cursor:pointer; }
+.qm-job-name:hover { color:#5268e8; }
+.qm-pagination { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 20px; border-top:1px solid #edf0f4; color:#8f9aaa; font-size:10px; }
+.qm-pagination div { display:flex; align-items:center; gap:7px; }
+.qm-pagination a,.qm-pagination span { padding:7px 10px; border:1px solid #e8edf2; border-radius:6px; }
+.qm-pagination a { color:#5365d8; background:#fff; }
+.qm-pagination .is-disabled { color:#b6bec8; background:#f8f9fb; }
+@media (max-width:1050px) { .qm-search-field { flex:1 1 100%; } }
+
+.qm-back-link { color:#6473d8; font-size:11px; font-weight:650; }
+.qm-detail-main { max-width:1160px; }
+.qm-detail-grid { display:grid; grid-template-columns:minmax(280px,.85fr) minmax(0,1.15fr); gap:14px; }
+.qm-detail-card { padding:22px; min-width:0; }
+.qm-detail-card h3 { margin:0 0 18px; font-size:13px; }
+.qm-detail-list { margin:0; }
+.qm-detail-list div { display:grid; grid-template-columns:110px minmax(0,1fr); gap:12px; padding:11px 0; border-bottom:1px solid #eff1f4; font-size:10px; }
+.qm-detail-list dt { color:#929dad; }
+.qm-detail-list dd { margin:0; color:#465365; overflow-wrap:anywhere; }
+.qm-detail-list code { color:#596be0; overflow-wrap:anywhere; }
+.qm-detail-code { max-height:560px; overflow:auto; margin:0; padding:17px; border-radius:9px; background:#182230; color:#d9e1ec; white-space:pre-wrap; overflow-wrap:anywhere; font:10px/1.65 ui-monospace,SFMono-Regular,Menlo,monospace; }
+.qm-detail-empty { color:#929dad; font-size:11px; }
+.qm-exception-card { margin-top:14px; }
+.qm-exception-card .qm-detail-code { background:#fff7f7; color:#9d4c55; border:1px solid #f4e0e1; }
+@media(max-width:760px) { .qm-detail-grid { grid-template-columns:1fr; } .qm-detail-list div { grid-template-columns:90px minmax(0,1fr); } }
