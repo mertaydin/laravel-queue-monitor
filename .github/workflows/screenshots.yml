@@ -39,6 +39,7 @@ jobs:
         run: |
           composer config repositories.queue-monitor '{"type":"path","url":"../","options":{"symlink":false}}'
           composer require mertaydin/laravel-queue-monitor:@dev --no-interaction
+          php -r '$p="vendor/mertaydin/laravel-queue-monitor/src/Http/Controllers/DashboardController.php"; $s=file_get_contents($p); $s=str_replace("Gate::authorize(".chr(36)."gate);", "// Authorization bypassed in isolated screenshot host", $s); file_put_contents($p, $s);'
           php artisan key:generate
           touch database/database.sqlite
           cat > .env <<'ENV'
@@ -60,41 +61,6 @@ jobs:
           php artisan vendor:publish --tag=queue-monitor-config --force
           php artisan vendor:publish --tag=queue-monitor-assets --force
           php artisan migrate --force
-          cat > app/Providers/AppServiceProvider.php <<'PHP'
-          <?php
-          namespace App\Providers;
-          use Illuminate\Support\Facades\Gate;
-          use Illuminate\Support\ServiceProvider;
-          class AppServiceProvider extends ServiceProvider {
-              public function boot(): void { Gate::before(static fn ($user, string $ability): bool => true); Gate::define('viewQueueMonitor', static fn (): bool => true); }
-          }
-          PHP
-          cat > bootstrap/app.php <<'PHP'
-          <?php
-          use Illuminate\Foundation\Application;
-          use Illuminate\Foundation\Configuration\Exceptions;
-          use Illuminate\Foundation\Configuration\Middleware;
-          use Illuminate\Support\Facades\Gate;
-          $app = Application::configure(basePath: dirname(__DIR__))
-              ->withRouting(
-                  web: __DIR__.'/../routes/web.php',
-                  commands: __DIR__.'/../routes/console.php',
-                  health: '/up',
-              )
-              ->withMiddleware(static function (Middleware $middleware): void {})
-              ->withExceptions(static function (Exceptions $exceptions): void {})
-              ->create();
-          $app->booted(static function (): void {
-              Gate::before(static fn ($user, string $ability): bool => true);
-          });
-          return $app;
-          PHP
-          cat > bootstrap/providers.php <<'PHP'
-          <?php
-          return [
-              App\Providers\AppServiceProvider::class,
-          ];
-          PHP
           cat > database/seeders/ScreenshotSeeder.php <<'PHP'
           <?php
           namespace Database\Seeders;
