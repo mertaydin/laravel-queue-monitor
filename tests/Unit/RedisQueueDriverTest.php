@@ -64,8 +64,7 @@ class FakeRedisConnection
 {
     public array $commands = [];
 
-    public function __construct(private readonly array $responses = []) {
-    }
+    public function __construct(private readonly array $responses = []) {}
 
     public function command(string $command, array $parameters = []): mixed
     {

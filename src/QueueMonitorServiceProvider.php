@@ -7,6 +7,7 @@ use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use MertAydin\LaravelQueueMonitor\Drivers\BeanstalkdQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Drivers\DatabaseQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Drivers\RedisQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Support\PayloadMasker;
@@ -18,6 +19,7 @@ class QueueMonitorServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/queue-monitor.php', 'queue-monitor');
 
         $this->app->singleton(QueueDriverManager::class);
+        $this->app->singleton(BeanstalkdQueueDriverFactory::class);
         $this->app->singleton(DatabaseQueueDriverFactory::class);
         $this->app->singleton(RedisQueueDriverFactory::class);
         $this->app->singleton(PayloadMasker::class);
@@ -26,6 +28,7 @@ class QueueMonitorServiceProvider extends ServiceProvider
 
     private function registerConfiguredDrivers(): void
     {
+        $beanstalkdFactory = $this->app->make(BeanstalkdQueueDriverFactory::class);
         $databaseFactory = $this->app->make(DatabaseQueueDriverFactory::class);
         $redisFactory = $this->app->make(RedisQueueDriverFactory::class);
         $manager = $this->app->make(QueueDriverManager::class);
@@ -35,6 +38,8 @@ class QueueMonitorServiceProvider extends ServiceProvider
                 $manager->register($connectionName, $databaseFactory->make($connectionName, $configuration));
             } elseif (($configuration['driver'] ?? null) === 'redis') {
                 $manager->register($connectionName, $redisFactory->make($connectionName, $configuration));
+            } elseif (($configuration['driver'] ?? null) === 'beanstalkd') {
+                $manager->register($connectionName, $beanstalkdFactory->make($connectionName, $configuration));
             }
         }
     }

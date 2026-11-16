@@ -16,37 +16,37 @@ Completed jobs are retained only when package history is enabled; Laravel normal
 
 ## Installation
 
-\`\`\`bash
+```bash
 composer require mertaydin/laravel-queue-monitor
 php artisan vendor:publish --tag=queue-monitor-config
 php artisan migrate
-\`\`\`
+```
 
-Enable history in \`config/queue-monitor.php\`:
+Enable history in `config/queue-monitor.php`:
 
-\`\`\`php
+```php
 'history' => [
     'enabled' => true,
     'connection' => env('QUEUE_MONITOR_DB_CONNECTION'),
     'table' => 'queue_monitor_jobs',
     'retention_days' => 14,
 ],
-\`\`\`
+```
 
 ## Redis configuration
 
-Redis connections are registered automatically. Queue names default to the Laravel connection's configured \`queue\` value. Add other names explicitly:
+Redis connections are registered automatically. Queue names default to the Laravel connection's configured `queue` value. Add other names explicitly:
 
-\`\`\`php
+```php
 'connections' => [
     'redis' => [
         'queues' => ['default', 'emails', 'reports'],
         'queue_prefix' => 'queues:',
     ],
 ],
-\`\`\`
+```
 
-The adapter reads Laravel Redis pending lists and reserved/delayed sorted sets. Completed jobs require package history. Failed jobs are stored by Laravel's failed-job provider outside Redis, so failed-job inspection is not advertised for this adapter. Queue discovery uses configured queue names and does not issue Redis \`KEYS\`.
+The adapter reads Laravel Redis pending lists and reserved/delayed sorted sets. Completed jobs require package history. Failed jobs are stored by Laravel's failed-job provider outside Redis, so failed-job inspection is not advertised for this adapter. Queue discovery uses configured queue names and does not issue Redis `KEYS`.
 
 Retry moves a matching reserved or delayed payload back to its pending list; already-pending jobs remain unchanged. Delete removes a matching payload from its current Redis structure. Payload masking is enabled by default.
 
@@ -67,10 +67,10 @@ Retry moves a matching reserved or delayed payload back to its pending list; alr
 
 ## Development
 
-\`\`\`bash
+```bash
 composer install
 composer test
-\`\`\`
+```
 
 ## License
 
