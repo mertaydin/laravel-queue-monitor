@@ -9,7 +9,7 @@ class HealthCheckTest extends TestCase
 {
     public function test_health_page_requires_the_dashboard_authorization_gate(): void
     {
-        Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andReturn(false);
+        Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andThrow(new AuthorizationException);
 
         $this->get('/queue-monitor/health')->assertForbidden();
     }
