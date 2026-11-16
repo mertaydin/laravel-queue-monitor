@@ -6,59 +6,56 @@ A Laravel package for monitoring and managing queues across supported queue conn
 
 ## Current capabilities
 
-- Database queue adapter for pending, reserved, failed, and recorded completed jobs.
-- Queue depth snapshots, payload inspection, retry, and delete operations for database-backed queues.
+- Database queues: pending, reserved, failed, and recorded completed jobs.
+- Redis queues: pending, reserved, delayed, and recorded completed jobs.
+- Queue depth snapshots, payload inspection, retry, and delete operations.
+- Driver-aware adapters and automatic registration of supported Laravel queue connections.
+- Optional lifecycle history and recursive masking of sensitive payload keys.
 
-- A driver-aware contract for queue adapters.
-- A registry for resolving adapters by Laravel queue connection.
-- Optional job lifecycle history for processing, completed, and failed jobs.
-- Recursive masking of configured sensitive payload keys before history is persisted.
-- A configurable history table and database connection.
-
-The lifecycle recorder listens to Laravel queue events. Completed jobs are only retained when history recording is enabled; queue drivers normally remove successful jobs after processing.
+Completed jobs are retained only when package history is enabled; Laravel normally removes successful jobs after processing.
 
 ## Installation
 
-Install the package through Composer:
-
-```bash
+\`\`\`bash
 composer require mertaydin/laravel-queue-monitor
-```
-
-Publish the configuration:
-
-```bash
 php artisan vendor:publish --tag=queue-monitor-config
-```
+php artisan migrate
+\`\`\`
 
-Enable lifecycle history in `config/queue-monitor.php`:
+Enable history in \`config/queue-monitor.php\`:
 
-```php
+\`\`\`php
 'history' => [
     'enabled' => true,
     'connection' => env('QUEUE_MONITOR_DB_CONNECTION'),
     'table' => 'queue_monitor_jobs',
     'retention_days' => 14,
 ],
-```
+\`\`\`
 
-Then run migrations:
+## Redis configuration
 
-```bash
-php artisan migrate
-```
+Redis connections are registered automatically. Queue names default to the Laravel connection's configured \`queue\` value. Add other names explicitly:
 
-When enabled, the package records jobs as they start, complete, or fail. Payload keys listed in `payload.sensitive_keys` are replaced recursively with `[REDACTED]` before being stored. Set `payload.mask_sensitive_data` to `false` only if storing unmasked payloads is acceptable for your environment.
+\`\`\`php
+'connections' => [
+    'redis' => [
+        'queues' => ['default', 'emails', 'reports'],
+        'queue_prefix' => 'queues:',
+    ],
+],
+\`\`\`
 
-Job history is stored in the configured database connection and table. The recorder preserves the original creation timestamp across lifecycle updates and identifies records by connection plus queue job ID.
+The adapter reads Laravel Redis pending lists and reserved/delayed sorted sets. Completed jobs require package history. Failed jobs are stored by Laravel's failed-job provider outside Redis, so failed-job inspection is not advertised for this adapter. Queue discovery uses configured queue names and does not issue Redis \`KEYS\`.
+
+Retry moves a matching reserved or delayed payload back to its pending list; already-pending jobs remain unchanged. Delete removes a matching payload from its current Redis structure. Payload masking is enabled by default.
 
 ## Design principles
 
-- **Capability-aware:** Driver-specific limitations are explicit; unsupported data is never presented as available.
-- **History-aware:** Completed-job history is opt-in and stored by the package.
-- **Secure by default:** Dashboard access will be protected by an authorization gate; payload masking is enabled by default.
-- **Laravel-native:** Integrates with Laravel queue events, configuration, service container, and conventions.
-- **Maintainable:** Small contracts, focused adapters, clear naming, and automated tests.
+- **Capability-aware:** Unsupported features are not presented as available.
+- **History-aware:** Completed-job history is opt-in.
+- **Secure by default:** Sensitive payload values are masked by default.
+- **Laravel-native:** Uses Laravel queue events, configuration, and service container.
 
 ## Planned driver targets
 
@@ -68,16 +65,12 @@ Job history is stored in the configured database connection and table. The recor
 - Amazon SQS
 - Sync (event-based visibility; no persistent queue depth)
 
-Each driver will document and test its actual capabilities.
-
 ## Development
 
-Run the test suite with:
-
-```bash
+\`\`\`bash
 composer install
 composer test
-```
+\`\`\`
 
 ## License
 

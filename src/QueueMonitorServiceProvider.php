@@ -8,6 +8,7 @@ use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use MertAydin\LaravelQueueMonitor\Drivers\DatabaseQueueDriverFactory;
+use MertAydin\LaravelQueueMonitor\Drivers\RedisQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Support\PayloadMasker;
 
 class QueueMonitorServiceProvider extends ServiceProvider
@@ -18,21 +19,23 @@ class QueueMonitorServiceProvider extends ServiceProvider
 
         $this->app->singleton(QueueDriverManager::class);
         $this->app->singleton(DatabaseQueueDriverFactory::class);
+        $this->app->singleton(RedisQueueDriverFactory::class);
         $this->app->singleton(PayloadMasker::class);
         $this->app->singleton(QueueLifecycleRecorder::class);
     }
 
     private function registerConfiguredDrivers(): void
     {
-        $factory = $this->app->make(DatabaseQueueDriverFactory::class);
+        $databaseFactory = $this->app->make(DatabaseQueueDriverFactory::class);
+        $redisFactory = $this->app->make(RedisQueueDriverFactory::class);
         $manager = $this->app->make(QueueDriverManager::class);
 
         foreach ((array) config('queue.connections', []) as $connectionName => $configuration) {
-            if (($configuration['driver'] ?? null) !== 'database') {
-                continue;
+            if (($configuration['driver'] ?? null) === 'database') {
+                $manager->register($connectionName, $databaseFactory->make($connectionName, $configuration));
+            } elseif (($configuration['driver'] ?? null) === 'redis') {
+                $manager->register($connectionName, $redisFactory->make($connectionName, $configuration));
             }
-
-            $manager->register($connectionName, $factory->make($connectionName, $configuration));
         }
     }
 
@@ -43,7 +46,6 @@ class QueueMonitorServiceProvider extends ServiceProvider
         ], 'queue-monitor-config');
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-
         $this->registerConfiguredDrivers();
 
         Event::listen(JobProcessing::class, function (JobProcessing $event): void {
