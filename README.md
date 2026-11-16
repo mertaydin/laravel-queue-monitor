@@ -109,6 +109,16 @@ You can add configured tube names as a fallback in `config/queue-monitor.php`:
 ],
 ```
 
+## Screenshots
+
+These screenshots are captured from the package running inside a temporary Laravel application in GitHub Actions. The dashboard is rendered by the package's real Blade views; the queue records and worker heartbeats are disposable demo data.
+
+| Queue dashboard | Queue comparison |
+| --- | --- |
+| ![Queue dashboard](docs/screenshots/queue-dashboard.png) | ![Queue comparison](docs/screenshots/queue-comparison.png) |
+
+![Job details](docs/screenshots/job-details.png)
+
 ## Dashboard
 
 The package includes a responsive dashboard at `/queue-monitor`. Publish its stylesheet after installation:

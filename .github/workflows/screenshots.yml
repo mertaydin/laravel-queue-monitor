@@ -1,0 +1,148 @@
+name: Capture package screenshots
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/screenshots.yml'
+      - 'README.md'
+      - 'resources/views/**'
+      - 'resources/css/**'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: package-screenshots
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, sqlite3, pdo_sqlite
+          tools: composer:v2
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Create temporary Laravel host application
+        run: composer create-project laravel/laravel screenshot-app '^12.0' --no-interaction
+      - name: Install this package into the host application
+        working-directory: screenshot-app
+        run: |
+          composer config repositories.queue-monitor '{"type":"path","url":"../","options":{"symlink":false}}'
+          composer require mertaydin/laravel-queue-monitor:@dev --no-interaction
+          php artisan key:generate
+          touch database/database.sqlite
+          cat > .env <<'ENV'
+          APP_NAME="Queue Monitor Screenshot"
+          APP_ENV=local
+          APP_KEY=
+          APP_DEBUG=true
+          APP_URL=http://127.0.0.1:8000
+          LOG_CHANNEL=stack
+          DB_CONNECTION=sqlite
+          DB_DATABASE=database/database.sqlite
+          QUEUE_CONNECTION=database
+          CACHE_STORE=file
+          SESSION_DRIVER=file
+          QUEUE_MONITOR_DB_CONNECTION=sqlite
+          QUEUE_MONITOR_WORKERS_DB_CONNECTION=sqlite
+          ENV
+          php artisan key:generate
+          php artisan vendor:publish --tag=queue-monitor-config --force
+          php artisan vendor:publish --tag=queue-monitor-assets --force
+          php artisan make:queue-table
+          php artisan migrate --force
+          cat > app/Providers/AppServiceProvider.php <<'PHP'
+          <?php
+          namespace App\Providers;
+          use Illuminate\Support\Facades\Gate;
+          use Illuminate\Support\ServiceProvider;
+          class AppServiceProvider extends ServiceProvider {
+              public function boot(): void { Gate::define('viewQueueMonitor', fn () => true); }
+          }
+          PHP
+          cat > database/seeders/ScreenshotSeeder.php <<'PHP'
+          <?php
+          namespace Database\Seeders;
+          use Illuminate\Database\Seeder;
+          use Illuminate\Support\Facades\DB;
+          class ScreenshotSeeder extends Seeder {
+              public function run(): void {
+                  $now = time();
+                  foreach ([
+                      ['SendInvoice', 'emails', 0],
+                      ['GenerateMonthlyReport', 'reports', 0],
+                      ['SyncCustomerProfile', 'default', 1],
+                      ['RebuildSearchIndex', 'default', 0],
+                  ] as [$name, $queue, $attempts]) {
+                      DB::table('jobs')->insert([
+                          'queue' => $queue,
+                          'payload' => json_encode(['uuid' => (string) \Illuminate\Support\Str::uuid(), 'displayName' => 'App\\Jobs\\'.$name, 'job' => 'Illuminate\\Queue\\CallQueuedHandler@call', 'maxTries' => 3, 'data' => ['commandName' => 'App\\Jobs\\'.$name]]),
+                          'attempts' => $attempts,
+                          'reserved_at' => null,
+                          'available_at' => $now,
+                          'created_at' => $now - 120,
+                      ]);
+                  }
+                  foreach ([
+                      ['worker-a', 'worker-01', 2411, 'active', now()],
+                      ['worker-b', 'worker-02', 2412, 'active', now()],
+                      ['worker-c', 'worker-03', 2413, 'active', now()->subMinutes(8)],
+                      ['worker-d', 'worker-04', 2414, 'stopped', now()->subMinutes(2)],
+                  ] as [$key, $host, $pid, $status, $heartbeat]) {
+                      DB::table('queue_monitor_workers')->insert([
+                          'worker_key' => $key, 'hostname' => $host, 'process_id' => $pid,
+                          'connection' => 'database', 'queue' => 'default', 'status' => $status,
+                          'started_at' => now()->subHour(), 'heartbeat_at' => $heartbeat,
+                          'last_job_at' => now()->subMinutes(3), 'stopped_at' => $status === 'stopped' ? now() : null,
+                          'created_at' => now()->subHour(), 'updated_at' => now(),
+                      ]);
+                  }
+              }
+          }
+          PHP
+          php artisan db:seed --class=Database\Seeders\ScreenshotSeeder
+          npm install --no-audit --no-fund playwright
+          npx playwright install --with-deps chromium
+      - name: Start Laravel
+        working-directory: screenshot-app
+        run: |
+          php artisan serve --host=127.0.0.1 --port=8000 > /tmp/queue-monitor-server.log 2>&1 &
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8000/queue-monitor >/dev/null && break; sleep 2; done
+      - name: Capture real package pages
+        working-directory: screenshot-app
+        run: |
+          mkdir -p ../docs/screenshots
+          node --input-type=module <<'NODE'
+          import { chromium } from 'playwright';
+          const browser = await chromium.launch({headless:true});
+          const page = await browser.newPage({viewport:{width:1440,height:1100},deviceScaleFactor:1});
+          page.on('pageerror', error => console.error(error));
+          for (const [path,file] of [
+            ['/queue-monitor','queue-dashboard.png'],
+            ['/queue-monitor/compare','queue-comparison.png'],
+            ['/queue-monitor/database/jobs/1','job-details.png'],
+          ]) {
+            const response = await page.goto('http://127.0.0.1:8000'+path,{waitUntil:'networkidle'});
+            if (!response || response.status() >= 400) throw new Error('Screenshot route failed: '+path+' '+response?.status());
+            await page.screenshot({path:'../docs/screenshots/'+file,fullPage:true});
+          }
+          await browser.close();
+          NODE
+      - name: Commit screenshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/screenshots
+          if ! git diff --cached --quiet; then
+            git commit -m "Add real package UI screenshots"
+            git push
+          fi
