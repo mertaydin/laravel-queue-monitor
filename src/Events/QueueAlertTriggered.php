@@ -4,7 +4,5 @@ namespace MertAydin\LaravelQueueMonitor\Events;
 
 final class QueueAlertTriggered
 {
-    public function __construct(public readonly array $payload)
-    {
-    }
+    public function __construct(public readonly array $payload) {}
 }
