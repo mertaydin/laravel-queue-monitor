@@ -18,7 +18,7 @@ final class RedisQueueDriverFactory
 
         return new RedisQueueDriver(
             connectionName: $connectionName,
-            redis: Redis::connection($queueConfiguration['connection'] ?? 'default'),
+            redis: new LazyRedisConnection(Redis::getFacadeRoot(), (string) ($queueConfiguration['connection'] ?? 'default')),
             queues: (array) $queues,
             queuePrefix: (string) ($monitorConfiguration['queue_prefix'] ?? 'queues:'),
             historyDatabase: $historyConfiguration['connection'] ?? null,
