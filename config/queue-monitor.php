@@ -38,6 +38,7 @@ return [
     'retry' => [
         // Zero means unlimited manual retries.
         'max_attempts' => 0,
+        'max_attempts_by_queue' => [],
     ],
 
     'notifications' => [

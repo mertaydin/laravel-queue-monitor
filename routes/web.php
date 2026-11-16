@@ -5,6 +5,7 @@ use MertAydin\LaravelQueueMonitor\Http\Controllers\DashboardController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\DashboardPreferenceController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\HealthCheckController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\JobActionController;
+use MertAydin\LaravelQueueMonitor\Http\Controllers\QueueComparisonController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\JobDetailController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\JobCompareController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\SupervisorController;
@@ -15,6 +16,7 @@ Route::middleware('web')
     ->group(function (): void {
         Route::get('/', DashboardController::class)->name('index');
         Route::get('/health', HealthCheckController::class)->name('health');
+        Route::get('/compare', QueueComparisonController::class)->name('compare');
         Route::post('/preferences', DashboardPreferenceController::class)->name('preferences');
         Route::get('/{connection}/jobs/{jobId}', JobDetailController::class)->name('jobs.show');
         Route::post('/{connection}/jobs/{jobId}/retry', [JobActionController::class, 'retry'])->name('jobs.retry');
