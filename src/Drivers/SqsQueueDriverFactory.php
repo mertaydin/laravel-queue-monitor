@@ -17,7 +17,9 @@ final class SqsQueueDriverFactory
 
         return new SqsQueueDriver(
             connectionName: $connectionName,
-            queueConnection: Queue::connection($connectionName),
+            queueConnection: new LazySqsQueueConnection(
+                static fn (): object => Queue::connection($connectionName)
+            ),
             configuredQueues: $configuredQueues,
             historyDatabase: $historyConfiguration['connection'] ?? null,
             historyTable: $historyConfiguration['table'] ?? 'queue_monitor_jobs',

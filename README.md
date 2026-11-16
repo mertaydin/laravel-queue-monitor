@@ -55,7 +55,7 @@ Retry moves a matching reserved or delayed payload back to its pending list; alr
 
 ## Amazon SQS support
 
-SQS connections are registered automatically. Configure queue names for each connection. Standard and FIFO queues use the same metrics adapter.
+SQS connections are registered automatically. Install the AWS SDK in the host application with `composer require aws/aws-sdk-php`. Configure queue names for each connection. Standard and FIFO queues use the same metrics adapter.
 
 ```php
 'connections' => [
