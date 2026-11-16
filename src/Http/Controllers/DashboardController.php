@@ -297,6 +297,69 @@ final class DashboardController
             ->keys()
             ->all();
 
+        $sla = [
+            'available' => false, 'total' => 0, 'breached' => 0, 'within' => 0,
+            'rate' => null, 'queues' => [],
+            'window_hours' => max(1, (int) config('queue-monitor.sla.window_hours', 24)),
+        ];
+        $historyConnection = config('queue-monitor.history.connection');
+        $historyTable = config('queue-monitor.history.table', 'queue_monitor_jobs');
+
+        if (
+            (bool) config('queue-monitor.sla.enabled', true)
+            && (bool) config('queue-monitor.history.enabled', false)
+            && $connection !== null
+            && Schema::connection($historyConnection)->hasTable($historyTable)
+            && Schema::connection($historyConnection)->hasColumn($historyTable, 'queued_at')
+        ) {
+            $since = CarbonImmutable::now()->subHours($sla['window_hours']);
+            $query = DB::connection($historyConnection)->table($historyTable)
+                ->where('connection', $connection)->whereNotNull('queued_at')->where('queued_at', '>=', $since);
+            if ($queue !== null) {
+                $query->where('queue', $queue);
+            }
+
+            $records = $query->limit(10000)->get(['queue', 'status', 'queued_at', 'wait_duration_ms']);
+            $thresholds = (array) config('queue-monitor.sla.queues', []);
+            $defaultThreshold = max(1, (int) config('queue-monitor.sla.default_wait_seconds', 30));
+            $now = CarbonImmutable::now();
+            $stats = [];
+
+            foreach ($records as $record) {
+                $threshold = max(1, (int) ($thresholds[$record->queue] ?? $defaultThreshold));
+                $queuedAt = CarbonImmutable::parse($record->queued_at);
+                $waitMs = $record->status === 'pending'
+                    ? max(0, $now->getTimestampMs() - $queuedAt->getTimestampMs())
+                    : ($record->wait_duration_ms === null ? null : (int) $record->wait_duration_ms);
+                if ($waitMs === null) {
+                    continue;
+                }
+
+                $name = (string) $record->queue;
+                $stats[$name] ??= ['queue' => $name, 'threshold' => $threshold, 'total' => 0, 'breached' => 0];
+                $stats[$name]['total']++;
+                if ($waitMs > $threshold * 1000) {
+                    $stats[$name]['breached']++;
+                }
+            }
+
+            foreach ($stats as &$item) {
+                $item['within'] = $item['total'] - $item['breached'];
+                $item['rate'] = round(($item['within'] / $item['total']) * 100, 1);
+            }
+            unset($item);
+
+            $queueStats = array_values($stats);
+            $total = array_sum(array_column($queueStats, 'total'));
+            $breached = array_sum(array_column($queueStats, 'breached'));
+            $sla = [
+                'available' => true, 'total' => $total, 'breached' => $breached,
+                'within' => $total - $breached,
+                'rate' => $total > 0 ? round((($total - $breached) / $total) * 100, 1) : null,
+                'queues' => $queueStats, 'window_hours' => $sla['window_hours'],
+            ];
+        }
+
         return view('queue-monitor::dashboard', [
             'connection' => $connection,
             'connectionCards' => $connectionCards,
@@ -311,6 +374,7 @@ final class DashboardController
             'capabilities' => $capabilities,
             'analytics' => $analytics,
             'health' => $health,
+            'sla' => $sla,
             'period' => $period,
             'search' => trim((string) $request->query('search', '')),
             'jobClass' => trim((string) $request->query('job_class', '')),

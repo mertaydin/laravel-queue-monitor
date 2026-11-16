@@ -192,6 +192,45 @@
                 </article>
             </section>
 
+            @if ($sla['available'])
+                <section class="qm-panel qm-sla-panel">
+                    <div class="qm-section-heading">
+                        <div><p class="qm-eyebrow">SERVICE LEVEL AGREEMENT</p><h2>Queue wait-time targets</h2></div>
+                        <span class="qm-total-label">Last {{ $sla['window_hours'] }} hours</span>
+                    </div>
+                    <div class="qm-stats-grid">
+                        <article class="qm-stat-card stat-completed">
+                            <div class="qm-stat-top"><span>SLA compliance</span><span class="qm-stat-icon">✓</span></div>
+                            <strong>{{ $sla['rate'] === null ? '—' : number_format($sla['rate'], 1).'%' }}</strong>
+                            <small>Jobs processed within target</small>
+                        </article>
+                        <article class="qm-stat-card stat-pending">
+                            <div class="qm-stat-top"><span>Jobs measured</span><span class="qm-stat-icon">◷</span></div>
+                            <strong>{{ number_format($sla['total']) }}</strong>
+                            <small>Jobs with recorded queue wait</small>
+                        </article>
+                        <article class="qm-stat-card stat-failed">
+                            <div class="qm-stat-top"><span>SLA breaches</span><span class="qm-stat-icon">!</span></div>
+                            <strong>{{ number_format($sla['breached']) }}</strong>
+                            <small>Wait time exceeded the queue target</small>
+                        </article>
+                    </div>
+                    @if ($sla['queues'] !== [])
+                        <div class="qm-sla-queues">
+                            @foreach ($sla['queues'] as $slaQueue)
+                                <div class="qm-sla-queue-row">
+                                    <div><strong>{{ $slaQueue['queue'] }}</strong><small>Target: {{ $slaQueue['threshold'] }} sec</small></div>
+                                    <span>{{ number_format($slaQueue['within']) }} / {{ number_format($slaQueue['total']) }} within target</span>
+                                    <strong>{{ number_format($slaQueue['rate'], 1) }}%</strong>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="qm-sla-empty">No jobs with queue wait measurements were recorded in this period.</p>
+                    @endif
+                </section>
+            @endif
+
             @if (in_array('analytics', $visibleWidgets, true))
         <section class="qm-analytics-grid">
             <article class="qm-panel qm-analytics-panel">

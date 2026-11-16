@@ -35,6 +35,13 @@ return [
         'stale_worker_warning' => true,
     ],
 
+    'sla' => [
+        'enabled' => true,
+        'default_wait_seconds' => 30,
+        'queues' => [],
+        'window_hours' => 24,
+    ],
+
     'retry' => [
         // Zero means unlimited manual retries.
         'max_attempts' => 0,

@@ -229,3 +229,26 @@ composer test
 ## License
 
 MIT
+
+
+## Queue SLA tracking
+
+Queue SLA tracking measures how long jobs wait between being pushed onto a queue and being picked up by a worker. It requires persistent history and the package migrations.
+
+Configure a default target and optional per-queue overrides:
+
+```php
+'sla' => [
+    'enabled' => true,
+    'default_wait_seconds' => 30,
+    'queues' => [
+        'critical' => 10,
+        'reports' => 120,
+    ],
+    'window_hours' => 24,
+],
+```
+
+The dashboard shows SLA compliance, measured jobs and breaches for the selected connection and queue. A job breaches its target only when its queue wait is greater than the configured limit. Pending jobs use their current wait time; started jobs use their recorded wait duration. When notifications are enabled, `queue-monitor:check-health` also reports pending jobs that exceed their queue target. Schedule the command every minute to receive these alerts.
+
+Existing installations should run `php artisan migrate` to add enqueue-time tracking columns. SLA measurements begin as jobs are queued after the migration; older history entries are not backfilled.
