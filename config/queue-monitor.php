@@ -33,6 +33,11 @@ return [
         'failure_rate_warning' => 0.05,
     ],
 
+    'retry' => [
+        // Zero means unlimited manual retries.
+        'max_attempts' => 0,
+    ],
+
     'notifications' => [
         'enabled' => false,
         'timeout_seconds' => 3,

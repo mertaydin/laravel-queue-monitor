@@ -93,6 +93,10 @@ You can change the route path with `QUEUE_MONITOR_PATH` and the gate name with t
 
 Worker heartbeats are stored in the `queue_monitor_workers` table. Configure the database with `workers.connection` and the stale threshold with `workers.stale_after_seconds`. Worker visibility is based on Laravel worker lifecycle events and heartbeats, identifying processes by hostname and PID. It does not claim to read Supervisor program names or Supervisor's own process state; use Supervisor XML-RPC or a separately configured integration for that level of detail.
 
+## Retry policy
+
+Set `retry.max_attempts` to a positive value to prevent manual retry actions for jobs that have already reached that attempt count. The default value `0` leaves retries unlimited. This is an operator safeguard; automatic retry timing and worker attempt limits remain governed by Laravel's worker options (for example, Supervisor's `--tries` and `--backoff` settings).
+
 ## Notifications
 
 Failure alerts can be sent to configured Slack, Microsoft Teams or generic incoming webhooks. Notifications are disabled by default. Add trusted webhook URLs in application configuration (never accept webhook URLs from dashboard input):
