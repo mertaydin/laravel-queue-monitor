@@ -128,6 +128,7 @@ final class DashboardController
             'average_duration' => null,
             'p95_duration' => null,
             'slowest' => [],
+            'top_classes' => [],
             'completed_count' => 0,
             'failed_count' => 0,
         ];
@@ -191,9 +192,21 @@ final class DashboardController
                 $failedCount = array_sum(array_column($buckets, 'failed'));
                 $averageDuration = $durations === [] ? null : (int) round(array_sum($durations) / count($durations));
                 $p95Duration = $durations === [] ? null : $durations[(int) floor((count($durations) - 1) * 0.95)];
-                $slowest = $records->where('status', 'completed')
-                    ->filter(fn ($record) => $record->duration_ms !== null)
-                    ->sortByDesc('duration_ms')->take(5)->values();
+                $completedRecords = $records->where('status', 'completed')
+                    ->filter(fn ($record) => $record->duration_ms !== null);
+                $slowest = $completedRecords->sortByDesc('duration_ms')->take(5)->values();
+                $topClasses = $completedRecords
+                    ->groupBy(fn ($record) => $record->job_name ?: 'Unknown job')
+                    ->map(fn ($jobs, $name): array => [
+                        'name' => $name,
+                        'count' => $jobs->count(),
+                        'average_duration' => (int) round($jobs->avg('duration_ms')),
+                        'max_duration' => (int) $jobs->max('duration_ms'),
+                    ])
+                    ->sortByDesc('average_duration')
+                    ->take(5)
+                    ->values()
+                    ->all();
 
                 $analytics = [
                     'available' => true,
@@ -203,6 +216,7 @@ final class DashboardController
                     'average_duration' => $averageDuration,
                     'p95_duration' => $p95Duration,
                     'slowest' => $slowest,
+                    'top_classes' => $topClasses,
                     'completed_count' => $completedCount,
                     'failed_count' => $failedCount,
                 ];

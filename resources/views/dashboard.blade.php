@@ -226,6 +226,14 @@
                         @endforeach
                     </div>
                     <div class="qm-chart-legend"><span><i class="qm-chart-completed"></i>Completed</span><span><i class="qm-chart-failed"></i>Failed</span></div>
+                    @if ($analytics['top_classes'] !== [])
+                        <div class="qm-slowest-jobs">
+                            <strong>Slowest job classes by average duration</strong>
+                            @foreach ($analytics['top_classes'] as $jobClass)
+                                <div><span>{{ $jobClass['name'] }} <small>· {{ number_format($jobClass['count']) }} jobs</small></span><b>{{ number_format($jobClass['average_duration']) }} ms avg.</b></div>
+                            @endforeach
+                        </div>
+                    @endif
                     @if ($analytics['slowest'] !== [])
                         <div class="qm-slowest-jobs">
                             <strong>Slowest completed jobs</strong>
