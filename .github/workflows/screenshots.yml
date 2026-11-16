@@ -108,7 +108,7 @@ jobs:
               }
           }
           PHP
-          php artisan db:seed --class=Database\Seeders\ScreenshotSeeder
+          php artisan db:seed --class='Database\Seeders\ScreenshotSeeder'
           npm install --no-audit --no-fund playwright
           npx playwright install --with-deps chromium
       - name: Start Laravel
