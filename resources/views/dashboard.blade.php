@@ -29,6 +29,7 @@
     </header>
 
     <main class="qm-main">
+    @php $visibleWidgets = session('queue-monitor.dashboard.widgets', ['analytics', 'workers', 'distribution', 'capabilities']); @endphp
         <section class="qm-heading">
             <div>
                 <p class="qm-eyebrow">OPERATIONS CENTER</p>
@@ -40,6 +41,17 @@
                 <a class="qm-refresh" href="{{ request()->fullUrl() }}" aria-label="Refresh dashboard" title="Refresh dashboard">↻</a>
             </div>
         </section>
+
+        <details class="qm-panel qm-widget-preferences">
+            <summary>Customize dashboard <span>Choose which panels are visible in this browser session</span></summary>
+            <form method="POST" action="{{ route('queue-monitor.preferences') }}">
+                @csrf
+                @foreach (['analytics' => 'Performance analytics', 'workers' => 'Worker status', 'distribution' => 'Queue distribution', 'capabilities' => 'Driver capabilities'] as $widget => $label)
+                    <label><input type="checkbox" name="widgets[]" value="{{ $widget }}" @checked(in_array($widget, $visibleWidgets, true))> {{ $label }}</label>
+                @endforeach
+                <button type="submit">Save dashboard</button>
+            </form>
+        </details>
 
         @if ($connectionCards !== [])
             <section class="qm-connections" aria-label="Queue connections">
@@ -175,7 +187,8 @@
                 </article>
             </section>
 
-            <section class="qm-analytics-grid">
+            @if (in_array('analytics', $visibleWidgets, true))
+        <section class="qm-analytics-grid">
             <article class="qm-panel qm-analytics-panel">
                 <div class="qm-panel-heading">
                     <div><h3>Job activity</h3><p>Completed and failed jobs from persistent history</p></div>
@@ -235,7 +248,9 @@
             </article>
         </section>
 
-        @if ($workers !== [])
+        @endif
+
+        @if (in_array('workers', $visibleWidgets, true) && $workers !== [])
             <section class="qm-panel qm-workers-panel">
                 <div class="qm-panel-heading"><div><h3>Worker processes</h3><p>Heartbeat-based visibility · hostname and process ID</p></div><span class="qm-results-count">{{ count($workers) }} tracked</span></div>
                 <div class="qm-workers-grid">
@@ -250,7 +265,9 @@
             </section>
         @endif
 
+        @if (in_array('distribution', $visibleWidgets, true) || in_array('capabilities', $visibleWidgets, true))
         <section class="qm-lower-grid">
+                @if (in_array('distribution', $visibleWidgets, true))
                 <article class="qm-panel qm-distribution">
                     <div class="qm-panel-heading">
                         <div><h3>Queue distribution</h3><p>How the current workload is split</p></div>
@@ -272,6 +289,8 @@
                         <span><i class="legend-delayed"></i>Delayed <b>{{ number_format($delayed) }}</b></span>
                     </div>
                 </article>
+                @endif
+                @if (in_array('capabilities', $visibleWidgets, true))
                 <article class="qm-panel qm-health">
                     <div class="qm-panel-heading">
                         <div><h3>Connection capabilities</h3><p>Available actions for this driver</p></div>
@@ -292,7 +311,9 @@
                         @endforeach
                     </div>
                 </article>
+                @endif
             </section>
+            @endif
 
             @if ($driverName === 'beanstalkd')
                 <div class="qm-info-note"><strong>Beanstalkd visibility:</strong> reserved job counts are available, but the Beanstalkd protocol does not expose reserved job payloads for listing. Only the next ready, delayed and buried job can be inspected per tube.</div>
