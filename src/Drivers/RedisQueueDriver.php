@@ -227,11 +227,11 @@ final class RedisQueueDriver implements QueueDriver
 
     private function maskPayload(array $payload): array
     {
-        if (!config('queue-monitor.payload.mask_sensitive_data', true)) {
+        if (! config('queue-monitor.payload.mask_sensitive_data', true)) {
             return $payload;
         }
 
-        return ($this->payloadMasker ?? new PayloadMasker)->mask(
+        return ($this->payloadMasker ?? new PayloadMasker())->mask(
             $payload,
             (array) config('queue-monitor.payload.sensitive_keys', [])
         );
