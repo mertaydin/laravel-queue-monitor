@@ -248,7 +248,7 @@ final class RedisQueueDriver implements QueueDriver
             && Schema::connection($this->historyDatabase)->hasTable($this->historyTable);
     }
 
-    private function historyQuery(): \Illuminate\Database\Query\Builder
+    private function historyQuery(): Builder
     {
         return DB::connection($this->historyDatabase)->table($this->historyTable)
             ->where('connection', $this->connectionName);
