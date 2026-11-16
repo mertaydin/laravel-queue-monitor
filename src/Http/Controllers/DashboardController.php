@@ -250,9 +250,20 @@ final class DashboardController
         }
 
         $workers = [];
+        $workerCapacity = [
+            'available' => false,
+            'active' => 0,
+            'stale' => 0,
+            'stopped' => 0,
+            'active_for_queue' => 0,
+            'pending' => $snapshot?->pending,
+            'pending_per_active_worker' => null,
+            'status' => 'unavailable',
+        ];
         $workerConnection = config('queue-monitor.workers.connection');
 
         if ($connection !== null && Schema::connection($workerConnection)->hasTable('queue_monitor_workers')) {
+            $workerCapacity['available'] = true;
             $workers = DB::connection($workerConnection)->table('queue_monitor_workers')
                 ->where('connection', $connection)
                 ->orderByDesc('heartbeat_at')
@@ -269,7 +280,27 @@ final class DashboardController
                 $worker->display_status = $worker->status === 'stopped'
                     ? 'stopped'
                     : ($heartbeat !== null && $heartbeat->greaterThan($staleBefore) ? 'active' : 'stale');
+
+                $workerCapacity[$worker->display_status]++;
+
+                if (
+                    $worker->display_status === 'active'
+                    && ($queue === null || $worker->queue === $queue)
+                ) {
+                    $workerCapacity['active_for_queue']++;
+                }
             }
+
+            if ($snapshot !== null && $workerCapacity['active_for_queue'] > 0) {
+                $workerCapacity['pending_per_active_worker'] = round(
+                    $snapshot->pending / $workerCapacity['active_for_queue'],
+                    1
+                );
+            }
+
+            $workerCapacity['status'] = ($snapshot?->pending ?? 0) > 0 && $workerCapacity['active_for_queue'] === 0
+                ? 'attention'
+                : 'available';
         }
 
         $connectionCards = [];
@@ -381,6 +412,7 @@ final class DashboardController
             'dateFrom' => trim((string) $request->query('date_from', '')),
             'dateTo' => trim((string) $request->query('date_to', '')),
             'workers' => $workers,
+            'workerCapacity' => $workerCapacity,
             'supervisorServers' => $supervisorServers,
         ]);
     }
