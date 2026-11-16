@@ -4,6 +4,10 @@ namespace MertAydin\LaravelQueueMonitor\Tests\Feature;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Gate;
+use MertAydin\LaravelQueueMonitor\Contracts\QueueDriver;
+use MertAydin\LaravelQueueMonitor\Data\QueueCapabilities;
+use MertAydin\LaravelQueueMonitor\Data\QueueJob;
+use MertAydin\LaravelQueueMonitor\QueueDriverManager;
 use MertAydin\LaravelQueueMonitor\Tests\TestCase;
 
 class JobActionTest extends TestCase
