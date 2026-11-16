@@ -302,18 +302,38 @@
 
         @endif
 
-        @if (in_array('workers', $visibleWidgets, true) && $workers !== [])
+        @if (in_array('workers', $visibleWidgets, true) && $workerCapacity['available'])
             <section class="qm-panel qm-workers-panel">
-                <div class="qm-panel-heading"><div><h3>Worker processes</h3><p>Heartbeat-based visibility · hostname and process ID</p></div><span class="qm-results-count">{{ count($workers) }} tracked</span></div>
-                <div class="qm-workers-grid">
-                    @foreach ($workers as $worker)
-                        <article class="qm-worker-card">
-                            <div class="qm-worker-top"><strong>{{ $worker->hostname }}:{{ $worker->process_id }}</strong><span class="qm-worker-state worker-{{ $worker->display_status }}"><i></i>{{ ucfirst($worker->display_status) }}</span></div>
-                            <div class="qm-worker-meta"><span>{{ $worker->connection }}</span><span>Queue: {{ $worker->queue ?: '—' }}</span></div>
-                            <small>Last heartbeat: {{ $worker->heartbeat_at ? \Illuminate\Support\Carbon::parse($worker->heartbeat_at)->diffForHumans() : 'Unknown' }}</small>
-                        </article>
-                    @endforeach
+                <div class="qm-panel-heading">
+                    <div><h3>Worker capacity</h3><p>Live heartbeat counts · {{ $queue ? 'Queue: '.$queue : 'All queues' }}</p></div>
+                    <span class="qm-results-count">{{ count($workers) }} tracked</span>
                 </div>
+                <div class="qm-worker-capacity-grid">
+                    <article class="qm-capacity-card capacity-active"><span>Active workers</span><strong>{{ number_format($workerCapacity['active']) }}</strong><small>{{ number_format($workerCapacity['active_for_queue']) }} serving selected queue</small></article>
+                    <article class="qm-capacity-card capacity-stale"><span>Stale workers</span><strong>{{ number_format($workerCapacity['stale']) }}</strong><small>No heartbeat within configured threshold</small></article>
+                    <article class="qm-capacity-card capacity-stopped"><span>Stopped workers</span><strong>{{ number_format($workerCapacity['stopped']) }}</strong><small>Reported a graceful shutdown</small></article>
+                    <article class="qm-capacity-card capacity-load"><span>Pending jobs / active worker</span><strong>{{ $workerCapacity['pending_per_active_worker'] === null ? '—' : number_format($workerCapacity['pending_per_active_worker'], 1) }}</strong><small>{{ $workerCapacity['pending'] === null ? 'Queue depth unavailable' : number_format($workerCapacity['pending']).' pending jobs in selected queue' }}</small></article>
+                </div>
+                @if ($workerCapacity['status'] === 'attention')
+                    <div class="qm-worker-capacity-note is-warning">Jobs are waiting, but no active worker heartbeat is available for this queue.</div>
+                @elseif ($workerCapacity['active_for_queue'] > 0)
+                    <div class="qm-worker-capacity-note">Pending jobs per worker is calculated from the selected queue depth and its active worker heartbeats.</div>
+                @else
+                    <div class="qm-worker-capacity-note">No active worker heartbeat is currently recorded for the selected queue.</div>
+                @endif
+                @if ($workers !== [])
+                    <div class="qm-workers-grid">
+                        @foreach ($workers as $worker)
+                            <article class="qm-worker-card">
+                                <div class="qm-worker-top"><strong>{{ $worker->hostname }}:{{ $worker->process_id }}</strong><span class="qm-worker-state worker-{{ $worker->display_status }}"><i></i>{{ ucfirst($worker->display_status) }}</span></div>
+                                <div class="qm-worker-meta"><span>{{ $worker->connection }}</span><span>Queue: {{ $worker->queue ?: '—' }}</span></div>
+                                <small>Last heartbeat: {{ $worker->heartbeat_at ? \Illuminate\Support\Carbon::parse($worker->heartbeat_at)->diffForHumans() : 'Unknown' }}</small>
+                            </article>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="qm-worker-capacity-note">No worker heartbeat records have been collected for this connection yet.</div>
+                @endif
             </section>
         @endif
 

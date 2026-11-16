@@ -177,6 +177,7 @@ a { color: inherit; text-decoration: none; }
     .qm-heading h1 { font-size: 25px; }
     .qm-subtitle { max-width: 390px; line-height: 1.55; }
     .qm-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .qm-worker-capacity-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
     .qm-stat-card { min-height: 140px; padding: 15px; }
     .qm-stat-card > strong { font-size: 25px; }
     .qm-lower-grid { grid-template-columns: 1fr; }
@@ -276,6 +277,17 @@ a { color: inherit; text-decoration: none; }
 
 
 /* Worker process monitoring */
+.qm-worker-capacity-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:17px; }
+.qm-capacity-card { min-width:0; padding:13px 14px; border:1px solid #edf0f4; border-radius:9px; background:#fcfdff; }
+.qm-capacity-card span { display:block; color:#8793a2; font-size:9px; font-weight:650; }
+.qm-capacity-card strong { display:block; margin-top:7px; color:#344153; font-size:23px; letter-spacing:-.6px; }
+.qm-capacity-card small { display:block; margin-top:4px; color:#a1aab6; font-size:9px; line-height:1.45; }
+.capacity-active strong { color:#209b76; }
+.capacity-stale strong { color:#c58b2e; }
+.capacity-stopped strong { color:#8995a4; }
+.capacity-load strong { color:#5369e8; }
+.qm-worker-capacity-note { margin-top:12px; padding:10px 12px; border-radius:8px; background:#f6f8fb; color:#8793a2; font-size:10px; line-height:1.5; }
+.qm-worker-capacity-note.is-warning { background:#fff8eb; color:#a97825; }
 .qm-workers-panel { padding:19px 20px; margin-bottom:15px; }
 .qm-workers-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:10px; margin-top:16px; }
 .qm-worker-card { min-width:0; padding:13px; border:1px solid #edf0f4; border-radius:9px; background:#fcfdff; }
