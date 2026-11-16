@@ -155,7 +155,7 @@ Set `retry.max_attempts` to a positive value to prevent manual retry actions for
 
 ## Notifications
 
-Failure and threshold alerts can be sent to configured Slack, Microsoft Teams or generic incoming webhooks. Notifications are disabled by default. Add trusted webhook URLs in application configuration (never accept webhook URLs from dashboard input):
+Failure and threshold alerts support Slack, Microsoft Teams, Discord, Telegram and generic JSON webhooks. Notifications are disabled by default. Add trusted webhook URLs in application configuration (never accept webhook URLs from dashboard input):
 
 ```php
 'notifications' => [
@@ -167,7 +167,24 @@ Failure and threshold alerts can be sent to configured Slack, Microsoft Teams or
 ],
 ```
 
-On a failed queue job, the package dispatches a `QueueAlertTriggered` event for application-specific integrations (including mail notifications) and posts a compact JSON message to each configured webhook. The `queue-monitor:check-health` command also checks backlog size, stale workers and the recent failure rate. Schedule it every minute to receive threshold alerts. Duplicate threshold alerts are suppressed for the configured cooldown period. Webhook errors are isolated from queue processing. Keep webhook URLs in environment variables and protect them as secrets.
+On a failed queue job, the package dispatches a `QueueAlertTriggered` event for application-specific integrations (including mail notifications) and posts a compact JSON message to each configured webhook. The `queue-monitor:check-health` command also checks backlog size, stale workers and the recent failure rate. Schedule it every minute to receive threshold alerts. Duplicate threshold alerts are suppressed for the configured cooldown period. Webhook errors are isolated from queue processing. Keep webhook URLs and Telegram bot tokens in environment variables. Protect them as secrets. Webhooks may be plain URL strings for generic JSON delivery or configuration arrays with a `driver` and `url`.
+
+Provider-specific webhook examples:
+
+```php
+'webhooks' => [
+    ['driver' => 'slack', 'url' => env('QUEUE_MONITOR_SLACK_WEBHOOK')],
+    ['driver' => 'discord', 'url' => env('QUEUE_MONITOR_DISCORD_WEBHOOK')],
+    [
+        'driver' => 'telegram',
+        'url' => env('QUEUE_MONITOR_TELEGRAM_API_URL'), // https://api.telegram.org/bot<TOKEN>/sendMessage
+        'chat_id' => env('QUEUE_MONITOR_TELEGRAM_CHAT_ID'),
+    ],
+],
+```
+
+Slack and Teams receive a `text` message. Discord receives `content`. Telegram receives `chat_id` and `text`. Generic URL strings continue to receive the full JSON event payload.
+
 
 ## Design principles
 
