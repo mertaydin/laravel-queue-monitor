@@ -27,7 +27,7 @@ final class QueueLifecycleRecorder
             $payload = [];
         }
 
-        $jobId = $event->jobId ?? $payload['uuid'] ?? null;
+        $jobId = $event->jobId ?? $event->id ?? $payload['uuid'] ?? null;
         $jobId = $jobId === null ? null : (string) $jobId;
         if ($jobId === null || $jobId === '') {
             return;
@@ -42,6 +42,7 @@ final class QueueLifecycleRecorder
 
         $now = CarbonImmutable::now();
         $connectionName = (string) $event->connectionName;
+        $workflow = $this->workflowMetadata($event->job ?? null);
         $jobData = $payload['data'] ?? [];
         $jobName = $payload['displayName'] ?? (is_array($jobData) ? ($jobData['commandName'] ?? null) : null);
         $record = [
@@ -56,6 +57,8 @@ final class QueueLifecycleRecorder
             'finished_at' => null,
             'duration_ms' => null,
             'wait_duration_ms' => null,
+            'batch_id' => $workflow['batch_id'],
+            'chain_remaining' => $workflow['chain_remaining'],
             'updated_at' => $now,
         ];
 
@@ -182,6 +185,22 @@ final class QueueLifecycleRecorder
                 'exception' => $exception === null ? null : (string) $exception,
                 'updated_at' => $now,
             ]);
+    }
+
+    /** @return array{batch_id: string|null, chain_remaining: int} */
+    private function workflowMetadata(mixed $job): array
+    {
+        if (! is_object($job)) {
+            return ['batch_id' => null, 'chain_remaining' => 0];
+        }
+
+        $batchId = isset($job->batchId) ? trim((string) $job->batchId) : null;
+        $chained = isset($job->chained) && is_array($job->chained) ? $job->chained : [];
+
+        return [
+            'batch_id' => $batchId === '' ? null : $batchId,
+            'chain_remaining' => count($chained),
+        ];
     }
 
     private function jobIdentifier(object $job): ?string

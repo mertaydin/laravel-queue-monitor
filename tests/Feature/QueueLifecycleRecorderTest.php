@@ -34,6 +34,8 @@ class QueueLifecycleRecorderTest extends TestCase
             $table->timestamp('finished_at')->nullable();
             $table->unsignedBigInteger('duration_ms')->nullable();
             $table->unsignedBigInteger('wait_duration_ms')->nullable();
+            $table->string('batch_id', 191)->nullable();
+            $table->unsignedInteger('chain_remaining')->default(0);
             $table->timestamps();
             $table->unique(['connection', 'job_id']);
         });
@@ -46,13 +48,55 @@ class QueueLifecycleRecorderTest extends TestCase
         parent::tearDown();
     }
 
+    public function test_it_records_batch_and_chain_metadata_from_the_queued_job(): void
+    {
+        $job = new class
+        {
+            public string $batchId = 'batch-123';
+
+            public array $chained = ['serialized-next-job', 'serialized-final-job'];
+        };
+
+        $recorder = $this->app->make(QueueLifecycleRecorder::class);
+        $recorder->queued((object) [
+            'connectionName' => 'redis',
+            'id' => 'job-workflow-123',
+            'queue' => 'emails',
+            'job' => $job,
+            'payload' => ['uuid' => 'job-workflow-123', 'displayName' => 'App\\Jobs\\SendEmail'],
+        ]);
+
+        $record = DB::table('queue_monitor_jobs')->where('job_id', 'job-workflow-123')->first();
+
+        $this->assertNotNull($record);
+        $this->assertSame('batch-123', $record->batch_id);
+        $this->assertSame(2, (int) $record->chain_remaining);
+    }
+
     public function test_it_records_a_completed_job_and_masks_its_payload(): void
     {
-        $job = new class {
-            public function getJobId(): string { return 'job-123'; }
-            public function getQueue(): string { return 'emails'; }
-            public function resolveName(): string { return 'App\Jobs\SendEmail'; }
-            public function attempts(): int { return 1; }
+        $job = new class
+        {
+            public function getJobId(): string
+            {
+                return 'job-123';
+            }
+
+            public function getQueue(): string
+            {
+                return 'emails';
+            }
+
+            public function resolveName(): string
+            {
+                return 'App\\Jobs\\SendEmail';
+            }
+
+            public function attempts(): int
+            {
+                return 1;
+            }
+
             public function payload(): array
             {
                 return ['data' => ['token' => 'private-value', 'recipient' => 'user@example.com']];
@@ -64,7 +108,7 @@ class QueueLifecycleRecorderTest extends TestCase
 
         $recorder->queued((object) [
             'connectionName' => 'redis',
-            'jobId' => 'job-123',
+            'id' => 'job-123',
             'queue' => 'emails',
             'payload' => ['uuid' => 'job-123', 'displayName' => 'App\\Jobs\\SendEmail'],
         ]);

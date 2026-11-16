@@ -36,6 +36,20 @@
                     <div><dt>Duration</dt><dd>{{ $job->durationMilliseconds === null ? '—' : number_format($job->durationMilliseconds).' ms' }}</dd></div>
                 </dl>
             </article>
+            @if ($workflow['batch_id'] !== null || $workflow['chain_remaining'] > 0)
+                <article class="qm-panel qm-detail-card">
+                    <h3>Workflow context</h3>
+                    <dl class="qm-detail-list">
+                        @if ($workflow['batch_id'] !== null)
+                            <div><dt>Batch ID</dt><dd><code>{{ $workflow['batch_id'] }}</code></dd></div>
+                        @endif
+                        @if ($workflow['chain_remaining'] > 0)
+                            <div><dt>Remaining chained jobs</dt><dd>{{ $workflow['chain_remaining'] }}</dd></div>
+                        @endif
+                    </dl>
+                    <p class="qm-detail-empty">Workflow metadata is captured when the job is queued. Chain counts show the number of follow-up jobs attached at that moment.</p>
+                </article>
+            @endif
             <article class="qm-panel qm-detail-card">
                 <h3>Payload</h3>
                 @if ($job->payload !== null)

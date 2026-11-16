@@ -3,9 +3,12 @@
 namespace MertAydin\LaravelQueueMonitor\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 use MertAydin\LaravelQueueMonitor\QueueDriverManager;
+use Throwable;
 
 final class JobDetailController
 {
@@ -31,12 +34,42 @@ final class JobDetailController
 
         abort_if($job === null, 404);
 
+        $workflow = ['batch_id' => null, 'chain_remaining' => 0];
+
+        if ((bool) config('queue-monitor.history.enabled', false)) {
+            $historyConnection = config('queue-monitor.history.connection');
+            $historyTable = config('queue-monitor.history.table', 'queue_monitor_jobs');
+
+            try {
+                $schema = Schema::connection($historyConnection);
+
+                if ($schema->hasTable($historyTable)
+                    && $schema->hasColumn($historyTable, 'batch_id')
+                    && $schema->hasColumn($historyTable, 'chain_remaining')) {
+                    $record = DB::connection($historyConnection)->table($historyTable)
+                        ->where('connection', $connection)
+                        ->where('job_id', $jobId)
+                        ->first(['batch_id', 'chain_remaining']);
+
+                    if ($record !== null) {
+                        $workflow = [
+                            'batch_id' => $record->batch_id,
+                            'chain_remaining' => (int) $record->chain_remaining,
+                        ];
+                    }
+                }
+            } catch (Throwable) {
+                // Workflow metadata is optional; keep job inspection available if history is unavailable.
+            }
+        }
+
         return view('queue-monitor::job-detail', [
             'connection' => $connection,
             'driverName' => $driver->name(),
             'job' => $job,
             'capabilities' => $driver->capabilities()->toArray(),
             'queue' => $queue,
+            'workflow' => $workflow,
         ]);
     }
 }
