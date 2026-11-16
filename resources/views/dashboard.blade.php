@@ -1,10 +1,17 @@
+@php
+    $qmAvailableLocales = config('queue-monitor.dashboard.available_locales', ['tr', 'en', 'zh_CN', 'hi', 'es', 'ar']);
+    $qmDefaultLocale = config('queue-monitor.dashboard.locale', 'en');
+    $qmRequestedLocale = request()->query('locale', request()->cookie('queue_monitor_locale', $qmDefaultLocale));
+    $qmLocale = in_array($qmRequestedLocale, $qmAvailableLocales, true) ? $qmRequestedLocale : $qmDefaultLocale;
+    $qmLanguageNames = {"tr":"Türkçe","en":"English","es":"Español","zh_CN":"简体中文","hi":"हिन्दी","ar":"العربية"};
+@endphp
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', $qmLocale) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="color-scheme" content="light">
-    <title>Queue Monitor</title>
+    <meta name="color-scheme" content="light dark">
+    <title>{{ __('queue-monitor::messages.queue', [], $qmLocale) }} Monitor</title>
     <link rel="stylesheet" href="{{ asset('vendor/queue-monitor/queue-monitor.css') }}">
 </head>
 <body>
@@ -13,18 +20,18 @@
         <a class="qm-brand" href="{{ route('queue-monitor.index') }}">
             <span class="qm-brand-mark"><span></span><span></span><span></span></span>
             <span>
-                <strong>Queue Monitor</strong>
+                <strong>{{ __('queue-monitor::messages.queue', [], $qmLocale) }} Monitor</strong>
                 <small>Laravel queue operations</small>
             </span>
         </a>
         <div class="qm-topbar-meta">
-            <a class="qm-supervisor-nav" href="{{ route('queue-monitor.compare') }}">Compare queues</a>
-            <a class="qm-supervisor-nav" href="{{ route('queue-monitor.health') }}">System health</a>
+            <a class="qm-supervisor-nav" href="{{ route('queue-monitor.compare') }}">{{ __('queue-monitor::messages.compare', [], $qmLocale) }}</a>
+            <a class="qm-supervisor-nav" href="{{ route('queue-monitor.health') }}">{{ __('queue-monitor::messages.health', [], $qmLocale) }}</a>
             @foreach ($supervisorServers as $supervisorServer)
                 <a class="qm-supervisor-nav" href="{{ route('queue-monitor.supervisor.index', ['server' => $supervisorServer]) }}">Supervisor · {{ $supervisorServer }}</a>
             @endforeach
             <span class="qm-live-dot"></span>
-            <span>Monitoring overview</span>
+            <span>{{ __('queue-monitor::messages.overview', [], $qmLocale) }}</span>
             <span class="qm-version">PACKAGE</span>
         </div>
     </header>
@@ -37,29 +44,29 @@
         <section class="qm-heading">
             <div>
                 <p class="qm-eyebrow">OPERATIONS CENTER</p>
-                <h1>Queue overview</h1>
-                <p class="qm-subtitle">Monitor workload, inspect jobs and spot issues across your queue connections.</p>
+                <h1>{{ __('queue-monitor::messages.queue_overview', [], $qmLocale) }}</h1>
+                <p class="qm-subtitle">{{ __('queue-monitor::messages.subtitle', [], $qmLocale) }}</p>
             </div>
             <div class="qm-heading-actions">
-                <span class="qm-updated"><span class="qm-live-dot"></span> Current snapshot</span>
-                <a class="qm-refresh" href="{{ request()->fullUrl() }}" aria-label="Refresh dashboard" title="Refresh dashboard">↻</a>
+                <span class="qm-updated"><span class="qm-live-dot"></span> {{ __('queue-monitor::messages.current', [], $qmLocale) }}</span>
+                <a class="qm-refresh" href="{{ request()->fullUrl() }}" aria-label="{{ __('queue-monitor::messages.refresh', [], $qmLocale) }}" title="{{ __('queue-monitor::messages.refresh', [], $qmLocale) }}">↻</a>
             </div>
         </section>
 
         <details class="qm-panel qm-widget-preferences">
-            <summary>Customize dashboard <span>Choose which panels are visible in this browser session</span></summary>
+            <summary>{{ __('queue-monitor::messages.customize', [], $qmLocale) }} <span>Choose which panels are visible in this browser session</span></summary>
             <form method="POST" action="{{ route('queue-monitor.preferences') }}">
                 @csrf
-                @foreach (['analytics' => 'Performance analytics', 'workers' => 'Worker status', 'distribution' => 'Queue distribution', 'capabilities' => 'Driver capabilities'] as $widget => $label)
+                @foreach (['analytics' => '{{ __('queue-monitor::messages.performance', [], $qmLocale) }}', 'workers' => '{{ __('queue-monitor::messages.workers', [], $qmLocale) }}', 'distribution' => '{{ __('queue-monitor::messages.queue', [], $qmLocale) }} distribution', 'capabilities' => '{{ __('queue-monitor::messages.capabilities', [], $qmLocale) }}'] as $widget => $label)
                     <label><input type="checkbox" name="widgets[]" value="{{ $widget }}" @checked(in_array($widget, $visibleWidgets, true))> {{ $label }}</label>
                 @endforeach
-                <label class="qm-refresh-preference"><span>Auto refresh</span><select name="refresh"><option value="0" @selected($refreshInterval === 0)>Off</option><option value="15" @selected($refreshInterval === 15)>15 seconds</option><option value="30" @selected($refreshInterval === 30)>30 seconds</option><option value="60" @selected($refreshInterval === 60)>60 seconds</option></select></label>
-                <button type="submit">Save dashboard</button>
+                <label class="qm-refresh-preference"><span>{{ __('queue-monitor::messages.auto_refresh', [], $qmLocale) }}</span><select name="refresh"><option value="0" @selected($refreshInterval === 0)>Off</option><option value="15" @selected($refreshInterval === 15)>15 seconds</option><option value="30" @selected($refreshInterval === 30)>30 seconds</option><option value="60" @selected($refreshInterval === 60)>60 seconds</option></select></label>
+                <button type="submit">{{ __('queue-monitor::messages.save', [], $qmLocale) }}</button>
             </form>
         </details>
 
         @if ($connectionCards !== [])
-            <section class="qm-connections" aria-label="Queue connections">
+            <section class="qm-connections" aria-label="{{ __('queue-monitor::messages.queue', [], $qmLocale) }} connections">
                 @foreach ($connectionCards as $card)
                     <a class="qm-connection-card {{ $card['connection'] === $connection ? 'is-selected' : '' }}"
                        href="{{ route('queue-monitor.index', ['connection' => $card['connection']]) }}">
@@ -69,9 +76,9 @@
                             <small>{{ ucfirst($card['driver']) }} driver</small>
                         </span>
                         @if ($card['error'])
-                            <span class="qm-connection-state is-error">Unavailable</span>
+                            <span class="qm-connection-state is-error">{{ __('queue-monitor::messages.unavailable', [], $qmLocale) }}</span>
                         @else
-                            <span class="qm-connection-state"><i></i> Connected</span>
+                            <span class="qm-connection-state"><i></i> {{ __('queue-monitor::messages.connected', [], $qmLocale) }}</span>
                         @endif
                     </a>
                 @endforeach
@@ -82,13 +89,13 @@
             <div class="qm-filter-intro">
                 <span class="qm-filter-icon">⌕</span>
                 <div>
-                    <strong>Explore jobs</strong>
+                    <strong>{{ __('queue-monitor::messages.explore', [], $qmLocale) }}</strong>
                     <small>Choose a connection, queue and job state</small>
                 </div>
             </div>
             <form class="qm-filters" method="GET" action="{{ route('queue-monitor.index') }}">
                 <label>
-                    <span>Connection</span>
+                    <span>{{ __('queue-monitor::messages.connection', [], $qmLocale) }}</span>
                     <select name="connection" onchange="this.form.submit()">
                         @forelse ($connectionNames as $connectionName)
                             <option value="{{ $connectionName }}" @selected($connectionName === $connection)>{{ $connectionName }}</option>
@@ -98,7 +105,7 @@
                     </select>
                 </label>
                 <label>
-                    <span>Queue</span>
+                    <span>{{ __('queue-monitor::messages.queue', [], $qmLocale) }}</span>
                     <select name="queue">
                         @forelse ($queues as $queueName)
                             <option value="{{ $queueName }}" @selected($queueName === $queue)>{{ $queueName }}</option>
@@ -108,16 +115,16 @@
                     </select>
                 </label>
                 <label>
-                    <span>Status</span>
+                    <span>{{ __('queue-monitor::messages.status', [], $qmLocale) }}</span>
                     <select name="status">
                         <option value="">All states</option>
-                        @foreach (['pending' => 'Pending', 'running' => 'Running', 'delayed' => 'Delayed', 'failed' => 'Failed / buried', 'completed' => 'Completed'] as $value => $label)
+                        @foreach (['pending' => '{{ __('queue-monitor::messages.pending', [], $qmLocale) }}', 'running' => '{{ __('queue-monitor::messages.running', [], $qmLocale) }}', 'delayed' => '{{ __('queue-monitor::messages.delayed', [], $qmLocale) }}', 'failed' => 'Failed / buried', 'completed' => '{{ __('queue-monitor::messages.completed', [], $qmLocale) }}'] as $value => $label)
                             <option value="{{ $value }}" @selected($status === $value)>{{ $label }}</option>
                         @endforeach
                     </select>
                 </label>
                 <label class="qm-search-field">
-                    <span>Search jobs</span>
+                    <span>{{ __('queue-monitor::messages.search', [], $qmLocale) }}</span>
                     <input type="search" name="search" value="{{ $search }}" placeholder="Name, ID, payload...">
                 </label>
                 <label>
@@ -132,7 +139,7 @@
                     <span>To</span>
                     <input type="date" name="date_to" value="{{ $dateTo }}">
                 </label>
-                <button class="qm-filter-button" type="submit">Apply filters <span>→</span></button>
+                <button class="qm-filter-button" type="submit">{{ __('queue-monitor::messages.apply', [], $qmLocale) }} <span>→</span></button>
             </form>
         </section>
 
@@ -143,7 +150,7 @@
         @if ($connectionError)
             <div class="qm-alert qm-alert-error">
                 <span class="qm-alert-icon">!</span>
-                <div><strong>Connection unavailable</strong><p>The selected queue connection could not be queried. Check its configuration and service health.</p></div>
+                <div><strong>{{ __('queue-monitor::messages.connection', [], $qmLocale) }} unavailable</strong><p>{{ __('queue-monitor::messages.connection_error', [], $qmLocale) }}</p></div>
             </div>
         @elseif ($snapshot !== null)
             @php
@@ -167,19 +174,19 @@
 
             <section class="qm-stats-grid">
                 <article class="qm-stat-card stat-pending">
-                    <div class="qm-stat-top"><span>Pending</span><span class="qm-stat-icon">◷</span></div>
+                    <div class="qm-stat-top"><span>{{ __('queue-monitor::messages.pending', [], $qmLocale) }}</span><span class="qm-stat-icon">◷</span></div>
                     <strong>{{ number_format($snapshot->pending) }}</strong>
                     <small>Waiting to be processed</small>
                     <div class="qm-stat-foot"><i></i> Ready in queue</div>
                 </article>
                 <article class="qm-stat-card stat-running">
-                    <div class="qm-stat-top"><span>Running</span><span class="qm-stat-icon">↗</span></div>
+                    <div class="qm-stat-top"><span>{{ __('queue-monitor::messages.running', [], $qmLocale) }}</span><span class="qm-stat-icon">↗</span></div>
                     <strong>{{ number_format($snapshot->running) }}</strong>
                     <small>Currently reserved by workers</small>
                     <div class="qm-stat-foot"><i></i> In progress</div>
                 </article>
                 <article class="qm-stat-card stat-completed">
-                    <div class="qm-stat-top"><span>Completed</span><span class="qm-stat-icon">✓</span></div>
+                    <div class="qm-stat-top"><span>{{ __('queue-monitor::messages.completed', [], $qmLocale) }}</span><span class="qm-stat-icon">✓</span></div>
                     <strong>{{ number_format($snapshot->completed) }}</strong>
                     <small>Recorded successful jobs</small>
                     <div class="qm-stat-foot"><i></i> History dependent</div>
@@ -195,7 +202,7 @@
             @if ($sla['available'])
                 <section class="qm-panel qm-sla-panel">
                     <div class="qm-section-heading">
-                        <div><p class="qm-eyebrow">SERVICE LEVEL AGREEMENT</p><h2>Queue wait-time targets</h2></div>
+                        <div><p class="qm-eyebrow">SERVICE LEVEL AGREEMENT</p><h2>{{ __('queue-monitor::messages.queue', [], $qmLocale) }} wait-time targets</h2></div>
                         <span class="qm-total-label">Last {{ $sla['window_hours'] }} hours</span>
                     </div>
                     <div class="qm-stats-grid">
@@ -217,11 +224,11 @@
                     </div>
                     @if ($sla['queues'] !== [])
                         <div class="qm-sla-queues">
-                            @foreach ($sla['queues'] as $slaQueue)
+                            @foreach ($sla['queues'] as $sla{{ __('queue-monitor::messages.queue', [], $qmLocale) }})
                                 <div class="qm-sla-queue-row">
-                                    <div><strong>{{ $slaQueue['queue'] }}</strong><small>Target: {{ $slaQueue['threshold'] }} sec</small></div>
-                                    <span>{{ number_format($slaQueue['within']) }} / {{ number_format($slaQueue['total']) }} within target</span>
-                                    <strong>{{ number_format($slaQueue['rate'], 1) }}%</strong>
+                                    <div><strong>{{ $sla{{ __('queue-monitor::messages.queue', [], $qmLocale) }}['queue'] }}</strong><small>Target: {{ $sla{{ __('queue-monitor::messages.queue', [], $qmLocale) }}['threshold'] }} sec</small></div>
+                                    <span>{{ number_format($sla{{ __('queue-monitor::messages.queue', [], $qmLocale) }}['within']) }} / {{ number_format($sla{{ __('queue-monitor::messages.queue', [], $qmLocale) }}['total']) }} within target</span>
+                                    <strong>{{ number_format($sla{{ __('queue-monitor::messages.queue', [], $qmLocale) }}['rate'], 1) }}%</strong>
                                 </div>
                             @endforeach
                         </div>
@@ -235,7 +242,7 @@
         <section class="qm-analytics-grid">
             <article class="qm-panel qm-analytics-panel">
                 <div class="qm-panel-heading">
-                    <div><h3>Job activity</h3><p>Completed and failed jobs from persistent history</p></div>
+                    <div><h3>Job activity</h3><p>{{ __('queue-monitor::messages.completed', [], $qmLocale) }} and failed jobs from persistent history</p></div>
                     <form method="GET" action="{{ route('queue-monitor.index') }}" class="qm-period-form">
                         <input type="hidden" name="connection" value="{{ $connection }}">
                         <input type="hidden" name="queue" value="{{ $queue }}">
@@ -249,13 +256,13 @@
                 </div>
                 @if ($analytics['available'])
                     <div class="qm-analytics-summary">
-                        <div><strong>{{ number_format($analytics['completed_count']) }}</strong><span>Completed</span></div>
+                        <div><strong>{{ number_format($analytics['completed_count']) }}</strong><span>{{ __('queue-monitor::messages.completed', [], $qmLocale) }}</span></div>
                         <div><strong>{{ number_format($analytics['failed_count']) }}</strong><span>Failed</span></div>
                         <div><strong>{{ $analytics['average_duration'] === null ? '—' : number_format($analytics['average_duration']).' ms' }}</strong><span>Avg. duration</span></div>
                         <div><strong>{{ $analytics['p95_duration'] === null ? '—' : number_format($analytics['p95_duration']).' ms' }}</strong><span>95th percentile</span></div>
                     </div>
                     @php $chartMax = max(1, ...$analytics['completed'], ...$analytics['failed']); @endphp
-                    <div class="qm-activity-chart" role="img" aria-label="Completed and failed job activity">
+                    <div class="qm-activity-chart" role="img" aria-label="{{ __('queue-monitor::messages.completed', [], $qmLocale) }} and failed job activity">
                         @foreach ($analytics['labels'] as $index => $label)
                             <div class="qm-chart-column" title="{{ $label }}: {{ $analytics['completed'][$index] }} completed, {{ $analytics['failed'][$index] }} failed">
                                 <div class="qm-chart-bars">
@@ -268,7 +275,7 @@
                             </div>
                         @endforeach
                     </div>
-                    <div class="qm-chart-legend"><span><i class="qm-chart-completed"></i>Completed</span><span><i class="qm-chart-failed"></i>Failed</span></div>
+                    <div class="qm-chart-legend"><span><i class="qm-chart-completed"></i>{{ __('queue-monitor::messages.completed', [], $qmLocale) }}</span><span><i class="qm-chart-failed"></i>Failed</span></div>
                     @if ($analytics['top_classes'] !== [])
                         <div class="qm-slowest-jobs">
                             <strong>Slowest job classes by average duration</strong>
@@ -290,12 +297,12 @@
                 @endif
             </article>
             <article class="qm-panel qm-health-summary">
-                <div class="qm-panel-heading"><div><h3>Queue health</h3><p>Based on configured thresholds</p></div></div>
+                <div class="qm-panel-heading"><div><h3>{{ __('queue-monitor::messages.queue', [], $qmLocale) }} health</h3><p>Based on configured thresholds</p></div></div>
                 <div class="qm-health-state health-{{ $health['status'] }}"><span></span>{{ $health['label'] }}</div>
                 <p>{{ $health['message'] }}</p>
                 @if ($analytics['available'])
                     <div class="qm-health-metric"><span>Failed jobs in period</span><strong>{{ number_format($analytics['failed_count']) }}</strong></div>
-                    <div class="qm-health-metric"><span>Pending now</span><strong>{{ number_format($snapshot->pending) }}</strong></div>
+                    <div class="qm-health-metric"><span>{{ __('queue-monitor::messages.pending', [], $qmLocale) }} now</span><strong>{{ number_format($snapshot->pending) }}</strong></div>
                 @endif
             </article>
         </section>
@@ -305,19 +312,19 @@
         @if (in_array('workers', $visibleWidgets, true) && $workerCapacity['available'])
             <section class="qm-panel qm-workers-panel">
                 <div class="qm-panel-heading">
-                    <div><h3>Worker capacity</h3><p>Live heartbeat counts · {{ $queue ? 'Queue: '.$queue : 'All queues' }}</p></div>
+                    <div><h3>Worker capacity</h3><p>Live heartbeat counts · {{ $queue ? '{{ __('queue-monitor::messages.queue', [], $qmLocale) }}: '.$queue : 'All queues' }}</p></div>
                     <span class="qm-results-count">{{ count($workers) }} tracked</span>
                 </div>
                 <div class="qm-worker-capacity-grid">
                     <article class="qm-capacity-card capacity-active"><span>Active workers</span><strong>{{ number_format($workerCapacity['active']) }}</strong><small>{{ number_format($workerCapacity['active_for_queue']) }} serving selected queue</small></article>
                     <article class="qm-capacity-card capacity-stale"><span>Stale workers</span><strong>{{ number_format($workerCapacity['stale']) }}</strong><small>No heartbeat within configured threshold</small></article>
                     <article class="qm-capacity-card capacity-stopped"><span>Stopped workers</span><strong>{{ number_format($workerCapacity['stopped']) }}</strong><small>Reported a graceful shutdown</small></article>
-                    <article class="qm-capacity-card capacity-load"><span>Pending jobs / active worker</span><strong>{{ $workerCapacity['pending_per_active_worker'] === null ? '—' : number_format($workerCapacity['pending_per_active_worker'], 1) }}</strong><small>{{ $workerCapacity['pending'] === null ? 'Queue depth unavailable' : number_format($workerCapacity['pending']).' pending jobs in selected queue' }}</small></article>
+                    <article class="qm-capacity-card capacity-load"><span>{{ __('queue-monitor::messages.pending', [], $qmLocale) }} jobs / active worker</span><strong>{{ $workerCapacity['pending_per_active_worker'] === null ? '—' : number_format($workerCapacity['pending_per_active_worker'], 1) }}</strong><small>{{ $workerCapacity['pending'] === null ? '{{ __('queue-monitor::messages.queue', [], $qmLocale) }} depth unavailable' : number_format($workerCapacity['pending']).' pending jobs in selected queue' }}</small></article>
                 </div>
                 @if ($workerCapacity['status'] === 'attention')
                     <div class="qm-worker-capacity-note is-warning">Jobs are waiting, but no active worker heartbeat is available for this queue.</div>
                 @elseif ($workerCapacity['active_for_queue'] > 0)
-                    <div class="qm-worker-capacity-note">Pending jobs per worker is calculated from the selected queue depth and its active worker heartbeats.</div>
+                    <div class="qm-worker-capacity-note">{{ __('queue-monitor::messages.pending', [], $qmLocale) }} jobs per worker is calculated from the selected queue depth and its active worker heartbeats.</div>
                 @else
                     <div class="qm-worker-capacity-note">No active worker heartbeat is currently recorded for the selected queue.</div>
                 @endif
@@ -326,7 +333,7 @@
                         @foreach ($workers as $worker)
                             <article class="qm-worker-card">
                                 <div class="qm-worker-top"><strong>{{ $worker->hostname }}:{{ $worker->process_id }}</strong><span class="qm-worker-state worker-{{ $worker->display_status }}"><i></i>{{ ucfirst($worker->display_status) }}</span></div>
-                                <div class="qm-worker-meta"><span>{{ $worker->connection }}</span><span>Queue: {{ $worker->queue ?: '—' }}</span></div>
+                                <div class="qm-worker-meta"><span>{{ $worker->connection }}</span><span>{{ __('queue-monitor::messages.queue', [], $qmLocale) }}: {{ $worker->queue ?: '—' }}</span></div>
                                 <small>Last heartbeat: {{ $worker->heartbeat_at ? \Illuminate\Support\Carbon::parse($worker->heartbeat_at)->diffForHumans() : 'Unknown' }}</small>
                             </article>
                         @endforeach
@@ -342,11 +349,11 @@
                 @if (in_array('distribution', $visibleWidgets, true))
                 <article class="qm-panel qm-distribution">
                     <div class="qm-panel-heading">
-                        <div><h3>Queue distribution</h3><p>How the current workload is split</p></div>
+                        <div><h3>{{ __('queue-monitor::messages.queue', [], $qmLocale) }} distribution</h3><p>How the current workload is split</p></div>
                         <span class="qm-panel-menu">•••</span>
                     </div>
                     <div class="qm-distribution-total"><strong>{{ number_format($snapshot->pending + $snapshot->running + $snapshot->completed + $snapshot->failed + $delayed) }}</strong><span>Total jobs</span></div>
-                    <div class="qm-bar" role="img" aria-label="Queue state distribution">
+                    <div class="qm-bar" role="img" aria-label="{{ __('queue-monitor::messages.queue', [], $qmLocale) }} state distribution">
                         <span class="bar-pending" style="width: {{ $pendingWidth }}%"></span>
                         <span class="bar-running" style="width: {{ $runningWidth }}%"></span>
                         <span class="bar-completed" style="width: {{ $completedWidth }}%"></span>
@@ -354,18 +361,18 @@
                         <span class="bar-delayed" style="width: {{ $delayedWidth }}%"></span>
                     </div>
                     <div class="qm-legend">
-                        <span><i class="legend-pending"></i>Pending <b>{{ number_format($snapshot->pending) }}</b></span>
-                        <span><i class="legend-running"></i>Running <b>{{ number_format($snapshot->running) }}</b></span>
-                        <span><i class="legend-completed"></i>Completed <b>{{ number_format($snapshot->completed) }}</b></span>
+                        <span><i class="legend-pending"></i>{{ __('queue-monitor::messages.pending', [], $qmLocale) }} <b>{{ number_format($snapshot->pending) }}</b></span>
+                        <span><i class="legend-running"></i>{{ __('queue-monitor::messages.running', [], $qmLocale) }} <b>{{ number_format($snapshot->running) }}</b></span>
+                        <span><i class="legend-completed"></i>{{ __('queue-monitor::messages.completed', [], $qmLocale) }} <b>{{ number_format($snapshot->completed) }}</b></span>
                         <span><i class="legend-failed"></i>Failed <b>{{ number_format($snapshot->failed) }}</b></span>
-                        <span><i class="legend-delayed"></i>Delayed <b>{{ number_format($delayed) }}</b></span>
+                        <span><i class="legend-delayed"></i>{{ __('queue-monitor::messages.delayed', [], $qmLocale) }} <b>{{ number_format($delayed) }}</b></span>
                     </div>
                 </article>
                 @endif
                 @if (in_array('capabilities', $visibleWidgets, true))
                 <article class="qm-panel qm-health">
                     <div class="qm-panel-heading">
-                        <div><h3>Connection capabilities</h3><p>Available actions for this driver</p></div>
+                        <div><h3>{{ __('queue-monitor::messages.connection', [], $qmLocale) }} capabilities</h3><p>Available actions for this driver</p></div>
                         <span class="qm-capability-count">{{ count(array_filter($capabilities)) }}/{{ count($capabilities) }}</span>
                     </div>
                     <div class="qm-capability-list">
@@ -406,7 +413,7 @@
                     <form id="qm-compare-form" method="POST" action="{{ route('queue-monitor.jobs.compare', ['connection' => $connection]) }}" class="qm-compare-toolbar">
                         @csrf
                         <input type="hidden" name="queue" value="{{ $queue }}">
-                        <span>Payload comparison</span>
+                        <span>{{ __('queue-monitor::messages.payload', [], $qmLocale) }} comparison</span>
                         <button type="submit" onclick="return confirm('Compare the two selected job payloads?')">Compare selected (choose 2)</button>
                     </form>
                     <form id="qm-bulk-form" method="POST" action="{{ route('queue-monitor.jobs.bulk', ['connection' => $connection]) }}" class="qm-bulk-toolbar">
@@ -418,11 +425,11 @@
                     </form>
                     <div class="qm-table-wrap">
                         <table class="qm-table">
-                            <thead><tr><th>Compare</th><th>Select</th><th>Job</th><th>Status</th><th>Attempts</th><th>Created</th><th>Details</th><th>Actions</th></tr></thead>
+                            <thead><tr><th>Compare</th><th>Select</th><th>Job</th><th>{{ __('queue-monitor::messages.status', [], $qmLocale) }}</th><th>Attempts</th><th>Created</th><th>Details</th><th>Actions</th></tr></thead>
                             <tbody>
                             @foreach ($jobs as $job)
                                 @php
-                                    $jobStatusClass = match ($job->status) {
+                                    $job{{ __('queue-monitor::messages.status', [], $qmLocale) }}Class = match ($job->status) {
                                         'pending' => 'pending',
                                         'running' => 'running',
                                         'completed' => 'completed',
@@ -438,7 +445,7 @@
                                         <a class="qm-job-name" href="{{ route('queue-monitor.jobs.show', ['connection' => $connection, 'jobId' => $job->id, 'queue' => $queue]) }}">{{ $job->name ?: 'Unnamed job' }}</a>
                                         <code>{{ \Illuminate\Support\Str::limit($job->id, 22) }}</code>
                                     </td>
-                                    <td><span class="qm-status status-{{ $jobStatusClass }}"><i></i>{{ ucfirst($job->status) }}</span></td>
+                                    <td><span class="qm-status status-{{ $job{{ __('queue-monitor::messages.status', [], $qmLocale) }}Class }}"><i></i>{{ ucfirst($job->status) }}</span></td>
                                     <td>{{ $job->attempts ?? '—' }}</td>
                                     <td>{{ $job->createdAt ? date('d M Y, H:i', $job->createdAt) : '—' }}</td>
                                     <td>
@@ -507,7 +514,7 @@
             </section>
         @endif
 
-        <footer class="qm-footer"><span>Laravel Queue Monitor</span><span>Secure queue visibility for your application</span></footer>
+        <footer class="qm-footer"><span>Laravel {{ __('queue-monitor::messages.queue', [], $qmLocale) }} Monitor</span><span>Secure queue visibility for your application</span></footer>
     </main>
 </div>
 @if ($refreshInterval > 0)
@@ -515,6 +522,7 @@
         window.setTimeout(() => window.location.reload(), {{ $refreshInterval * 1000 }});
     </script>
 @endif
+    @include('queue-monitor::partials.language')
     @include('queue-monitor::partials.theme')
 </body>
 </html>

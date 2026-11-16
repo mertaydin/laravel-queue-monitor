@@ -1,10 +1,17 @@
+@php
+    $qmAvailableLocales = config('queue-monitor.dashboard.available_locales', ['tr', 'en', 'zh_CN', 'hi', 'es', 'ar']);
+    $qmDefaultLocale = config('queue-monitor.dashboard.locale', 'en');
+    $qmRequestedLocale = request()->query('locale', request()->cookie('queue_monitor_locale', $qmDefaultLocale));
+    $qmLocale = in_array($qmRequestedLocale, $qmAvailableLocales, true) ? $qmRequestedLocale : $qmDefaultLocale;
+    $qmLanguageNames = {"tr":"Türkçe","en":"English","es":"Español","zh_CN":"简体中文","hi":"हिन्दी","ar":"العربية"};
+@endphp
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', $qmLocale) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="color-scheme" content="light">
-    <title>Compare job payloads · Queue Monitor</title>
+    <meta name="color-scheme" content="light dark">
+    <title>Compare job payloads · {{ __('queue-monitor::messages.queue', [], $qmLocale) }} Monitor</title>
     <link rel="stylesheet" href="{{ asset('vendor/queue-monitor/queue-monitor.css') }}">
 </head>
 <body>
@@ -12,9 +19,9 @@
     <header class="qm-topbar">
         <a class="qm-brand" href="{{ route('queue-monitor.index', ['connection' => $connection, 'queue' => $queue]) }}">
             <span class="qm-brand-mark"><span></span><span></span><span></span></span>
-            <span><strong>Queue Monitor</strong><small>Laravel queue operations</small></span>
+            <span><strong>{{ __('queue-monitor::messages.queue', [], $qmLocale) }} Monitor</strong><small>Laravel queue operations</small></span>
         </a>
-        <a class="qm-back-link" href="{{ route('queue-monitor.index', ['connection' => $connection, 'queue' => $queue]) }}">← Back to dashboard</a>
+        <a class="qm-back-link" href="{{ route('queue-monitor.index', ['connection' => $connection, 'queue' => $queue]) }}">← {{ __('queue-monitor::messages.back', [], $qmLocale) }}</a>
     </header>
     <main class="qm-main qm-detail-main">
         <section class="qm-heading">
@@ -54,6 +61,7 @@
         </article>
     </main>
 </div>
+    @include('queue-monitor::partials.language')
     @include('queue-monitor::partials.theme')
 </body>
 </html>

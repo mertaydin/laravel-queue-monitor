@@ -1,10 +1,17 @@
+@php
+    $qmAvailableLocales = config('queue-monitor.dashboard.available_locales', ['tr', 'en', 'zh_CN', 'hi', 'es', 'ar']);
+    $qmDefaultLocale = config('queue-monitor.dashboard.locale', 'en');
+    $qmRequestedLocale = request()->query('locale', request()->cookie('queue_monitor_locale', $qmDefaultLocale));
+    $qmLocale = in_array($qmRequestedLocale, $qmAvailableLocales, true) ? $qmRequestedLocale : $qmDefaultLocale;
+    $qmLanguageNames = {"tr":"Türkçe","en":"English","es":"Español","zh_CN":"简体中文","hi":"हिन्दी","ar":"العربية"};
+@endphp
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', $qmLocale) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="color-scheme" content="light">
-    <title>Supervisor · Queue Monitor</title>
+    <meta name="color-scheme" content="light dark">
+    <title>Supervisor · {{ __('queue-monitor::messages.queue', [], $qmLocale) }} Monitor</title>
     <link rel="stylesheet" href="{{ asset('vendor/queue-monitor/queue-monitor.css') }}">
 </head>
 <body>
@@ -12,9 +19,9 @@
     <header class="qm-topbar">
         <a class="qm-brand" href="{{ route('queue-monitor.index') }}">
             <span class="qm-brand-mark"><span></span><span></span><span></span></span>
-            <span><strong>Queue Monitor</strong><small>Worker process management</small></span>
+            <span><strong>{{ __('queue-monitor::messages.queue', [], $qmLocale) }} Monitor</strong><small>Worker process management</small></span>
         </a>
-        <a class="qm-back-link" href="{{ route('queue-monitor.index') }}">← Dashboard</a>
+        <a class="qm-back-link" href="{{ route('queue-monitor.index') }}">← {{ __('queue-monitor::messages.dashboard', [], $qmLocale) }}</a>
     </header>
     <main class="qm-main">
         <section class="qm-heading">
@@ -61,9 +68,10 @@
                 </div>
             @endif
         </section>
-        <p class="qm-supervisor-footnote">Process controls require the separate <code>manageQueueWorkers</code> authorization gate. Configure only trusted Supervisor endpoints and explicitly allowed program names.</p>
+        <p class="qm-supervisor-footnote">Process controls require the separate <code>manage{{ __('queue-monitor::messages.queue', [], $qmLocale) }}Workers</code> authorization gate. Configure only trusted Supervisor endpoints and explicitly allowed program names.</p>
     </main>
 </div>
+    @include('queue-monitor::partials.language')
     @include('queue-monitor::partials.theme')
 </body>
 </html>
