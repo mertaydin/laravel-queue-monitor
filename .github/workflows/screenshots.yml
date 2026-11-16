@@ -135,7 +135,6 @@ jobs:
           for (const [path,file] of [
             ['/queue-monitor','queue-dashboard.png'],
             ['/queue-monitor/compare','queue-comparison.png'],
-            ['/queue-monitor/database/jobs/1','job-details.png'],
           ]) {
             const response = await page.goto('http://127.0.0.1:8000'+path,{waitUntil:'networkidle'});
             if (!response || response.status() >= 400) throw new Error('Screenshot route failed: '+path+' '+response?.status());
