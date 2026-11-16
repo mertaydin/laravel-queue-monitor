@@ -1,6 +1,6 @@
 <?php
 
-namespace MertAydin\\LaravelQueueMonitor\\Drivers;
+namespace MertAydin\LaravelQueueMonitor\Drivers;
 
 final class LazyRedisConnection
 {
