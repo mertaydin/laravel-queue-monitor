@@ -47,6 +47,7 @@ final class CheckQueueHealthCommand extends Command
 
         $this->checkStaleWorkers($dispatcher);
         $this->checkFailureRate($dispatcher);
+        $this->checkQueueSla($dispatcher);
         $this->info('Queue health checks completed.');
 
         return self::SUCCESS;
@@ -78,6 +79,56 @@ final class CheckQueueHealthCommand extends Command
                     'message' => 'One or more queue workers have stale heartbeats.',
                     'stale_workers' => $staleCount,
                     'threshold_seconds' => $staleAfter,
+                    'occurred_at' => now()->toIso8601String(),
+                ]);
+            }
+        } catch (Throwable $exception) {
+            report($exception);
+        }
+    }
+
+    private function checkQueueSla(QueueAlertDispatcher $dispatcher): void
+    {
+        if (! (bool) config('queue-monitor.sla.enabled', true) || ! (bool) config('queue-monitor.history.enabled', false)) {
+            return;
+        }
+
+        try {
+            $connection = config('queue-monitor.history.connection');
+            $table = config('queue-monitor.history.table', 'queue_monitor_jobs');
+            if (! Schema::connection($connection)->hasTable($table)
+                || ! Schema::connection($connection)->hasColumn($table, 'queued_at')) {
+                return;
+            }
+
+            $records = DB::connection($connection)->table($table)
+                ->where('status', 'pending')->whereNotNull('queued_at')
+                ->orderBy('queued_at')->limit(10000)->get(['connection', 'queue', 'queued_at']);
+            $thresholds = (array) config('queue-monitor.sla.queues', []);
+            $defaultThreshold = max(1, (int) config('queue-monitor.sla.default_wait_seconds', 30));
+            $breaches = [];
+
+            foreach ($records as $record) {
+                $threshold = max(1, (int) ($thresholds[$record->queue] ?? $defaultThreshold));
+                $wait = max(0, now()->getTimestamp() - strtotime((string) $record->queued_at));
+                if ($wait <= $threshold) {
+                    continue;
+                }
+
+                $key = $record->connection.':'.$record->queue;
+                $breaches[$key] ??= [
+                    'connection' => $record->connection, 'queue' => $record->queue,
+                    'count' => 0, 'oldest_wait_seconds' => 0, 'threshold_seconds' => $threshold,
+                ];
+                $breaches[$key]['count']++;
+                $breaches[$key]['oldest_wait_seconds'] = max($breaches[$key]['oldest_wait_seconds'], $wait);
+            }
+
+            foreach ($breaches as $key => $breach) {
+                $this->sendAlert($dispatcher, 'sla:'.$key, [
+                    'event' => 'queue.sla_breach',
+                    'message' => 'Pending jobs have exceeded the configured queue wait-time target.',
+                    ...$breach,
                     'occurred_at' => now()->toIso8601String(),
                 ]);
             }

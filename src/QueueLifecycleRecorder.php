@@ -12,6 +12,70 @@ final class QueueLifecycleRecorder
 {
     public function __construct(private readonly PayloadMasker $payloadMasker) {}
 
+    public function queued(object $event): void
+    {
+        if (! config('queue-monitor.history.enabled', false)) {
+            return;
+        }
+
+        $payload = $event->payload ?? [];
+        if (is_string($payload)) {
+            $payload = json_decode($payload, true) ?: [];
+        }
+
+        if (! is_array($payload)) {
+            $payload = [];
+        }
+
+        $jobId = $event->jobId ?? $payload['uuid'] ?? null;
+        $jobId = $jobId === null ? null : (string) $jobId;
+        if ($jobId === null || $jobId === '') {
+            return;
+        }
+
+        if (config('queue-monitor.payload.mask_sensitive_data', true)) {
+            $payload = $this->payloadMasker->mask(
+                $payload,
+                (array) config('queue-monitor.payload.sensitive_keys', [])
+            );
+        }
+
+        $now = CarbonImmutable::now();
+        $connectionName = (string) $event->connectionName;
+        $jobData = $payload['data'] ?? [];
+        $jobName = $payload['displayName'] ?? (is_array($jobData) ? ($jobData['commandName'] ?? null) : null);
+        $record = [
+            'queue' => (string) ($event->queue ?? 'default'),
+            'job_name' => $jobName,
+            'status' => 'pending',
+            'payload' => json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'attempts' => 0,
+            'exception' => null,
+            'queued_at' => $now,
+            'started_at' => null,
+            'finished_at' => null,
+            'duration_ms' => null,
+            'wait_duration_ms' => null,
+            'updated_at' => $now,
+        ];
+
+        $query = $this->table()
+            ->where('connection', $connectionName)
+            ->where('job_id', $jobId);
+
+        if ($query->exists()) {
+            $query->update($record);
+
+            return;
+        }
+
+        $this->table()->insert($record + [
+            'connection' => $connectionName,
+            'job_id' => $jobId,
+            'created_at' => $now,
+        ]);
+    }
+
     public function processing(object $event): void
     {
         $this->store($event, 'running', true);
@@ -42,6 +106,12 @@ final class QueueLifecycleRecorder
         }
 
         $now = CarbonImmutable::now();
+        $queuedAt = $resetStartTime
+            ? $this->table()->where('connection', $connectionName)->where('job_id', $jobId)->value('queued_at')
+            : null;
+        $waitDuration = $queuedAt === null
+            ? null
+            : max(0, $now->getTimestampMs() - CarbonImmutable::parse($queuedAt)->getTimestampMs());
         $payload = $this->payload($job);
         $record = [
             'connection' => $connectionName,
@@ -59,6 +129,7 @@ final class QueueLifecycleRecorder
             $record['started_at'] = $now;
             $record['finished_at'] = null;
             $record['duration_ms'] = null;
+            $record['wait_duration_ms'] = $waitDuration;
         }
 
         $query = $this->table()

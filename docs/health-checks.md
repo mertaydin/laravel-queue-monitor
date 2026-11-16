@@ -27,3 +27,10 @@ Schedule::command('queue-monitor:check-health')->everyMinute();
 The command checks queue backlog, stale worker heartbeats and the recent job failure rate. It sends alerts through the same event and webhook dispatcher used for failed jobs. Repeated alerts for the same condition are suppressed for `notifications.cooldown_minutes`.
 
 The scheduler must be running in the host application. The command does not start a scheduler or daemon itself.
+
+
+## Queue SLA alerts
+
+Queue SLA tracking is configured with the `sla` section in `config/queue-monitor.php`. Set `default_wait_seconds` for the default target and use `queues` to override it for named queues. The dashboard calculates compliance over `window_hours`. Pending jobs that exceed their target are included in `queue-monitor:check-health` alerts when notifications are enabled.
+
+SLA tracking requires persistent history and the latest package migrations. Only jobs queued after the tracking migration have queue wait measurements.

@@ -26,12 +26,14 @@ class QueueLifecycleRecorderTest extends TestCase
             $table->string('queue');
             $table->string('job_name')->nullable();
             $table->string('status');
+            $table->timestamp('queued_at')->nullable();
             $table->longText('payload')->nullable();
             $table->unsignedInteger('attempts')->default(0);
             $table->longText('exception')->nullable();
             $table->timestamp('started_at')->nullable();
             $table->timestamp('finished_at')->nullable();
             $table->unsignedBigInteger('duration_ms')->nullable();
+            $table->unsignedBigInteger('wait_duration_ms')->nullable();
             $table->timestamps();
             $table->unique(['connection', 'job_id']);
         });
@@ -60,6 +62,12 @@ class QueueLifecycleRecorderTest extends TestCase
         $event = (object) ['connectionName' => 'redis', 'job' => $job];
         $recorder = $this->app->make(QueueLifecycleRecorder::class);
 
+        $recorder->queued((object) [
+            'connectionName' => 'redis',
+            'jobId' => 'job-123',
+            'queue' => 'emails',
+            'payload' => ['uuid' => 'job-123', 'displayName' => 'App\\Jobs\\SendEmail'],
+        ]);
         $recorder->processing($event);
         $createdAt = DB::table('queue_monitor_jobs')->where('job_id', 'job-123')->value('created_at');
 
@@ -74,6 +82,8 @@ class QueueLifecycleRecorderTest extends TestCase
         $this->assertSame('[REDACTED]', json_decode($record->payload, true)['data']['token']);
         $this->assertSame('user@example.com', json_decode($record->payload, true)['data']['recipient']);
         $this->assertNotNull($record->finished_at);
+        $this->assertNotNull($record->queued_at);
+        $this->assertNotNull($record->wait_duration_ms);
         $this->assertSame($createdAt, $record->created_at);
     }
 }

@@ -5,6 +5,7 @@ namespace MertAydin\LaravelQueueMonitor;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Queue\Events\JobQueued;
 use Illuminate\Queue\Events\Looping;
 use Illuminate\Queue\Events\WorkerStarting;
 use Illuminate\Queue\Events\WorkerStopping;
@@ -89,6 +90,10 @@ class QueueMonitorServiceProvider extends ServiceProvider
 
         Event::listen(WorkerStopping::class, function (WorkerStopping $event): void {
             $this->app->make(WorkerHeartbeatRecorder::class)->stopping($event);
+        });
+
+        Event::listen(JobQueued::class, function (JobQueued $event): void {
+            $this->app->make(QueueLifecycleRecorder::class)->queued($event);
         });
 
         Event::listen(JobProcessing::class, function (JobProcessing $event): void {
