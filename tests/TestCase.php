@@ -13,6 +13,9 @@ abstract class TestCase extends Orchestra
 
     protected function getPackageProviders($app): array
     {
-        return [\MertAydin\LaravelQueueMonitor\QueueMonitorServiceProvider::class];
+        return [
+            \Illuminate\Auth\AuthServiceProvider::class,
+            \MertAydin\LaravelQueueMonitor\QueueMonitorServiceProvider::class,
+        ];
     }
 }
