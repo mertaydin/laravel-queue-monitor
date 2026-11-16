@@ -2,6 +2,7 @@
 
 namespace MertAydin\LaravelQueueMonitor\Drivers;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use InvalidArgumentException;
@@ -226,7 +227,7 @@ final class RedisQueueDriver implements QueueDriver
 
     private function maskPayload(array $payload): array
     {
-        if (! config('queue-monitor.payload.mask_sensitive_data', true)) {
+        if (!config('queue-monitor.payload.mask_sensitive_data', true)) {
             return $payload;
         }
 

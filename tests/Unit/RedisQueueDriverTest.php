@@ -54,7 +54,7 @@ class RedisQueueDriverTest extends TestCase
 
     public function test_it_does_not_advertise_failed_job_inspection(): void
     {
-        $driver = new RedisQueueDriver('redis', new FakeRedisConnection, ['default']);
+        $driver = new RedisQueueDriver('redis', new FakeRedisConnection(), ['default']);
 
         $this->assertFalse($driver->capabilities()->canInspectFailed);
     }
