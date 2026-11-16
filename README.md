@@ -41,6 +41,7 @@ Laravel 10 and 11 are outside their security support windows. They are not inclu
 composer require mertaydin/laravel-queue-monitor
 php artisan vendor:publish --tag=queue-monitor-config
 php artisan migrate
+php artisan vendor:publish --tag=queue-monitor-assets
 ```
 
 Enable history in `config/queue-monitor.php`:
@@ -119,11 +120,7 @@ These screenshots are captured from the package running inside a temporary Larav
 
 ## Dashboard
 
-The package includes a responsive dashboard at `/queue-monitor`. Publish its stylesheet after installation:
-
-```bash
-php artisan vendor:publish --tag=queue-monitor-assets
-```
+The package includes a responsive dashboard at `/queue-monitor`. Its stylesheet is published by the `queue-monitor-assets` command in the installation steps above.
 
 Access is denied by default unless the configured authorization gate exists and grants access. Define the default gate in your application, for example:
 
