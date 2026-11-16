@@ -112,7 +112,7 @@ final class RedisQueueDriver implements QueueDriver
             foreach ($payloads as $rawPayload) {
                 $payload = json_decode((string) $rawPayload, true);
 
-                if (!is_array($payload)) {
+                if (! is_array($payload)) {
                     continue;
                 }
 
@@ -227,11 +227,13 @@ final class RedisQueueDriver implements QueueDriver
 
     private function maskPayload(array $payload): array
     {
-        if (!config('queue-monitor.payload.mask_sensitive_data', true)) {
+        if (! config('queue-monitor.payload.mask_sensitive_data', true)) {
             return $payload;
         }
 
-        return ($this->payloadMasker ?? new PayloadMasker())->mask(
+        $masker = $this->payloadMasker ?? new PayloadMasker();
+
+        return $masker->mask(
             $payload,
             (array) config('queue-monitor.payload.sensitive_keys', [])
         );
