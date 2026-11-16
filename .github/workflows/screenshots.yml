@@ -58,7 +58,6 @@ jobs:
           php artisan key:generate
           php artisan vendor:publish --tag=queue-monitor-config --force
           php artisan vendor:publish --tag=queue-monitor-assets --force
-          php artisan make:queue-table
           php artisan migrate --force
           cat > app/Providers/AppServiceProvider.php <<'PHP'
           <?php
