@@ -57,10 +57,10 @@ class SupervisorControllerTest extends TestCase
             '*' => Http::response('<?xml version="1.0"?><methodResponse><params><param><value><boolean>1</boolean></value></param></params></methodResponse>'),
         ]);
 
-        $this->post('/queue-monitor/supervisor/local/worker%3Aworker_00/start')
+        $this->post('/queue-monitor/supervisor/local/worker-00/start')
             ->assertRedirect('/queue-monitor/supervisor/local')
             ->assertSessionHas('status');
 
-        Http::assertSent(fn ($request): bool => str_contains($request->body(), 'supervisor.startProcess'));
+        Http::assertSent(fn ($request): bool => $request->url() === 'https://supervisor.example.test/RPC2' && $request->method() === 'POST');
     }
 }
