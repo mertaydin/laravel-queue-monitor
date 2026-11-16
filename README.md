@@ -71,6 +71,24 @@ You can add configured tube names as a fallback in `config/queue-monitor.php`:
 ],
 ```
 
+## Dashboard
+
+The package includes a responsive dashboard at `/queue-monitor`. Publish its stylesheet after installation:
+
+```bash
+php artisan vendor:publish --tag=queue-monitor-assets
+```
+
+Access is denied by default unless the configured authorization gate exists and grants access. Define the default gate in your application, for example:
+
+```php
+use IlluminateSupportFacades\Gate;
+
+Gate::define('viewQueueMonitor', fn ($user) => $user->is_admin);
+```
+
+You can change the route path with `QUEUE_MONITOR_PATH` and the gate name with the `authorization.gate` setting. The dashboard adapts its available job states and actions to each driver's capabilities; it does not imply support for operations a backend cannot provide.
+
 ## Design principles
 
 - **Capability-aware:** Unsupported features are not presented as available.

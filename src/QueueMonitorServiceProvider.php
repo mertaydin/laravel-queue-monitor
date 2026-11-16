@@ -51,6 +51,11 @@ class QueueMonitorServiceProvider extends ServiceProvider
         ], 'queue-monitor-config');
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'queue-monitor');
+        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        $this->publishes([
+            __DIR__.'/../resources/css/queue-monitor.css' => public_path('vendor/queue-monitor/queue-monitor.css'),
+        ], 'queue-monitor-assets');
         $this->registerConfiguredDrivers();
 
         Event::listen(JobProcessing::class, function (JobProcessing $event): void {
