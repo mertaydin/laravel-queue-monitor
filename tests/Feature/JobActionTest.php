@@ -31,4 +31,27 @@ class JobActionTest extends TestCase
         $this->post('/queue-monitor/unknown/jobs/123/retry', ['queue' => 'default'])
             ->assertNotFound();
     }
+    public function test_queue_specific_retry_limit_blocks_manual_retry(): void
+    {
+        Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andReturn(true);
+
+        config([
+            'queue-monitor.retry.max_attempts' => 0,
+            'queue-monitor.retry.max_attempts_by_queue' => ['emails' => 3],
+        ]);
+
+        $driver = \\Mockery::mock(QueueDriver::class);
+        $driver->shouldReceive('capabilities')->andReturn(new QueueCapabilities(canRetry: true));
+        $driver->shouldReceive('queues')->andReturn(['emails']);
+        $driver->shouldReceive('jobs')->with('emails', null, 500)->andReturn([
+            new QueueJob('failed-1', 'fake', 'emails', 'failed', attempts: 4),
+        ]);
+        $driver->shouldNotReceive('retry');
+
+        app(QueueDriverManager::class)->register('fake', $driver);
+
+        $this->post('/queue-monitor/fake/jobs/failed-1/retry', ['queue' => 'emails'])
+            ->assertStatus(422);
+    }
+
 }
