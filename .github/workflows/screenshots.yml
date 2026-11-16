@@ -122,6 +122,8 @@ jobs:
           done
           cat /tmp/queue-monitor-server.log
           cat storage/logs/laravel.log || true
+          php artisan route:list --path=queue-monitor || true
+          curl --max-time 3 -sS -i http://127.0.0.1:8000/queue-monitor | head -n 80 || true
           exit 1
       - name: Print Laravel exception log
         if: failure()
