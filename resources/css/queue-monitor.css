@@ -370,3 +370,5 @@ a { color: inherit; text-decoration: none; }
 .qm-comparison-panel .qm-table td strong { color:#465365; }
 .qm-comparison-panel .qm-table td a { color:#5268d8; font-size:10px; font-weight:700; text-decoration:none; }
 .qm-comparison-panel .qm-table td a:hover { text-decoration:underline; }
+
+.qm-refresh-preference select { height:30px; padding:0 8px; border:1px solid #e8edf2; border-radius:6px; background:#fff; color:#657386; font:inherit; font-size:10px; }
