@@ -99,6 +99,10 @@
             </form>
         </section>
 
+        @if (session('status'))
+            <div class="qm-alert qm-alert-success"><span class="qm-alert-icon">✓</span><div><strong>{{ session('status') }}</strong></div></div>
+        @endif
+
         @if ($connectionError)
             <div class="qm-alert qm-alert-error">
                 <span class="qm-alert-icon">!</span>
@@ -213,7 +217,7 @@
                 @else
                     <div class="qm-table-wrap">
                         <table class="qm-table">
-                            <thead><tr><th>Job</th><th>Status</th><th>Attempts</th><th>Created</th><th>Details</th></tr></thead>
+                            <thead><tr><th>Job</th><th>Status</th><th>Attempts</th><th>Created</th><th>Details</th><th>Actions</th></tr></thead>
                             <tbody>
                             @foreach ($jobs as $job)
                                 @php
@@ -248,6 +252,25 @@
                                         @else
                                             <span class="qm-muted">No details</span>
                                         @endif
+                                    </td>
+                                    <td>
+                                        <div class="qm-job-actions">
+                                            @if (($capabilities['can_retry'] ?? false) && in_array($job->status, ['failed', 'delayed', 'running'], true))
+                                                <form method="POST" action="{{ route('queue-monitor.jobs.retry', ['connection' => $connection, 'jobId' => $job->id]) }}">
+                                                    @csrf
+                                                    <input type="hidden" name="queue" value="{{ $queue }}">
+                                                    <button class="qm-action-button action-retry" type="submit">Retry</button>
+                                                </form>
+                                            @endif
+                                            @if (($capabilities['can_delete'] ?? false) && ($job->status !== 'completed' || $driverName === 'database'))
+                                                <form method="POST" action="{{ route('queue-monitor.jobs.delete', ['connection' => $connection, 'jobId' => $job->id]) }}" onsubmit="return confirm('Delete this job?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <input type="hidden" name="queue" value="{{ $queue }}">
+                                                    <button class="qm-action-button action-delete" type="submit">Delete</button>
+                                                </form>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
