@@ -6,6 +6,9 @@ A Laravel package for monitoring and managing queues across supported queue conn
 
 ## Current capabilities
 
+- Database queue adapter for pending, reserved, failed, and recorded completed jobs.
+- Queue depth snapshots, payload inspection, retry, and delete operations for database-backed queues.
+
 - A driver-aware contract for queue adapters.
 - A registry for resolving adapters by Laravel queue connection.
 - Optional job lifecycle history for processing, completed, and failed jobs.

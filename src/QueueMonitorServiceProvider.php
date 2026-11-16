@@ -7,6 +7,7 @@ use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use MertAydin\LaravelQueueMonitor\Drivers\DatabaseQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Support\PayloadMasker;
 
 class QueueMonitorServiceProvider extends ServiceProvider
@@ -16,8 +17,23 @@ class QueueMonitorServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/queue-monitor.php', 'queue-monitor');
 
         $this->app->singleton(QueueDriverManager::class);
+        $this->app->singleton(DatabaseQueueDriverFactory::class);
         $this->app->singleton(PayloadMasker::class);
         $this->app->singleton(QueueLifecycleRecorder::class);
+    }
+
+    private function registerConfiguredDrivers(): void
+    {
+        $factory = $this->app->make(DatabaseQueueDriverFactory::class);
+        $manager = $this->app->make(QueueDriverManager::class);
+
+        foreach ((array) config('queue.connections', []) as $connectionName => $configuration) {
+            if (($configuration['driver'] ?? null) !== 'database') {
+                continue;
+            }
+
+            $manager->register($connectionName, $factory->make($connectionName, $configuration));
+        }
     }
 
     public function boot(): void
@@ -27,6 +43,8 @@ class QueueMonitorServiceProvider extends ServiceProvider
         ], 'queue-monitor-config');
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+
+        $this->registerConfiguredDrivers();
 
         Event::listen(JobProcessing::class, function (JobProcessing $event): void {
             $this->app->make(QueueLifecycleRecorder::class)->processing($event);
