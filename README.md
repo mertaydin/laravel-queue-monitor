@@ -8,6 +8,7 @@ A Laravel package for monitoring and managing queues across supported queue conn
 
 - Database queues: pending, reserved, failed, and recorded completed jobs.
 - Redis queues: pending, reserved, delayed, and recorded completed jobs.
+- Beanstalkd queues: ready, reserved, delayed, buried, and recorded completed counts.
 - Queue depth snapshots, payload inspection, retry, and delete operations.
 - Driver-aware adapters and automatic registration of supported Laravel queue connections.
 - Optional lifecycle history and recursive masking of sensitive payload keys.
@@ -50,6 +51,26 @@ The adapter reads Laravel Redis pending lists and reserved/delayed sorted sets. 
 
 Retry moves a matching reserved or delayed payload back to its pending list; already-pending jobs remain unchanged. Delete removes a matching payload from its current Redis structure. Payload masking is enabled by default.
 
+## Beanstalkd support
+
+Install Laravel's optional Beanstalkd client dependency in the host application:
+
+```bash
+composer require pda/pheanstalk:^5.0
+```
+
+Beanstalkd tubes are discovered from the server. Queue snapshots include ready, reserved, delayed, and buried counts; buried jobs are represented as failed. The protocol can report the reserved count but does not provide a way to list reserved job payloads, so running-job inspection is not advertised. The Pheanstalk peek commands expose only the next ready, delayed, or buried job in a tube; this adapter therefore returns at most one inspectable job per state and tube. Retrying uses Beanstalkd's kick operation for buried or delayed jobs. Completed-job details require package history.
+
+You can add configured tube names as a fallback in `config/queue-monitor.php`:
+
+```php
+'connections' => [
+    'beanstalkd' => [
+        'queues' => ['default', 'emails'],
+    ],
+],
+```
+
 ## Design principles
 
 - **Capability-aware:** Unsupported features are not presented as available.
@@ -59,9 +80,6 @@ Retry moves a matching reserved or delayed payload back to its pending list; alr
 
 ## Planned driver targets
 
-- Database
-- Redis
-- Beanstalkd
 - Amazon SQS
 - Sync (event-based visibility; no persistent queue depth)
 
