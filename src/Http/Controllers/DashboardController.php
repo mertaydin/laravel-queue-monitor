@@ -68,6 +68,30 @@ final class DashboardController
                         }));
                     }
 
+                    $jobClass = trim((string) $request->query('job_class', ''));
+                    $dateFrom = trim((string) $request->query('date_from', ''));
+                    $dateTo = trim((string) $request->query('date_to', ''));
+                    $fromTimestamp = $this->dateTimestamp($dateFrom, false);
+                    $toTimestamp = $this->dateTimestamp($dateTo, true);
+
+                    if ($jobClass !== '' || $fromTimestamp !== null || $toTimestamp !== null) {
+                        $allJobs = array_values(array_filter($allJobs, static function ($job) use ($jobClass, $fromTimestamp, $toTimestamp): bool {
+                            if ($jobClass !== '' && ! str_contains(strtolower($job->name ?? ''), strtolower($jobClass))) {
+                                return false;
+                            }
+
+                            if ($job->createdAt === null) {
+                                return $fromTimestamp === null && $toTimestamp === null;
+                            }
+
+                            if ($fromTimestamp !== null && $job->createdAt < $fromTimestamp) {
+                                return false;
+                            }
+
+                            return $toTimestamp === null || $job->createdAt <= $toTimestamp;
+                        }));
+                    }
+
                     $perPage = 25;
                     $currentPage = max(1, LengthAwarePaginator::resolveCurrentPage());
                     $pageItems = array_slice($allJobs, ($currentPage - 1) * $perPage, $perPage);
@@ -275,8 +299,26 @@ final class DashboardController
             'health' => $health,
             'period' => $period,
             'search' => trim((string) $request->query('search', '')),
+            'jobClass' => trim((string) $request->query('job_class', '')),
+            'dateFrom' => trim((string) $request->query('date_from', '')),
+            'dateTo' => trim((string) $request->query('date_to', '')),
             'workers' => $workers,
             'supervisorServers' => $supervisorServers,
         ]);
+    }
+
+    private function dateTimestamp(string $date, bool $endOfDay): ?int
+    {
+        if ($date === '' || preg_match('/^\\d{4}-\\d{2}-\\d{2}$/', $date) !== 1) {
+            return null;
+        }
+
+        $parsed = CarbonImmutable::createFromFormat('!Y-m-d', $date);
+
+        if ($parsed === false || $parsed->format('Y-m-d') !== $date) {
+            return null;
+        }
+
+        return $endOfDay ? $parsed->endOfDay()->timestamp : $parsed->timestamp;
     }
 }

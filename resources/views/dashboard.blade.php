@@ -102,6 +102,18 @@
                     <span>Search jobs</span>
                     <input type="search" name="search" value="{{ $search }}" placeholder="Name, ID, payload...">
                 </label>
+                <label>
+                    <span>Job class</span>
+                    <input type="search" name="job_class" value="{{ $jobClass }}" placeholder="App\\Jobs\\...">
+                </label>
+                <label>
+                    <span>From</span>
+                    <input type="date" name="date_from" value="{{ $dateFrom }}">
+                </label>
+                <label>
+                    <span>To</span>
+                    <input type="date" name="date_to" value="{{ $dateTo }}">
+                </label>
                 <button class="qm-filter-button" type="submit">Apply filters <span>→</span></button>
             </form>
         </section>
