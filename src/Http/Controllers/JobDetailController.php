@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
-use Throwable;
 use MertAydin\LaravelQueueMonitor\QueueDriverManager;
+use Throwable;
 
 final class JobDetailController
 {
