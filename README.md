@@ -8,7 +8,7 @@ A Laravel package for monitoring and managing queues across supported queue conn
 
 - Database queues: pending, reserved, failed, and recorded completed jobs.
 - Redis queues: pending, reserved, delayed, and recorded completed jobs.
-- Beanstalkd queues: ready, reserved, delayed, buried, and recorded completed counts.\n- Optional Supervisor integration: process status, start, stop and restart for configured programs.
+- Beanstalkd queues: ready, reserved, delayed, buried, and recorded completed counts.\n- Amazon SQS metrics for standard and FIFO queues. Payload inspection and job actions are intentionally disabled because SQS receipt handles are short-lived.\n- Sync driver history for completed and failed jobs. Queue depth and queue actions are not available.\n- Optional Supervisor integration: process status, start, stop and restart for configured programs.
 - Queue depth snapshots, payload inspection, retry, and delete operations.
 - Driver-aware adapters and automatic registration of supported Laravel queue connections.
 - Optional lifecycle history and recursive masking of sensitive payload keys.
@@ -52,6 +52,24 @@ Redis connections are registered automatically. Queue names default to the Larav
 The adapter reads Laravel Redis pending lists and reserved/delayed sorted sets. Completed jobs require package history. Failed jobs are stored by Laravel's failed-job provider outside Redis, so failed-job inspection is not advertised for this adapter. Queue discovery uses configured queue names and does not issue Redis `KEYS`.
 
 Retry moves a matching reserved or delayed payload back to its pending list; already-pending jobs remain unchanged. Delete removes a matching payload from its current Redis structure. Payload masking is enabled by default.
+
+## Amazon SQS support
+
+SQS connections are registered automatically. Configure queue names for each connection. Standard and FIFO queues use the same metrics adapter.
+
+```php
+'connections' => [
+    'sqs' => [
+        'queues' => ['emails', 'emails.fifo'],
+    ],
+],
+```
+
+The adapter reads approximate pending, in-flight and delayed counts. It does not receive messages to inspect them. This avoids changing receive counts or triggering redrive policies during dashboard viewing. Job payload inspection, retry and deletion are not supported. Completed-job history is available when history recording is enabled.
+
+## Sync driver
+
+The sync driver executes jobs immediately. It has no queue depth. Enable package history to inspect completed and failed jobs after execution. Pending-job inspection, retry and deletion are not available.
 
 ## Beanstalkd support
 

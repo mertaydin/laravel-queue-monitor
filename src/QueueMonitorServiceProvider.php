@@ -14,6 +14,8 @@ use MertAydin\LaravelQueueMonitor\Alerts\QueueAlertDispatcher;
 use MertAydin\LaravelQueueMonitor\Drivers\BeanstalkdQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Drivers\DatabaseQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Drivers\RedisQueueDriverFactory;
+use MertAydin\LaravelQueueMonitor\Drivers\SqsQueueDriverFactory;
+use MertAydin\LaravelQueueMonitor\Drivers\SyncQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Support\PayloadMasker;
 
 class QueueMonitorServiceProvider extends ServiceProvider
@@ -26,6 +28,8 @@ class QueueMonitorServiceProvider extends ServiceProvider
         $this->app->singleton(BeanstalkdQueueDriverFactory::class);
         $this->app->singleton(DatabaseQueueDriverFactory::class);
         $this->app->singleton(RedisQueueDriverFactory::class);
+        $this->app->singleton(SqsQueueDriverFactory::class);
+        $this->app->singleton(SyncQueueDriverFactory::class);
         $this->app->singleton(PayloadMasker::class);
         $this->app->singleton(QueueLifecycleRecorder::class);
         $this->app->singleton(WorkerHeartbeatRecorder::class);
@@ -37,6 +41,8 @@ class QueueMonitorServiceProvider extends ServiceProvider
         $beanstalkdFactory = $this->app->make(BeanstalkdQueueDriverFactory::class);
         $databaseFactory = $this->app->make(DatabaseQueueDriverFactory::class);
         $redisFactory = $this->app->make(RedisQueueDriverFactory::class);
+        $sqsFactory = $this->app->make(SqsQueueDriverFactory::class);
+        $syncFactory = $this->app->make(SyncQueueDriverFactory::class);
         $manager = $this->app->make(QueueDriverManager::class);
 
         foreach ((array) config('queue.connections', []) as $connectionName => $configuration) {
@@ -46,6 +52,10 @@ class QueueMonitorServiceProvider extends ServiceProvider
                 $manager->register($connectionName, $redisFactory->make($connectionName, $configuration));
             } elseif (($configuration['driver'] ?? null) === 'beanstalkd') {
                 $manager->register($connectionName, $beanstalkdFactory->make($connectionName, $configuration));
+            } elseif (($configuration['driver'] ?? null) === 'sqs') {
+                $manager->register($connectionName, $sqsFactory->make($connectionName, $configuration));
+            } elseif (($configuration['driver'] ?? null) === 'sync') {
+                $manager->register($connectionName, $syncFactory->make($connectionName, $configuration));
             }
         }
     }
