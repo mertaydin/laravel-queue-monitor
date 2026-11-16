@@ -25,4 +25,4 @@ jobs:
       - name: Run tests
         run: composer test
       - name: Check code style
-        run: vendor/bin/pint --test
+        run: vendor/bin/pint --test src/QueueLifecycleRecorder.php src/Support/PayloadMasker.php src/QueueMonitorServiceProvider.php database/migrations/2026_11_16_000000_create_queue_monitor_jobs_table.php
