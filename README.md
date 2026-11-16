@@ -151,7 +151,22 @@ Use HTTPS and valid TLS certificates. Plain HTTP is blocked unless `allow_insecu
 
 ## Retry policy
 
-Set `retry.max_attempts` to a positive value to prevent manual retry actions for jobs that have already reached that attempt count. Override the limit for specific queues with `retry.max_attempts_by_queue`, using queue names as keys. The default value `0` leaves retries unlimited. This is an operator safeguard; automatic retry timing and worker attempt limits remain governed by Laravel's worker options (for example, Supervisor's `--tries` and `--backoff` settings).
+Set `retry.max_attempts` to a positive value to prevent manual retry actions for jobs that have already reached that attempt count. Override the limit for specific queues with `retry.max_attempts_by_queue`, using queue names as keys. The default value `0` leaves retries unlimited. This is an operator safeguard; automatic retry timing remains governed by Laravel. Define a job-level `backoff()` method or use the worker's `--backoff` option. For example:
+
+```php
+class SendReport implements ShouldQueue
+{
+    public $tries = 5;
+
+    public function backoff(): array
+    {
+        return [10, 30, 60];
+    }
+}
+```
+
+The package controls manual retry eligibility. Laravel controls automatic retry timing and worker attempts.
+
 
 ## Notifications
 
