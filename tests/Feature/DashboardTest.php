@@ -6,8 +6,8 @@ use Carbon\CarbonImmutable;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
 use MertAydin\LaravelQueueMonitor\Tests\TestCase;
 
 class DashboardTest extends TestCase
@@ -28,6 +28,7 @@ class DashboardTest extends TestCase
             ->assertSee('Queue Monitor')
             ->assertSee('Queue overview');
     }
+
     public function test_dashboard_summarizes_active_stale_and_stopped_workers(): void
     {
         Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andReturn(true);
