@@ -4,17 +4,16 @@ namespace MertAydin\LaravelQueueMonitor;
 
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Queue\Events\Looping;
 use Illuminate\Queue\Events\WorkerStarting;
 use Illuminate\Queue\Events\WorkerStopping;
-use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use MertAydin\LaravelQueueMonitor\Drivers\BeanstalkdQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Drivers\DatabaseQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Drivers\RedisQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Support\PayloadMasker;
-use MertAydin\LaravelQueueMonitor\WorkerHeartbeatRecorder;
 
 class QueueMonitorServiceProvider extends ServiceProvider
 {

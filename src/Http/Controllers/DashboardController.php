@@ -4,11 +4,11 @@ namespace MertAydin\LaravelQueueMonitor\Http\Controllers;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
-use Illuminate\Pagination\LengthAwarePaginator;
 use MertAydin\LaravelQueueMonitor\QueueDriverManager;
 use Throwable;
 
