@@ -82,7 +82,7 @@ php artisan vendor:publish --tag=queue-monitor-assets
 Access is denied by default unless the configured authorization gate exists and grants access. Define the default gate in your application, for example:
 
 ```php
-use Illuminate\\Support\\Facades\\Gate;
+use Illuminate\Support\Facades\Gate;
 
 Gate::define('viewQueueMonitor', fn ($user) => $user !== null && $user->is_admin);
 ```

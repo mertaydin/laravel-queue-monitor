@@ -32,7 +32,7 @@
                 <p class="qm-subtitle">Monitor workload, inspect jobs and spot issues across your queue connections.</p>
             </div>
             <div class="qm-heading-actions">
-                <span class="qm-updated"><span class="qm-live-dot"></span> Live snapshot</span>
+                <span class="qm-updated"><span class="qm-live-dot"></span> Current snapshot</span>
                 <a class="qm-refresh" href="{{ request()->fullUrl() }}" aria-label="Refresh dashboard" title="Refresh dashboard">↻</a>
             </div>
         </section>
@@ -107,7 +107,8 @@
         @elseif ($snapshot !== null)
             @php
                 $delayed = (int) ($snapshot->metadata['delayed'] ?? 0);
-                $total = max(1, $snapshot->pending + $snapshot->running + $snapshot->completed + $snapshot->failed + $delayed);
+                $totalJobs = $snapshot->pending + $snapshot->running + $snapshot->completed + $snapshot->failed + $delayed;
+                $total = max(1, $totalJobs);
                 $pendingWidth = round(($snapshot->pending / $total) * 100, 1);
                 $runningWidth = round(($snapshot->running / $total) * 100, 1);
                 $completedWidth = round(($snapshot->completed / $total) * 100, 1);
@@ -120,7 +121,7 @@
                     <p class="qm-eyebrow">CURRENT WORKLOAD</p>
                     <h2>{{ $queue ?? 'All queues' }} <span class="qm-driver-tag">{{ ucfirst($driverName) }}</span></h2>
                 </div>
-                <span class="qm-total-label">{{ number_format($total === 1 && $snapshot->pending + $snapshot->running + $snapshot->completed + $snapshot->failed + $delayed === 0 ? 0 : $total) }} tracked jobs</span>
+                <span class="qm-total-label">{{ number_format($totalJobs) }} tracked jobs</span>
             </section>
 
             <section class="qm-stats-grid">
