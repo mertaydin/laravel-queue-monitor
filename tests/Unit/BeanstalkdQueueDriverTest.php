@@ -64,16 +64,12 @@ class BeanstalkdQueueDriverTest extends TestCase
 
 class FakeTubeName
 {
-    public function __construct(public readonly string $value)
-    {
-    }
+    public function __construct(public readonly string $value) {}
 }
 
 class FakeJobId
 {
-    public function __construct(private readonly string $id)
-    {
-    }
+    public function __construct(private readonly string $id) {}
 
     public function getId(): string
     {
@@ -88,9 +84,7 @@ class FakeJobId
 
 class FakeBeanstalkdJob
 {
-    public function __construct(private readonly string $id, private readonly string $data)
-    {
-    }
+    public function __construct(private readonly string $id, private readonly string $data) {}
 
     public function getId(): FakeJobId
     {

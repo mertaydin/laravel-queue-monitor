@@ -9,9 +9,7 @@ final class LazyBeanstalkdConnection
 {
     private ?object $connection = null;
 
-    public function __construct(private readonly Closure $resolver)
-    {
-    }
+    public function __construct(private readonly Closure $resolver) {}
 
     public function __call(string $method, array $arguments): mixed
     {
