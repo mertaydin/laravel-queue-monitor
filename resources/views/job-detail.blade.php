@@ -64,5 +64,6 @@
         @endif
     </main>
 </div>
+    @include('queue-monitor::partials.theme')
 </body>
 </html>

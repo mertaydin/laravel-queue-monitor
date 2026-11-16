@@ -64,5 +64,6 @@
         <p class="qm-supervisor-footnote">Process controls require the separate <code>manageQueueWorkers</code> authorization gate. Configure only trusted Supervisor endpoints and explicitly allowed program names.</p>
     </main>
 </div>
+    @include('queue-monitor::partials.theme')
 </body>
 </html>

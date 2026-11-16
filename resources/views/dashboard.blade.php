@@ -515,5 +515,6 @@
         window.setTimeout(() => window.location.reload(), {{ $refreshInterval * 1000 }});
     </script>
 @endif
+    @include('queue-monitor::partials.theme')
 </body>
 </html>

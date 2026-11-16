@@ -47,5 +47,6 @@
         <p class="qm-diagnostics-note">This page performs read-only checks. It does not restart workers, modify jobs or change queue configuration.</p>
     </main>
 </div>
+    @include('queue-monitor::partials.theme')
 </body>
 </html>

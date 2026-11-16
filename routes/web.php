@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use MertAydin\LaravelQueueMonitor\Http\Middleware\ApplyDashboardTheme;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\DashboardController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\DashboardPreferenceController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\HealthCheckController;
@@ -11,7 +10,7 @@ use MertAydin\LaravelQueueMonitor\Http\Controllers\JobDetailController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\JobCompareController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\SupervisorController;
 
-Route::middleware(['web', ApplyDashboardTheme::class])
+Route::middleware(['web'])
     ->prefix(trim((string) config('queue-monitor.path', 'queue-monitor'), '/'))
     ->name('queue-monitor.')
     ->group(function (): void {
