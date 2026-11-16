@@ -60,7 +60,8 @@ jobs:
           startsecs=0
           stopsignal=TERM
           SUPERVISOR
-          sudo supervisord -c /tmp/queue-monitor-supervisord.conf
+          sudo supervisord -c /tmp/queue-monitor-supervisord.conf &
+          sleep 2
           for attempt in $(seq 1 20); do
             if sudo supervisorctl -c /tmp/queue-monitor-supervisord.conf status queue-monitor-test | grep -q RUNNING; then
               exit 0
