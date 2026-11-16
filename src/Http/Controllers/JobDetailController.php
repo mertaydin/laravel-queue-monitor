@@ -4,7 +4,11 @@ namespace MertAydin\LaravelQueueMonitor\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
+use Throwable;
 use MertAydin\LaravelQueueMonitor\QueueDriverManager;
 
 final class JobDetailController
