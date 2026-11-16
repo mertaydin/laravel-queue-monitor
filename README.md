@@ -155,7 +155,7 @@ Set `retry.max_attempts` to a positive value to prevent manual retry actions for
 
 ## Notifications
 
-Failure alerts can be sent to configured Slack, Microsoft Teams or generic incoming webhooks. Notifications are disabled by default. Add trusted webhook URLs in application configuration (never accept webhook URLs from dashboard input):
+Failure and threshold alerts can be sent to configured Slack, Microsoft Teams or generic incoming webhooks. Notifications are disabled by default. Add trusted webhook URLs in application configuration (never accept webhook URLs from dashboard input):
 
 ```php
 'notifications' => [
@@ -167,7 +167,7 @@ Failure alerts can be sent to configured Slack, Microsoft Teams or generic incom
 ],
 ```
 
-On a failed queue job, the package dispatches a `QueueAlertTriggered` event for application-specific integrations (including mail notifications) and posts a compact JSON message to each configured webhook. Webhook errors are isolated from queue processing. Keep webhook URLs in environment variables and protect them as secrets.
+On a failed queue job, the package dispatches a `QueueAlertTriggered` event for application-specific integrations (including mail notifications) and posts a compact JSON message to each configured webhook. The `queue-monitor:check-health` command also checks backlog size, stale workers and the recent failure rate. Schedule it every minute to receive threshold alerts. Duplicate threshold alerts are suppressed for the configured cooldown period. Webhook errors are isolated from queue processing. Keep webhook URLs in environment variables and protect them as secrets.
 
 ## Design principles
 

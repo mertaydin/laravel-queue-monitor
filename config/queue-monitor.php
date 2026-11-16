@@ -31,6 +31,8 @@ return [
     'health' => [
         'backlog_warning' => 1000,
         'failure_rate_warning' => 0.05,
+        'failure_rate_window_minutes' => 15,
+        'stale_worker_warning' => true,
     ],
 
     'retry' => [
@@ -41,6 +43,7 @@ return [
     'notifications' => [
         'enabled' => false,
         'timeout_seconds' => 3,
+        'cooldown_minutes' => 10,
         'webhooks' => [],
     ],
 
