@@ -39,7 +39,7 @@ jobs:
         run: |
           composer config repositories.queue-monitor '{"type":"path","url":"../","options":{"symlink":false}}'
           composer require mertaydin/laravel-queue-monitor:@dev --no-interaction
-          php -r '$p="vendor/mertaydin/laravel-queue-monitor/src/Http/Controllers/DashboardController.php"; $s=file_get_contents($p); $s=str_replace("Gate::authorize(".chr(36)."gate);", "// Authorization bypassed in isolated screenshot host", $s); file_put_contents($p, $s);'
+          find vendor/mertaydin/laravel-queue-monitor/src/Http/Controllers -type f -name '*.php' -exec sed -i '/Gate::authorize(/s/^/\/\/ Authorization bypassed in isolated screenshot host: /' {} +
           php artisan key:generate
           touch database/database.sqlite
           cat > .env <<'ENV'
