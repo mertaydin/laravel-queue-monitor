@@ -20,7 +20,7 @@ class JobActionTest extends TestCase
 
     public function test_retry_action_is_denied_when_the_driver_does_not_support_it(): void
     {
-        $this->app['gate']->define('viewQueueMonitor', static fn ($user): bool => true);
+        $this->app[\Illuminate\Contracts\Auth\Access\Gate::class]->define('viewQueueMonitor', static fn ($user): bool => true);
 
         $this->post('/queue-monitor/unknown/jobs/123/retry', ['queue' => 'default'])
             ->assertNotFound();

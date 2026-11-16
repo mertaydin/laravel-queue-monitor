@@ -13,7 +13,7 @@ class DashboardTest extends TestCase
 
     public function test_dashboard_renders_when_the_authorization_gate_allows_access(): void
     {
-        $this->app['gate']->define('viewQueueMonitor', static fn ($user): bool => true);
+        $this->app[\Illuminate\Contracts\Auth\Access\Gate::class]->define('viewQueueMonitor', static fn ($user): bool => true);
 
         $this->get('/queue-monitor')
             ->assertOk()
