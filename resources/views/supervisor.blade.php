@@ -6,12 +6,12 @@
     $qmLanguageNames = ['tr' => 'Türkçe', 'en' => 'English', 'es' => 'Español', 'zh_CN' => '简体中文', 'hi' => 'हिन्दी', 'ar' => 'العربية'];
 @endphp
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', $qmLocale) }}">
+<html lang="{{ str_replace('_', '-', $qmLocale) }}" dir="{{ $qmLocale === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <title>Supervisor · {{ __('queue-monitor::messages.queue', [], $qmLocale) }} Monitor</title>
+    <title>Supervisor · Queue Monitor</title>
     <link rel="stylesheet" href="{{ asset('vendor/queue-monitor/queue-monitor.css') }}">
 </head>
 <body>
@@ -19,7 +19,7 @@
     <header class="qm-topbar">
         <a class="qm-brand" href="{{ route('queue-monitor.index') }}">
             <span class="qm-brand-mark"><span></span><span></span><span></span></span>
-            <span><strong>{{ __('queue-monitor::messages.queue', [], $qmLocale) }} Monitor</strong><small>Worker process management</small></span>
+            <span><strong>Queue Monitor</strong><small>Worker process management</small></span>
         </a>
         <a class="qm-back-link" href="{{ route('queue-monitor.index') }}">← {{ __('queue-monitor::messages.dashboard', [], $qmLocale) }}</a>
     </header>

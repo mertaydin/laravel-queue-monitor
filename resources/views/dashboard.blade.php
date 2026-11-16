@@ -6,12 +6,12 @@
     $qmLanguageNames = ['tr' => 'Türkçe', 'en' => 'English', 'es' => 'Español', 'zh_CN' => '简体中文', 'hi' => 'हिन्दी', 'ar' => 'العربية'];
 @endphp
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', $qmLocale) }}">
+<html lang="{{ str_replace('_', '-', $qmLocale) }}" dir="{{ $qmLocale === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <title>{{ __('queue-monitor::messages.queue', [], $qmLocale) }} Monitor</title>
+    <title>Queue Monitor</title>
     <link rel="stylesheet" href="{{ asset('vendor/queue-monitor/queue-monitor.css') }}">
 </head>
 <body>
@@ -20,7 +20,7 @@
         <a class="qm-brand" href="{{ route('queue-monitor.index') }}">
             <span class="qm-brand-mark"><span></span><span></span><span></span></span>
             <span>
-                <strong>{{ __('queue-monitor::messages.queue', [], $qmLocale) }} Monitor</strong>
+                <strong>Queue Monitor</strong>
                 <small>Laravel queue operations</small>
             </span>
         </a>
@@ -224,11 +224,11 @@
                     </div>
                     @if ($sla['queues'] !== [])
                         <div class="qm-sla-queues">
-                            @foreach ($sla['queues'] as $sla{{ __('queue-monitor::messages.queue', [], $qmLocale) }})
+                            @foreach ($sla['queues'] as $slaQueue)
                                 <div class="qm-sla-queue-row">
-                                    <div><strong>{{ $sla{{ __('queue-monitor::messages.queue', [], $qmLocale) }}['queue'] }}</strong><small>Target: {{ $sla{{ __('queue-monitor::messages.queue', [], $qmLocale) }}['threshold'] }} sec</small></div>
-                                    <span>{{ number_format($sla{{ __('queue-monitor::messages.queue', [], $qmLocale) }}['within']) }} / {{ number_format($sla{{ __('queue-monitor::messages.queue', [], $qmLocale) }}['total']) }} within target</span>
-                                    <strong>{{ number_format($sla{{ __('queue-monitor::messages.queue', [], $qmLocale) }}['rate'], 1) }}%</strong>
+                                    <div><strong>{{ $slaQueue['queue'] }}</strong><small>Target: {{ $slaQueue['threshold'] }} sec</small></div>
+                                    <span>{{ number_format($slaQueue['within']) }} / {{ number_format($slaQueue['total']) }} within target</span>
+                                    <strong>{{ number_format($slaQueue['rate'], 1) }}%</strong>
                                 </div>
                             @endforeach
                         </div>
@@ -312,14 +312,14 @@
         @if (in_array('workers', $visibleWidgets, true) && $workerCapacity['available'])
             <section class="qm-panel qm-workers-panel">
                 <div class="qm-panel-heading">
-                    <div><h3>Worker capacity</h3><p>Live heartbeat counts · {{ $queue ? '{{ __('queue-monitor::messages.queue', [], $qmLocale) }}: '.$queue : 'All queues' }}</p></div>
+                    <div><h3>Worker capacity</h3><p>Live heartbeat counts · {{ $queue ? 'Queue: '.$queue : 'All queues' }}</p></div>
                     <span class="qm-results-count">{{ count($workers) }} tracked</span>
                 </div>
                 <div class="qm-worker-capacity-grid">
                     <article class="qm-capacity-card capacity-active"><span>Active workers</span><strong>{{ number_format($workerCapacity['active']) }}</strong><small>{{ number_format($workerCapacity['active_for_queue']) }} serving selected queue</small></article>
                     <article class="qm-capacity-card capacity-stale"><span>Stale workers</span><strong>{{ number_format($workerCapacity['stale']) }}</strong><small>No heartbeat within configured threshold</small></article>
                     <article class="qm-capacity-card capacity-stopped"><span>Stopped workers</span><strong>{{ number_format($workerCapacity['stopped']) }}</strong><small>Reported a graceful shutdown</small></article>
-                    <article class="qm-capacity-card capacity-load"><span>{{ __('queue-monitor::messages.pending', [], $qmLocale) }} jobs / active worker</span><strong>{{ $workerCapacity['pending_per_active_worker'] === null ? '—' : number_format($workerCapacity['pending_per_active_worker'], 1) }}</strong><small>{{ $workerCapacity['pending'] === null ? '{{ __('queue-monitor::messages.queue', [], $qmLocale) }} depth unavailable' : number_format($workerCapacity['pending']).' pending jobs in selected queue' }}</small></article>
+                    <article class="qm-capacity-card capacity-load"><span>{{ __('queue-monitor::messages.pending', [], $qmLocale) }} jobs / active worker</span><strong>{{ $workerCapacity['pending_per_active_worker'] === null ? '—' : number_format($workerCapacity['pending_per_active_worker'], 1) }}</strong><small>{{ $workerCapacity['pending'] === null ? 'Queue depth unavailable' : number_format($workerCapacity['pending']).' pending jobs in selected queue' }}</small></article>
                 </div>
                 @if ($workerCapacity['status'] === 'attention')
                     <div class="qm-worker-capacity-note is-warning">Jobs are waiting, but no active worker heartbeat is available for this queue.</div>
@@ -429,7 +429,7 @@
                             <tbody>
                             @foreach ($jobs as $job)
                                 @php
-                                    $job{{ __('queue-monitor::messages.status', [], $qmLocale) }}Class = match ($job->status) {
+                                    $jobStatusClass = match ($job->status) {
                                         'pending' => 'pending',
                                         'running' => 'running',
                                         'completed' => 'completed',
@@ -445,7 +445,7 @@
                                         <a class="qm-job-name" href="{{ route('queue-monitor.jobs.show', ['connection' => $connection, 'jobId' => $job->id, 'queue' => $queue]) }}">{{ $job->name ?: 'Unnamed job' }}</a>
                                         <code>{{ \Illuminate\Support\Str::limit($job->id, 22) }}</code>
                                     </td>
-                                    <td><span class="qm-status status-{{ $job{{ __('queue-monitor::messages.status', [], $qmLocale) }}Class }}"><i></i>{{ ucfirst($job->status) }}</span></td>
+                                    <td><span class="qm-status status-{{ $jobStatusClass }}"><i></i>{{ ucfirst($job->status) }}</span></td>
                                     <td>{{ $job->attempts ?? '—' }}</td>
                                     <td>{{ $job->createdAt ? date('d M Y, H:i', $job->createdAt) : '—' }}</td>
                                     <td>
@@ -514,7 +514,7 @@
             </section>
         @endif
 
-        <footer class="qm-footer"><span>Laravel {{ __('queue-monitor::messages.queue', [], $qmLocale) }} Monitor</span><span>Secure queue visibility for your application</span></footer>
+        <footer class="qm-footer"><span>Laravel Queue Monitor</span><span>Secure queue visibility for your application</span></footer>
     </main>
 </div>
 @if ($refreshInterval > 0)
