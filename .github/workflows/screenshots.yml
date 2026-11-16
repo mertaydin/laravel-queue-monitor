@@ -39,6 +39,7 @@ jobs:
         run: |
           composer config repositories.queue-monitor '{"type":"path","url":"../","options":{"symlink":false}}'
           composer require mertaydin/laravel-queue-monitor:@dev --no-interaction
+          sed -i 's/Gate::authorize(\\$gate);/\\/\\/ Authorization bypassed in isolated screenshot host/' vendor/mertaydin/laravel-queue-monitor/src/Http/Controllers/DashboardController.php
           php artisan key:generate
           touch database/database.sqlite
           cat > .env <<'ENV'
