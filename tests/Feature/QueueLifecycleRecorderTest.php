@@ -78,9 +78,12 @@ class QueueLifecycleRecorderTest extends TestCase
         $job = new class {
 
             public function getJobId(): string { return 'job-123'; }
+
             public function getQueue(): string { return 'emails'; }
+
             public function resolveName(): string { return 'App\Jobs\SendEmail'; }
             public function attempts(): int { return 1; }
+
             public function payload(): array
             {
                 return ['data' => ['token' => 'private-value', 'recipient' => 'user@example.com']];
