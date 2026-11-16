@@ -58,7 +58,7 @@ class QueueLifecycleRecorderTest extends TestCase
         $recorder = $this->app->make(QueueLifecycleRecorder::class);
         $recorder->queued((object) [
             'connectionName' => 'redis',
-            'jobId' => 'job-workflow-123',
+            'id' => 'job-workflow-123',
             'queue' => 'emails',
             'job' => $job,
             'payload' => ['uuid' => 'job-workflow-123', 'displayName' => 'App\\Jobs\\SendEmail'],
@@ -89,7 +89,7 @@ class QueueLifecycleRecorderTest extends TestCase
 
         $recorder->queued((object) [
             'connectionName' => 'redis',
-            'jobId' => 'job-123',
+            'id' => 'job-123',
             'queue' => 'emails',
             'payload' => ['uuid' => 'job-123', 'displayName' => 'App\\Jobs\\SendEmail'],
         ]);

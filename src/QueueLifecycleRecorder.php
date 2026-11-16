@@ -27,7 +27,7 @@ final class QueueLifecycleRecorder
             $payload = [];
         }
 
-        $jobId = $event->jobId ?? $payload['uuid'] ?? null;
+        $jobId = $event->jobId ?? $event->id ?? $payload['uuid'] ?? null;
         $jobId = $jobId === null ? null : (string) $jobId;
         if ($jobId === null || $jobId === '') {
             return;
