@@ -31,7 +31,7 @@ final class CheckQueueHealthCommand extends Command
                 $snapshot = $driver->snapshot();
 
                 if ($backlogLimit > 0 && $snapshot->pending >= $backlogLimit) {
-                    $this->alert($dispatcher, 'backlog:'.$connection, [
+                    $this->sendAlert($dispatcher, 'backlog:'.$connection, [
                         'event' => 'queue.backlog_threshold',
                         'message' => 'Queue backlog threshold reached.',
                         'connection' => $connection,
@@ -125,7 +125,7 @@ final class CheckQueueHealthCommand extends Command
     }
 
     /** @param array<string, mixed> $payload */
-    private function alert(QueueAlertDispatcher $dispatcher, string $key, array $payload): void
+    private function sendAlert(QueueAlertDispatcher $dispatcher, string $key, array $payload): void
     {
         $cooldown = max(1, (int) config('queue-monitor.notifications.cooldown_minutes', 10));
 
