@@ -81,5 +81,4 @@ class DashboardTest extends TestCase
             ->assertSee('stale-host:102')
             ->assertSee('stopped-host:103');
     }
-
 }
