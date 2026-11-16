@@ -74,7 +74,7 @@ final class SupervisorClient
                 throw new RuntimeException(sprintf(
                     'Supervisor returned HTTP %d: %s',
                     $response->status(),
-                    mb_substr($responseBody, 0, 400)
+                    substr($responseBody, 0, 400)
                 ));
             }
         } catch (Throwable $exception) {
