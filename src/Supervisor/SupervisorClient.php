@@ -9,9 +9,7 @@ use Throwable;
 
 final class SupervisorClient
 {
-    public function __construct(private readonly array $configuration)
-    {
-    }
+    public function __construct(private readonly array $configuration) {}
 
     public function processes(): array
     {
