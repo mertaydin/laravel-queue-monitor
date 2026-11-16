@@ -19,7 +19,7 @@ final class CheckQueueHealthCommand extends Command
     public function handle(QueueDriverManager $manager, QueueAlertDispatcher $dispatcher): int
     {
         if (! (bool) config('queue-monitor.notifications.enabled', false)) {
-            $this->components->info('Queue Monitor notifications are disabled.');
+            $this->info('Queue Monitor notifications are disabled.');
 
             return self::SUCCESS;
         }
@@ -31,7 +31,7 @@ final class CheckQueueHealthCommand extends Command
                 $snapshot = $driver->snapshot();
 
                 if ($backlogLimit > 0 && $snapshot->pending >= $backlogLimit) {
-                    $this->sendAlert($dispatcher, 'backlog:'.$connection, [
+                    $this->alert($dispatcher, 'backlog:'.$connection, [
                         'event' => 'queue.backlog_threshold',
                         'message' => 'Queue backlog threshold reached.',
                         'connection' => $connection,
@@ -47,7 +47,7 @@ final class CheckQueueHealthCommand extends Command
 
         $this->checkStaleWorkers($dispatcher);
         $this->checkFailureRate($dispatcher);
-        $this->components->info('Queue health checks completed.');
+        $this->info('Queue health checks completed.');
 
         return self::SUCCESS;
     }
@@ -125,7 +125,7 @@ final class CheckQueueHealthCommand extends Command
     }
 
     /** @param array<string, mixed> $payload */
-    private function sendAlert(QueueAlertDispatcher $dispatcher, string $key, array $payload): void
+    private function alert(QueueAlertDispatcher $dispatcher, string $key, array $payload): void
     {
         $cooldown = max(1, (int) config('queue-monitor.notifications.cooldown_minutes', 10));
 

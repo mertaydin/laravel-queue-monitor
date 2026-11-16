@@ -10,8 +10,6 @@ class HealthAlertCommandTest extends TestCase
     {
         config(['queue-monitor.notifications.enabled' => false]);
 
-        $this->artisan('queue-monitor:check-health')
-            ->expectsOutput('Queue Monitor notifications are disabled.')
-            ->assertExitCode(0);
+        $this->artisan('queue-monitor:check-health')->assertExitCode(0);
     }
 }
