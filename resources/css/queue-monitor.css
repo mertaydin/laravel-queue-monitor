@@ -320,3 +320,7 @@ a { color: inherit; text-decoration: none; }
 .qm-supervisor-button.action-restart { color:#b17a25; }
 .qm-supervisor-footnote { margin:14px 2px; color:#929dad; font-size:11px; line-height:1.6; }
 @media(max-width:760px) { .qm-supervisor-panel { padding:14px; } .qm-supervisor-actions { min-width:150px; } }
+
+.qm-supervisor-nav { color:#6575df; font-size:11px; font-weight:700; padding:7px 10px; border:1px solid #e5e8ff; border-radius:7px; background:#fafaff; }
+.qm-supervisor-nav:hover { background:#f0f2ff; }
+@media(max-width:760px) { .qm-topbar-meta { gap:6px; } .qm-supervisor-nav { font-size:9px; padding:5px 6px; } }

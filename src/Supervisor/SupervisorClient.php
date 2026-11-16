@@ -91,6 +91,10 @@ final class SupervisorClient
 
     private function decodeResponse(string $xml): mixed
     {
+        if (! function_exists('simplexml_load_string')) {
+            throw new RuntimeException('The PHP SimpleXML extension is required for Supervisor integration.');
+        }
+
         if (str_contains($xml, '<!DOCTYPE') || str_contains($xml, '<!ENTITY')) {
             throw new RuntimeException('Supervisor returned an unsafe XML response.');
         }

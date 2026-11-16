@@ -254,6 +254,11 @@ final class DashboardController
             }
         }
 
+        $supervisorServers = collect((array) config('queue-monitor.supervisor.servers', []))
+            ->filter(static fn (array $server): bool => (bool) ($server['enabled'] ?? false))
+            ->keys()
+            ->all();
+
         return view('queue-monitor::dashboard', [
             'connection' => $connection,
             'connectionCards' => $connectionCards,
@@ -271,6 +276,7 @@ final class DashboardController
             'period' => $period,
             'search' => trim((string) $request->query('search', '')),
             'workers' => $workers,
+            'supervisorServers' => $supervisorServers,
         ]);
     }
 }
