@@ -23,8 +23,7 @@ final class RedisQueueDriver implements QueueDriver
         private readonly ?string $historyDatabase = null,
         private readonly string $historyTable = 'queue_monitor_jobs',
         private readonly ?PayloadMasker $payloadMasker = null,
-    ) {
-    }
+    ) {}
 
     public function name(): string
     {
@@ -112,7 +111,7 @@ final class RedisQueueDriver implements QueueDriver
             foreach ($payloads as $rawPayload) {
                 $payload = json_decode((string) $rawPayload, true);
 
-                if (! is_array($payload)) {
+                if (!is_array($payload)) {
                     continue;
                 }
 
@@ -227,11 +226,11 @@ final class RedisQueueDriver implements QueueDriver
 
     private function maskPayload(array $payload): array
     {
-        if (! config('queue-monitor.payload.mask_sensitive_data', true)) {
+        if (!config('queue-monitor.payload.mask_sensitive_data', true)) {
             return $payload;
         }
 
-        $masker = $this->payloadMasker ?? new PayloadMasker();
+        $masker = $this->payloadMasker ?? new PayloadMasker;
 
         return $masker->mask(
             $payload,
