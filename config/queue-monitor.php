@@ -33,6 +33,12 @@ return [
         'failure_rate_warning' => 0.05,
     ],
 
+    'notifications' => [
+        'enabled' => false,
+        'timeout_seconds' => 3,
+        'webhooks' => [],
+    ],
+
     'workers' => [
         'connection' => env('QUEUE_MONITOR_WORKERS_DB_CONNECTION'),
         'stale_after_seconds' => 90,

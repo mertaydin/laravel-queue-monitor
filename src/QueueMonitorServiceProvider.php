@@ -9,6 +9,7 @@ use Illuminate\Queue\Events\Looping;
 use Illuminate\Queue\Events\WorkerStarting;
 use Illuminate\Queue\Events\WorkerStopping;
 use Illuminate\Support\Facades\Event;
+use MertAydin\LaravelQueueMonitor\Alerts\QueueAlertDispatcher;
 use Illuminate\Support\ServiceProvider;
 use MertAydin\LaravelQueueMonitor\Drivers\BeanstalkdQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Drivers\DatabaseQueueDriverFactory;
@@ -28,6 +29,7 @@ class QueueMonitorServiceProvider extends ServiceProvider
         $this->app->singleton(PayloadMasker::class);
         $this->app->singleton(QueueLifecycleRecorder::class);
         $this->app->singleton(WorkerHeartbeatRecorder::class);
+        $this->app->singleton(QueueAlertDispatcher::class);
     }
 
     private function registerConfiguredDrivers(): void
@@ -88,6 +90,7 @@ class QueueMonitorServiceProvider extends ServiceProvider
 
         Event::listen(JobFailed::class, function (JobFailed $event): void {
             $this->app->make(QueueLifecycleRecorder::class)->failed($event);
+            $this->app->make(QueueAlertDispatcher::class)->jobFailed($event);
         });
     }
 }
