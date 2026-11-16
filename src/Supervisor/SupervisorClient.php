@@ -66,7 +66,17 @@ final class SupervisorClient
                 );
             }
 
-            $response = $request->post($endpoint, $body)->throw();
+            $response = $request->post($endpoint, $body);
+
+            if ($response->successful() === false) {
+                $responseBody = trim(strip_tags($response->body()));
+
+                throw new RuntimeException(sprintf(
+                    'Supervisor returned HTTP %d: %s',
+                    $response->status(),
+                    mb_substr($responseBody, 0, 400)
+                ));
+            }
         } catch (Throwable $exception) {
             throw new RuntimeException('Could not communicate with the configured Supervisor server.', previous: $exception);
         }
