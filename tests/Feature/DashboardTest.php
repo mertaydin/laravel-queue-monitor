@@ -19,6 +19,6 @@ class DashboardTest extends TestCase
         $this->get('/queue-monitor')
             ->assertOk()
             ->assertSee('Queue Monitor')
-            ->assertSee('No queue connections registered');
+            ->assertSee('Queue overview');
     }
 }

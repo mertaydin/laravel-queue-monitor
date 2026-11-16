@@ -82,9 +82,9 @@ php artisan vendor:publish --tag=queue-monitor-assets
 Access is denied by default unless the configured authorization gate exists and grants access. Define the default gate in your application, for example:
 
 ```php
-use IlluminateSupportFacades\Gate;
+use Illuminate\\Support\\Facades\\Gate;
 
-Gate::define('viewQueueMonitor', fn ($user) => $user->is_admin);
+Gate::define('viewQueueMonitor', fn ($user) => $user !== null && $user->is_admin);
 ```
 
 You can change the route path with `QUEUE_MONITOR_PATH` and the gate name with the `authorization.gate` setting. The dashboard adapts its available job states and actions to each driver's capabilities; it does not imply support for operations a backend cannot provide.

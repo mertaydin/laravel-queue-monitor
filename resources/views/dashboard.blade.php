@@ -112,6 +112,7 @@
                 $runningWidth = round(($snapshot->running / $total) * 100, 1);
                 $completedWidth = round(($snapshot->completed / $total) * 100, 1);
                 $failedWidth = round(($snapshot->failed / $total) * 100, 1);
+                $delayedWidth = round(($delayed / $total) * 100, 1);
             @endphp
 
             <section class="qm-section-heading">
@@ -161,12 +162,14 @@
                         <span class="bar-running" style="width: {{ $runningWidth }}%"></span>
                         <span class="bar-completed" style="width: {{ $completedWidth }}%"></span>
                         <span class="bar-failed" style="width: {{ $failedWidth }}%"></span>
+                        <span class="bar-delayed" style="width: {{ $delayedWidth }}%"></span>
                     </div>
                     <div class="qm-legend">
                         <span><i class="legend-pending"></i>Pending <b>{{ number_format($snapshot->pending) }}</b></span>
                         <span><i class="legend-running"></i>Running <b>{{ number_format($snapshot->running) }}</b></span>
                         <span><i class="legend-completed"></i>Completed <b>{{ number_format($snapshot->completed) }}</b></span>
                         <span><i class="legend-failed"></i>Failed <b>{{ number_format($snapshot->failed) }}</b></span>
+                        <span><i class="legend-delayed"></i>Delayed <b>{{ number_format($delayed) }}</b></span>
                     </div>
                 </article>
                 <article class="qm-panel qm-health">

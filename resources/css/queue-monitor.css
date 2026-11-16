@@ -104,6 +104,7 @@ a { color: inherit; text-decoration: none; }
 .bar-running, .legend-running { background: #28b68a; }
 .bar-completed, .legend-completed { background: #54a9c7; }
 .bar-failed, .legend-failed { background: #df747b; }
+.bar-delayed, .legend-delayed { background: #e1a53d; }
 .qm-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 11px 18px; margin-top: 17px; }
 .qm-legend span { display: flex; align-items: center; gap: 7px; color: #8793a2; font-size: 10px; }
 .qm-legend i { width: 7px; height: 7px; border-radius: 2px; }
