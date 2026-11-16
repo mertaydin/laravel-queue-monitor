@@ -34,6 +34,8 @@ class QueueLifecycleRecorderTest extends TestCase
             $table->timestamp('finished_at')->nullable();
             $table->unsignedBigInteger('duration_ms')->nullable();
             $table->unsignedBigInteger('wait_duration_ms')->nullable();
+            $table->string('batch_id', 191)->nullable();
+            $table->unsignedInteger('chain_remaining')->default(0);
             $table->timestamps();
             $table->unique(['connection', 'job_id']);
         });
@@ -44,6 +46,29 @@ class QueueLifecycleRecorderTest extends TestCase
         DB::connection()->getSchemaBuilder()->dropIfExists('queue_monitor_jobs');
 
         parent::tearDown();
+    }
+
+    public function test_it_records_batch_and_chain_metadata_from_the_queued_job(): void
+    {
+        $job = new class {
+            public string $batchId = 'batch-123';
+            public array $chained = ['serialized-next-job', 'serialized-final-job'];
+        };
+
+        $recorder = $this->app->make(QueueLifecycleRecorder::class);
+        $recorder->queued((object) [
+            'connectionName' => 'redis',
+            'jobId' => 'job-workflow-123',
+            'queue' => 'emails',
+            'job' => $job,
+            'payload' => ['uuid' => 'job-workflow-123', 'displayName' => 'App\\Jobs\\SendEmail'],
+        ]);
+
+        $record = DB::table('queue_monitor_jobs')->where('job_id', 'job-workflow-123')->first();
+
+        $this->assertNotNull($record);
+        $this->assertSame('batch-123', $record->batch_id);
+        $this->assertSame(2, (int) $record->chain_remaining);
     }
 
     public function test_it_records_a_completed_job_and_masks_its_payload(): void

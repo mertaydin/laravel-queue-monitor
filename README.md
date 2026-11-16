@@ -21,7 +21,7 @@ A Laravel package for monitoring and managing queues across supported queue conn
 - Optional Supervisor integration: process status, start, stop and restart for configured programs.
 - Queue depth snapshots, payload inspection, retry, and delete operations.
 - Driver-aware adapters and automatic registration of supported Laravel queue connections.
-- Optional lifecycle history and recursive masking of sensitive payload keys.
+- Optional lifecycle history, batch IDs and remaining chained-job counts, with recursive masking of sensitive payload keys.
 - On-demand, read-only diagnostics for database, queue connections, worker storage and configured Supervisor servers.
 
 Completed jobs are retained only when package history is enabled; Laravel normally removes successful jobs after processing.
