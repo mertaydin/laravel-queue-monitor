@@ -1,0 +1,24 @@
+{
+  "name": "mertaydin/laravel-queue-monitor",
+  "description": "Monitor and manage Laravel queue connections with a driver-aware dashboard.",
+  "type": "library",
+  "license": "MIT",
+  "require": {
+    "php": "^8.2",
+    "illuminate/contracts": "^10.0|^11.0|^12.0|^13.0",
+    "illuminate/queue": "^10.0|^11.0|^12.0|^13.0",
+    "illuminate/support": "^10.0|^11.0|^12.0|^13.0"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^8.0|^9.0|^10.0",
+    "phpunit/phpunit": "^10.5|^11.0",
+    "laravel/pint": "^1.0"
+  },
+  "autoload": {"psr-4": {"MertAydin\\LaravelQueueMonitor\\": "src/"}},
+  "autoload-dev": {"psr-4": {"MertAydin\\LaravelQueueMonitor\\Tests\\": "tests/"}},
+  "extra": {"laravel": {"providers": ["MertAydin\\LaravelQueueMonitor\\QueueMonitorServiceProvider"]}},
+  "scripts": {"test": "phpunit", "format": "pint"},
+  "config": {"sort-packages": true},
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}
