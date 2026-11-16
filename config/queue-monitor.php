@@ -31,16 +31,20 @@ return [
     'health' => [
         'backlog_warning' => 1000,
         'failure_rate_warning' => 0.05,
+        'failure_rate_window_minutes' => 15,
+        'stale_worker_warning' => true,
     ],
 
     'retry' => [
         // Zero means unlimited manual retries.
         'max_attempts' => 0,
+        'max_attempts_by_queue' => [],
     ],
 
     'notifications' => [
         'enabled' => false,
         'timeout_seconds' => 3,
+        'cooldown_minutes' => 10,
         'webhooks' => [],
     ],
 

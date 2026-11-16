@@ -329,3 +329,44 @@ a { color: inherit; text-decoration: none; }
 
 .qm-filters input[type="date"] { width:100%; height:37px; padding:0 9px; border:1px solid var(--qm-line); border-radius:7px; background:#fff; color:#536174; font:inherit; font-size:11px; outline:none; }
 .qm-filters input[type="date"]:focus { border-color:#c4cbff; box-shadow:0 0 0 3px #f0f1ff; }
+
+
+/* On-demand health diagnostics */
+.qm-health-overview { display:flex; align-items:center; gap:14px; padding:18px 22px; margin-bottom:16px; border:1px solid var(--qm-line); border-radius:12px; background:#fff; }
+.qm-health-overview > div { min-width:0; }
+.qm-health-overview strong { display:block; color:#344256; font-size:15px; }
+.qm-health-overview p { margin:4px 0 0; color:#8793a2; font-size:11px; }
+.qm-health-indicator,.qm-diagnostic-mark { flex:0 0 auto; width:10px; height:10px; border-radius:50%; background:#20a477; box-shadow:0 0 0 5px #e9f7f1; }
+.health-warning .qm-health-indicator,.diagnostic-warning { background:#d69a35; box-shadow:0 0 0 5px #fff5e4; }
+.health-critical .qm-health-indicator,.diagnostic-critical { background:#d65c68; box-shadow:0 0 0 5px #fff0f1; }
+.qm-diagnostics-panel { padding:20px; }
+.qm-diagnostic-list { display:grid; }
+.qm-diagnostic-item { display:flex; align-items:center; gap:13px; padding:15px 2px; border-bottom:1px solid #edf0f4; }
+.qm-diagnostic-item:last-child { border-bottom:0; }
+.qm-diagnostic-item > div { flex:1; min-width:0; }
+.qm-diagnostic-item strong { display:block; color:#465365; font-size:12px; }
+.qm-diagnostic-item p { margin:4px 0 0; color:#8995a4; font-size:11px; line-height:1.55; overflow-wrap:anywhere; }
+.qm-diagnostic-status { flex:0 0 auto; padding:5px 9px; border-radius:20px; color:#16815e; background:#eaf8f2; font-size:9px; font-weight:750; text-transform:uppercase; letter-spacing:.04em; }
+.qm-diagnostic-status.diagnostic-warning { color:#a66c17; background:#fff5e4; box-shadow:none; }
+.qm-diagnostic-status.diagnostic-critical { color:#b54d58; background:#fff0f1; box-shadow:none; }
+.qm-diagnostics-note,.qm-diagnostics-empty { margin:13px 2px; color:#929dad; font-size:11px; line-height:1.6; }
+@media(max-width:600px) { .qm-diagnostic-item { align-items:flex-start; flex-wrap:wrap; } .qm-diagnostic-status { margin-left:23px; } }
+
+
+/* Session-scoped dashboard widget preferences */
+.qm-widget-preferences { margin-bottom:15px; padding:0 18px; }
+.qm-widget-preferences > summary { padding:14px 0; color:#526174; font-size:11px; font-weight:750; cursor:pointer; list-style:none; }
+.qm-widget-preferences > summary::-webkit-details-marker { display:none; }
+.qm-widget-preferences > summary span { margin-left:8px; color:#9aa4b2; font-size:10px; font-weight:450; }
+.qm-widget-preferences form { display:flex; align-items:center; flex-wrap:wrap; gap:13px; padding:0 0 14px; }
+.qm-widget-preferences label { display:flex; align-items:center; gap:6px; color:#657386; font-size:10px; }
+.qm-widget-preferences input { accent-color:#5268e8; }
+.qm-widget-preferences button { height:30px; padding:0 12px; border:0; border-radius:6px; background:#5268e8; color:#fff; font:inherit; font-size:10px; font-weight:700; cursor:pointer; }
+
+
+/* Cross-connection queue comparison */
+.qm-comparison-panel { padding:20px; }
+.qm-comparison-panel .qm-table { min-width:760px; }
+.qm-comparison-panel .qm-table td strong { color:#465365; }
+.qm-comparison-panel .qm-table td a { color:#5268d8; font-size:10px; font-weight:700; text-decoration:none; }
+.qm-comparison-panel .qm-table td a:hover { text-decoration:underline; }

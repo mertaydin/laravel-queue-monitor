@@ -91,7 +91,8 @@ final class JobActionController
 
     private function assertRetryAllowed(QueueDriver $driver, string $queue, string $jobId): void
     {
-        $maxAttempts = max(0, (int) config('queue-monitor.retry.max_attempts', 0));
+        $queueLimits = (array) config('queue-monitor.retry.max_attempts_by_queue', []);
+        $maxAttempts = max(0, (int) ($queueLimits[$queue] ?? config('queue-monitor.retry.max_attempts', 0)));
 
         if ($maxAttempts === 0) {
             return;

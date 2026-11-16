@@ -11,6 +11,7 @@ use Illuminate\Queue\Events\WorkerStopping;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use MertAydin\LaravelQueueMonitor\Alerts\QueueAlertDispatcher;
+use MertAydin\LaravelQueueMonitor\Console\CheckQueueHealthCommand;
 use MertAydin\LaravelQueueMonitor\Drivers\BeanstalkdQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Drivers\DatabaseQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Drivers\RedisQueueDriverFactory;
@@ -62,6 +63,10 @@ class QueueMonitorServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        if ($this->app->runningInConsole()) {
+            $this->commands([CheckQueueHealthCommand::class]);
+        }
+
         $this->publishes([
             __DIR__.'/../config/queue-monitor.php' => config_path('queue-monitor.php'),
         ], 'queue-monitor-config');

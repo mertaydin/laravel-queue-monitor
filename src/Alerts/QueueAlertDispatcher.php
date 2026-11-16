@@ -29,6 +29,16 @@ final class QueueAlertDispatcher
             'occurred_at' => now()->toIso8601String(),
         ];
 
+        $this->dispatch($payload);
+    }
+
+    /** @param array<string, mixed> $payload */
+    public function dispatch(array $payload): void
+    {
+        if (! (bool) config('queue-monitor.notifications.enabled', false)) {
+            return;
+        }
+
         Event::dispatch(new QueueAlertTriggered($payload));
 
         $timeout = max(1, (int) config('queue-monitor.notifications.timeout_seconds', 3));
