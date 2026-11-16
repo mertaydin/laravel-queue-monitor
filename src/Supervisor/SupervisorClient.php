@@ -17,7 +17,7 @@ final class SupervisorClient
     {
         $processes = $this->call('supervisor.getAllProcessInfo');
 
-        if (! is_array($processes)) {
+        if (is_array($processes) === false) {
             throw new RuntimeException('Supervisor returned an invalid process list.');
         }
 
@@ -43,7 +43,7 @@ final class SupervisorClient
         }
 
         if (parse_url($endpoint, PHP_URL_SCHEME) !== 'https'
-            && ! (bool) ($this->configuration['allow_insecure_http'] ?? false)) {
+            && ($this->configuration['allow_insecure_http'] ?? false) === false) {
             throw new RuntimeException('Supervisor HTTP access is disabled. Use HTTPS or explicitly allow trusted local HTTP.');
         }
 
@@ -61,7 +61,7 @@ final class SupervisorClient
                 ->withHeaders(['Content-Type' => 'text/xml'])
                 ->withOptions(['verify' => (bool) ($this->configuration['verify_tls'] ?? true)]);
 
-            if (! empty($this->configuration['username'])) {
+            if (empty($this->configuration['username']) === false) {
                 $request = $request->withBasicAuth(
                     (string) $this->configuration['username'],
                     (string) ($this->configuration['password'] ?? '')
@@ -91,7 +91,7 @@ final class SupervisorClient
 
     private function decodeResponse(string $xml): mixed
     {
-        if (! function_exists('simplexml_load_string')) {
+        if (function_exists('simplexml_load_string') === false) {
             throw new RuntimeException('The PHP SimpleXML extension is required for Supervisor integration.');
         }
 
@@ -113,7 +113,7 @@ final class SupervisorClient
                 throw new RuntimeException((string) ($fault['faultString'] ?? 'Supervisor reported an XML-RPC fault.'));
             }
 
-            if (! isset($document->params->param->value)) {
+            if (isset($document->params->param->value) === false) {
                 throw new RuntimeException('Supervisor returned an empty XML-RPC response.');
             }
 
