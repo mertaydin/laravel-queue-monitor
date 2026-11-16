@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use MertAydin\LaravelQueueMonitor\Contracts\QueueDriver;
 use MertAydin\LaravelQueueMonitor\QueueDriverManager;
+use Throwable;
 
 final class JobActionController
 {
@@ -42,6 +43,44 @@ final class JobActionController
         return redirect()
             ->route('queue-monitor.index', ['connection' => $connection, 'queue' => $queue])
             ->with('status', 'Job '.$jobId.' was deleted.');
+    }
+
+    public function bulk(
+        Request $request,
+        string $connection,
+        QueueDriverManager $manager
+    ): RedirectResponse {
+        $driver = $this->authorizedDriver($connection, $manager);
+        $validated = $request->validate([
+            'action' => ['required', 'in:retry,delete'],
+            'job_ids' => ['required', 'array', 'min:1', 'max:100'],
+            'job_ids.*' => ['required', 'string', 'max:191'],
+            'queue' => ['required', 'string', 'max:191'],
+        ]);
+
+        $queue = $this->validatedQueue($request, $driver);
+        $action = $validated['action'];
+
+        abort_if($action === 'retry' && ! $driver->capabilities()->canRetry, 403);
+        abort_if($action === 'delete' && ! $driver->capabilities()->canDelete, 403);
+
+        $succeeded = 0;
+        $failed = 0;
+
+        foreach (array_unique($validated['job_ids']) as $jobId) {
+            try {
+                $driver->{$action}($jobId, $queue);
+                $succeeded++;
+            } catch (Throwable) {
+                $failed++;
+            }
+        }
+
+        $message = sprintf('%d job(s) processed successfully; %d failed.', $succeeded, $failed);
+
+        return redirect()
+            ->route('queue-monitor.index', ['connection' => $connection, 'queue' => $queue])
+            ->with('status', $message);
     }
 
     private function authorizedDriver(string $connection, QueueDriverManager $manager): QueueDriver

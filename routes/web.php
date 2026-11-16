@@ -13,4 +13,5 @@ Route::middleware('web')
         Route::get('/{connection}/jobs/{jobId}', JobDetailController::class)->name('jobs.show');
         Route::post('/{connection}/jobs/{jobId}/retry', [JobActionController::class, 'retry'])->name('jobs.retry');
         Route::delete('/{connection}/jobs/{jobId}', [JobActionController::class, 'delete'])->name('jobs.delete');
+        Route::post('/{connection}/jobs/bulk', [JobActionController::class, 'bulk'])->name('jobs.bulk');
     });
