@@ -28,5 +28,10 @@ return [
         ],
     ],
 
+    'health' => [
+        'backlog_warning' => 1000,
+        'failure_rate_warning' => 0.05,
+    ],
+
     'connections' => [],
 ];

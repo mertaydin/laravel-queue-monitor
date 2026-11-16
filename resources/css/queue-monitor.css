@@ -198,3 +198,40 @@ a { color: inherit; text-decoration: none; }
     .qm-legend { gap: 10px; }
     .qm-footer { gap: 12px; flex-direction: column; }
 }
+
+
+/* Analytics and health */
+.qm-analytics-grid { display:grid; grid-template-columns:minmax(0,1.65fr) minmax(250px,.75fr); gap:14px; margin-bottom:15px; }
+.qm-analytics-panel,.qm-health-summary { padding:19px 20px; min-width:0; }
+.qm-period-form select { border:1px solid #e8edf2; border-radius:7px; padding:7px 10px; color:#657284; background:#fff; font:inherit; font-size:10px; }
+.qm-analytics-summary { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:20px 0 12px; }
+.qm-analytics-summary div { display:flex; flex-direction:column; gap:5px; }
+.qm-analytics-summary strong { color:#344153; font-size:17px; letter-spacing:-.4px; }
+.qm-analytics-summary span { color:#9aa4b1; font-size:9px; }
+.qm-activity-chart { height:145px; display:flex; align-items:stretch; gap:4px; padding:12px 0 0; border-bottom:1px solid #edf0f4; }
+.qm-chart-column { flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:7px; }
+.qm-chart-bars { height:112px; width:100%; display:flex; align-items:flex-end; justify-content:center; gap:2px; }
+.qm-chart-bars i { display:block; width:min(12px,42%); min-height:2px; border-radius:3px 3px 0 0; }
+.qm-chart-completed { background:#55b99a; }
+.qm-chart-failed { background:#e17b83; }
+.qm-chart-column small { min-height:12px; color:#a1aab6; font-size:8px; }
+.qm-chart-legend { display:flex; gap:15px; margin-top:12px; color:#8995a4; font-size:9px; }
+.qm-chart-legend span { display:flex; align-items:center; gap:6px; }
+.qm-chart-legend i { width:7px; height:7px; border-radius:2px; }
+.qm-analytics-empty { padding:35px 10px; color:#929dad; font-size:11px; line-height:1.6; text-align:center; }
+.qm-health-state { display:flex; align-items:center; gap:8px; margin-top:24px; font-size:14px; font-weight:750; }
+.qm-health-state span { width:9px; height:9px; border-radius:50%; background:currentColor; box-shadow:0 0 0 4px rgba(32,155,118,.12); }
+.health-healthy { color:#209b76; }
+.health-warning { color:#c58b2e; }
+.health-critical { color:#cf5e68; }
+.health-unknown { color:#8995a4; }
+.qm-health-summary > p { color:#8e99a8; font-size:10px; line-height:1.65; margin:12px 0 20px; }
+.qm-health-metric { display:flex; justify-content:space-between; gap:12px; padding:11px 0; border-top:1px solid #eff1f4; color:#8995a4; font-size:10px; }
+.qm-health-metric strong { color:#465365; }
+.qm-slowest-jobs { margin-top:18px; padding-top:13px; border-top:1px solid #eff1f4; }
+.qm-slowest-jobs > strong { display:block; margin-bottom:8px; color:#465365; font-size:10px; }
+.qm-slowest-jobs div { display:flex; justify-content:space-between; gap:12px; padding:6px 0; color:#8995a4; font-size:9px; }
+.qm-slowest-jobs div span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.qm-slowest-jobs b { color:#536174; white-space:nowrap; }
+@media (max-width:850px) { .qm-analytics-grid { grid-template-columns:1fr; } }
+@media (max-width:560px) { .qm-analytics-summary { grid-template-columns:repeat(2,minmax(0,1fr)); row-gap:15px; } .qm-chart-column:nth-child(2n) small { display:none; } }

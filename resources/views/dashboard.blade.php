@@ -155,7 +155,67 @@
                 </article>
             </section>
 
-            <section class="qm-lower-grid">
+            <section class="qm-analytics-grid">
+            <article class="qm-panel qm-analytics-panel">
+                <div class="qm-panel-heading">
+                    <div><h3>Job activity</h3><p>Completed and failed jobs from persistent history</p></div>
+                    <form method="GET" action="{{ route('queue-monitor.index') }}" class="qm-period-form">
+                        <input type="hidden" name="connection" value="{{ $connection }}">
+                        <input type="hidden" name="queue" value="{{ $queue }}">
+                        <input type="hidden" name="status" value="{{ $status }}">
+                        <select name="period" aria-label="Analytics period" onchange="this.form.submit()">
+                            <option value="24h" @selected($period === '24h')>Last 24 hours</option>
+                            <option value="7d" @selected($period === '7d')>Last 7 days</option>
+                            <option value="30d" @selected($period === '30d')>Last 30 days</option>
+                        </select>
+                    </form>
+                </div>
+                @if ($analytics['available'])
+                    <div class="qm-analytics-summary">
+                        <div><strong>{{ number_format($analytics['completed_count']) }}</strong><span>Completed</span></div>
+                        <div><strong>{{ number_format($analytics['failed_count']) }}</strong><span>Failed</span></div>
+                        <div><strong>{{ $analytics['average_duration'] === null ? '—' : number_format($analytics['average_duration']).' ms' }}</strong><span>Avg. duration</span></div>
+                        <div><strong>{{ $analytics['p95_duration'] === null ? '—' : number_format($analytics['p95_duration']).' ms' }}</strong><span>95th percentile</span></div>
+                    </div>
+                    @php $chartMax = max(1, ...$analytics['completed'], ...$analytics['failed']); @endphp
+                    <div class="qm-activity-chart" role="img" aria-label="Completed and failed job activity">
+                        @foreach ($analytics['labels'] as $index => $label)
+                            <div class="qm-chart-column" title="{{ $label }}: {{ $analytics['completed'][$index] }} completed, {{ $analytics['failed'][$index] }} failed">
+                                <div class="qm-chart-bars">
+                                    <i class="qm-chart-completed" style="height: {{ max(2, ($analytics['completed'][$index] / $chartMax) * 100) }}%"></i>
+                                    <i class="qm-chart-failed" style="height: {{ max(2, ($analytics['failed'][$index] / $chartMax) * 100) }}%"></i>
+                                </div>
+                                @if (count($analytics['labels']) <= 7 || $index % 3 === 0)
+                                    <small>{{ $label }}</small>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="qm-chart-legend"><span><i class="qm-chart-completed"></i>Completed</span><span><i class="qm-chart-failed"></i>Failed</span></div>
+                    @if ($analytics['slowest'] !== [])
+                        <div class="qm-slowest-jobs">
+                            <strong>Slowest completed jobs</strong>
+                            @foreach ($analytics['slowest'] as $slowJob)
+                                <div><span>{{ $slowJob->job_name ?: $slowJob->job_id }}</span><b>{{ number_format((int) $slowJob->duration_ms) }} ms</b></div>
+                            @endforeach
+                        </div>
+                    @endif
+                @else
+                    <div class="qm-analytics-empty">Enable persistent history to unlock activity charts and execution-time analytics.</div>
+                @endif
+            </article>
+            <article class="qm-panel qm-health-summary">
+                <div class="qm-panel-heading"><div><h3>Queue health</h3><p>Based on configured thresholds</p></div></div>
+                <div class="qm-health-state health-{{ $health['status'] }}"><span></span>{{ $health['label'] }}</div>
+                <p>{{ $health['message'] }}</p>
+                @if ($analytics['available'])
+                    <div class="qm-health-metric"><span>Failed jobs in period</span><strong>{{ number_format($analytics['failed_count']) }}</strong></div>
+                    <div class="qm-health-metric"><span>Pending now</span><strong>{{ number_format($snapshot->pending) }}</strong></div>
+                @endif
+            </article>
+        </section>
+
+        <section class="qm-lower-grid">
                 <article class="qm-panel qm-distribution">
                     <div class="qm-panel-heading">
                         <div><h3>Queue distribution</h3><p>How the current workload is split</p></div>

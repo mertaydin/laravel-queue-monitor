@@ -15,6 +15,8 @@ A Laravel package for monitoring and managing queues across supported queue conn
 
 Completed jobs are retained only when package history is enabled; Laravel normally removes successful jobs after processing.
 
+When history is enabled, the dashboard includes 24-hour, 7-day and 30-day activity summaries, average and 95th-percentile completed-job duration, a slowest-jobs list, and a queue-health indicator. Analytics are calculated from recorded history and are intentionally unavailable when history is disabled. Configure health warnings with `health.backlog_warning` and `health.failure_rate_warning` in `config/queue-monitor.php`.
+
 ## Installation
 
 ```bash
