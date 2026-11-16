@@ -8,7 +8,10 @@ A Laravel package for monitoring and managing queues across supported queue conn
 
 - Database queues: pending, reserved, failed, and recorded completed jobs.
 - Redis queues: pending, reserved, delayed, and recorded completed jobs.
-- Beanstalkd queues: ready, reserved, delayed, buried, and recorded completed counts.\n- Amazon SQS metrics for standard and FIFO queues. Payload inspection and job actions are intentionally disabled because SQS receipt handles are short-lived.\n- Sync driver history for completed and failed jobs. Queue depth and queue actions are not available.\n- Optional Supervisor integration: process status, start, stop and restart for configured programs.
+- Beanstalkd queues: ready, reserved, delayed, buried, and recorded completed counts.
+- Amazon SQS metrics for standard and FIFO queues. Payload inspection and job actions are intentionally disabled because SQS receipt handles are short-lived.
+- Sync driver history for completed and failed jobs. Queue depth and queue actions are not available.
+- Optional Supervisor integration: process status, start, stop and restart for configured programs.
 - Queue depth snapshots, payload inspection, retry, and delete operations.
 - Driver-aware adapters and automatic registration of supported Laravel queue connections.
 - Optional lifecycle history and recursive masking of sensitive payload keys.
