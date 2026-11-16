@@ -56,7 +56,6 @@ final class SupervisorClient
 
         try {
             $request = Http::timeout(max(1, (int) ($this->configuration['timeout'] ?? 5)))
-                ->withHeaders(['Content-Type' => 'text/xml'])
                 ->withOptions(['verify' => (bool) ($this->configuration['verify_tls'] ?? true)]);
 
             if (empty($this->configuration['username']) === false) {
@@ -66,7 +65,7 @@ final class SupervisorClient
                 );
             }
 
-            $response = $request->post($endpoint, $body);
+            $response = $request->withBody($body, 'text/xml')->post($endpoint);
 
             if ($response->successful() === false) {
                 $responseBody = trim(strip_tags($response->body()));
