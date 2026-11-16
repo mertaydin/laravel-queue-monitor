@@ -327,7 +327,7 @@
                             <article class="qm-worker-card">
                                 <div class="qm-worker-top"><strong>{{ $worker->hostname }}:{{ $worker->process_id }}</strong><span class="qm-worker-state worker-{{ $worker->display_status }}"><i></i>{{ ucfirst($worker->display_status) }}</span></div>
                                 <div class="qm-worker-meta"><span>{{ $worker->connection }}</span><span>Queue: {{ $worker->queue ?: '—' }}</span></div>
-                                <small>Last heartbeat: {{ $worker->heartbeat_at ? \Illuminate\\Support\\Carbon::parse($worker->heartbeat_at)->diffForHumans() : 'Unknown' }}</small>
+                                <small>Last heartbeat: {{ $worker->heartbeat_at ? \Illuminate\Support\Carbon::parse($worker->heartbeat_at)->diffForHumans() : 'Unknown' }}</small>
                             </article>
                         @endforeach
                     </div>
