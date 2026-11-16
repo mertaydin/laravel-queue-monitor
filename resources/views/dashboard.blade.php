@@ -294,6 +294,12 @@
                         <p>There are no jobs matching the selected queue and filters, or this driver cannot expose that state.</p>
                     </div>
                 @else
+                    <form id="qm-compare-form" method="POST" action="{{ route('queue-monitor.jobs.compare', ['connection' => $connection]) }}" class="qm-compare-toolbar">
+                        @csrf
+                        <input type="hidden" name="queue" value="{{ $queue }}">
+                        <span>Payload comparison</span>
+                        <button type="submit" onclick="return confirm('Compare the two selected job payloads?')">Compare selected (choose 2)</button>
+                    </form>
                     <form id="qm-bulk-form" method="POST" action="{{ route('queue-monitor.jobs.bulk', ['connection' => $connection]) }}" class="qm-bulk-toolbar">
                         @csrf
                         <input type="hidden" name="queue" value="{{ $queue }}">
@@ -303,7 +309,7 @@
                     </form>
                     <div class="qm-table-wrap">
                         <table class="qm-table">
-                            <thead><tr><th>Select</th><th>Job</th><th>Status</th><th>Attempts</th><th>Created</th><th>Details</th><th>Actions</th></tr></thead>
+                            <thead><tr><th>Compare</th><th>Select</th><th>Job</th><th>Status</th><th>Attempts</th><th>Created</th><th>Details</th><th>Actions</th></tr></thead>
                             <tbody>
                             @foreach ($jobs as $job)
                                 @php
@@ -317,6 +323,7 @@
                                     };
                                 @endphp
                                 <tr>
+                                    <td><input class="qm-job-select" type="checkbox" name="compare_ids[]" value="{{ $job->id }}" form="qm-compare-form" aria-label="Compare {{ $job->name ?: $job->id }}"></td>
                                     <td><input class="qm-job-select" type="checkbox" name="job_ids[]" value="{{ $job->id }}" form="qm-bulk-form" aria-label="Select {{ $job->name ?: $job->id }}"></td>
                                     <td>
                                         <a class="qm-job-name" href="{{ route('queue-monitor.jobs.show', ['connection' => $connection, 'jobId' => $job->id, 'queue' => $queue]) }}">{{ $job->name ?: 'Unnamed job' }}</a>
