@@ -52,6 +52,7 @@ class QueueLifecycleRecorderTest extends TestCase
     {
         $job = new class {
             public string $batchId = 'batch-123';
+
             public array $chained = ['serialized-next-job', 'serialized-final-job'];
         };
 
