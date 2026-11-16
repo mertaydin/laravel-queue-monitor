@@ -51,6 +51,7 @@ class QueueLifecycleRecorderTest extends TestCase
     public function test_it_records_batch_and_chain_metadata_from_the_queued_job(): void
     {
         $job = new class {
+
             public string $batchId = 'batch-123';
 
             public array $chained = ['serialized-next-job', 'serialized-final-job'];
@@ -75,6 +76,7 @@ class QueueLifecycleRecorderTest extends TestCase
     public function test_it_records_a_completed_job_and_masks_its_payload(): void
     {
         $job = new class {
+
             public function getJobId(): string { return 'job-123'; }
             public function getQueue(): string { return 'emails'; }
             public function resolveName(): string { return 'App\Jobs\SendEmail'; }
