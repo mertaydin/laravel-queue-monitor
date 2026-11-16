@@ -40,5 +40,19 @@
     "sort-packages": true
   },
   "minimum-stability": "stable",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "homepage": "https://github.com/mertaydin/laravel-queue-monitor",
+  "keywords": [
+    "laravel",
+    "queue",
+    "monitoring",
+    "supervisor",
+    "redis",
+    "beanstalkd",
+    "amazon-sqs"
+  ],
+  "support": {
+    "issues": "https://github.com/mertaydin/laravel-queue-monitor/issues",
+    "source": "https://github.com/mertaydin/laravel-queue-monitor"
+  }
 }

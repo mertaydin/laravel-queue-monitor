@@ -124,6 +124,7 @@ Supervisor integration is optional. It uses the Supervisor XML-RPC API. Configur
             'username' => env('QUEUE_MONITOR_SUPERVISOR_USER'),
             'password' => env('QUEUE_MONITOR_SUPERVISOR_PASSWORD'),
             'verify_tls' => true,
+            'allow_insecure_http' => env('QUEUE_MONITOR_SUPERVISOR_ALLOW_HTTP', false),
             'timeout' => 5,
             'programs' => ['laravel-worker:*'],
         ],
