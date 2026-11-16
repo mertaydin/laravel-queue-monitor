@@ -17,7 +17,7 @@ class SupervisorControllerTest extends TestCase
             'queue-monitor.supervisor.servers.local' => [
                 'enabled' => true,
                 'url' => 'https://supervisor.example.test/RPC2',
-                'programs' => ['worker:*'],
+                'programs' => ['worker-*'],
             ],
         ]);
     }
@@ -29,7 +29,7 @@ class SupervisorControllerTest extends TestCase
             ->with('manageQueueWorkers')
             ->andThrow(new AuthorizationException);
 
-        $this->post('/queue-monitor/supervisor/local/worker%3Aworker_00/start')
+        $this->post('/queue-monitor/supervisor/local/worker-00/start')
             ->assertForbidden();
     }
 

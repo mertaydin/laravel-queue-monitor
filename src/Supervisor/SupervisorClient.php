@@ -139,10 +139,21 @@ final class SupervisorClient
             'boolean' => (string) $type === '1',
             'double' => (float) $type,
             'nil' => null,
-            'array' => array_map(fn (SimpleXMLElement $item) => $this->decodeValue($item), iterator_to_array($type->data->value)),
+            'array' => $this->decodeArray($type),
             'struct' => $this->decodeStruct($type),
             default => (string) $type,
         };
+    }
+
+    private function decodeArray(SimpleXMLElement $array): array
+    {
+        $items = [];
+
+        foreach ($array->data->value as $value) {
+            $items[] = $this->decodeValue($value);
+        }
+
+        return $items;
     }
 
     private function decodeStruct(SimpleXMLElement $struct): array

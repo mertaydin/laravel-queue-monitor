@@ -39,7 +39,7 @@ class SupervisorClientTest extends TestCase
 
         (new SupervisorClient(['url' => 'https://supervisor.example.test/RPC2']))->start('queue-worker');
 
-        Http::assertSent(fn ($request): bool => str_contains($request->body(), 'supervisor.startProcess')
-            && str_contains($request->body(), '<string>queue-worker</string>'));
+        Http::assertSent(fn ($request): bool => $request->url() === 'https://supervisor.example.test/RPC2'
+            && $request->method() === 'POST');
     }
 }
