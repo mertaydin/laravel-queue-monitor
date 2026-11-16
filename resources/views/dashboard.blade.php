@@ -3,7 +3,7 @@
     $qmDefaultLocale = config('queue-monitor.dashboard.locale', 'en');
     $qmRequestedLocale = request()->query('locale', request()->cookie('queue_monitor_locale', $qmDefaultLocale));
     $qmLocale = in_array($qmRequestedLocale, $qmAvailableLocales, true) ? $qmRequestedLocale : $qmDefaultLocale;
-    $qmLanguageNames = {"tr":"Türkçe","en":"English","es":"Español","zh_CN":"简体中文","hi":"हिन्दी","ar":"العربية"};
+    $qmLanguageNames = ['tr' => 'Türkçe', 'en' => 'English', 'es' => 'Español', 'zh_CN' => '简体中文', 'hi' => 'हिन्दी', 'ar' => 'العربية'];
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', $qmLocale) }}">
@@ -57,7 +57,7 @@
             <summary>{{ __('queue-monitor::messages.customize', [], $qmLocale) }} <span>Choose which panels are visible in this browser session</span></summary>
             <form method="POST" action="{{ route('queue-monitor.preferences') }}">
                 @csrf
-                @foreach (['analytics' => '{{ __('queue-monitor::messages.performance', [], $qmLocale) }}', 'workers' => '{{ __('queue-monitor::messages.workers', [], $qmLocale) }}', 'distribution' => '{{ __('queue-monitor::messages.queue', [], $qmLocale) }} distribution', 'capabilities' => '{{ __('queue-monitor::messages.capabilities', [], $qmLocale) }}'] as $widget => $label)
+                @foreach (['analytics' => __('queue-monitor::messages.performance', [], $qmLocale), 'workers' => __('queue-monitor::messages.workers', [], $qmLocale), 'distribution' => __('queue-monitor::messages.distribution', [], $qmLocale), 'capabilities' => __('queue-monitor::messages.capabilities', [], $qmLocale)] as $widget => $label)
                     <label><input type="checkbox" name="widgets[]" value="{{ $widget }}" @checked(in_array($widget, $visibleWidgets, true))> {{ $label }}</label>
                 @endforeach
                 <label class="qm-refresh-preference"><span>{{ __('queue-monitor::messages.auto_refresh', [], $qmLocale) }}</span><select name="refresh"><option value="0" @selected($refreshInterval === 0)>Off</option><option value="15" @selected($refreshInterval === 15)>15 seconds</option><option value="30" @selected($refreshInterval === 30)>30 seconds</option><option value="60" @selected($refreshInterval === 60)>60 seconds</option></select></label>
@@ -118,7 +118,7 @@
                     <span>{{ __('queue-monitor::messages.status', [], $qmLocale) }}</span>
                     <select name="status">
                         <option value="">All states</option>
-                        @foreach (['pending' => '{{ __('queue-monitor::messages.pending', [], $qmLocale) }}', 'running' => '{{ __('queue-monitor::messages.running', [], $qmLocale) }}', 'delayed' => '{{ __('queue-monitor::messages.delayed', [], $qmLocale) }}', 'failed' => 'Failed / buried', 'completed' => '{{ __('queue-monitor::messages.completed', [], $qmLocale) }}'] as $value => $label)
+                        @foreach (['pending' => __('queue-monitor::messages.pending', [], $qmLocale), 'running' => __('queue-monitor::messages.running', [], $qmLocale), 'delayed' => __('queue-monitor::messages.delayed', [], $qmLocale), 'failed' => __('queue-monitor::messages.failed', [], $qmLocale), 'completed' => __('queue-monitor::messages.completed', [], $qmLocale)] as $value => $label)
                             <option value="{{ $value }}" @selected($status === $value)>{{ $label }}</option>
                         @endforeach
                     </select>

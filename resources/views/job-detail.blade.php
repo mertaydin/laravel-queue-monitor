@@ -3,7 +3,7 @@
     $qmDefaultLocale = config('queue-monitor.dashboard.locale', 'en');
     $qmRequestedLocale = request()->query('locale', request()->cookie('queue_monitor_locale', $qmDefaultLocale));
     $qmLocale = in_array($qmRequestedLocale, $qmAvailableLocales, true) ? $qmRequestedLocale : $qmDefaultLocale;
-    $qmLanguageNames = {"tr":"Türkçe","en":"English","es":"Español","zh_CN":"简体中文","hi":"हिन्दी","ar":"العربية"};
+    $qmLanguageNames = ['tr' => 'Türkçe', 'en' => 'English', 'es' => 'Español', 'zh_CN' => '简体中文', 'hi' => 'हिन्दी', 'ar' => 'العربية'];
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', $qmLocale) }}">
