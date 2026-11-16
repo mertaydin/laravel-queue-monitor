@@ -2,7 +2,6 @@
 
 namespace MertAydin\LaravelQueueMonitor\Tests\Feature;
 
-use Illuminate\Support\Facades\Gate;
 use MertAydin\LaravelQueueMonitor\Tests\TestCase;
 
 class DashboardTest extends TestCase
@@ -14,7 +13,7 @@ class DashboardTest extends TestCase
 
     public function test_dashboard_renders_when_the_authorization_gate_allows_access(): void
     {
-        Gate::define('viewQueueMonitor', static fn (): bool => true);
+        $this->app['gate']->define('viewQueueMonitor', static fn ($user): bool => true);
 
         $this->get('/queue-monitor')
             ->assertOk()

@@ -2,7 +2,6 @@
 
 namespace MertAydin\LaravelQueueMonitor\Tests\Feature;
 
-use Illuminate\Support\Facades\Gate;
 use MertAydin\LaravelQueueMonitor\Tests\TestCase;
 
 class JobActionTest extends TestCase
@@ -21,7 +20,7 @@ class JobActionTest extends TestCase
 
     public function test_retry_action_is_denied_when_the_driver_does_not_support_it(): void
     {
-        Gate::define('viewQueueMonitor', static fn (): bool => true);
+        $this->app['gate']->define('viewQueueMonitor', static fn ($user): bool => true);
 
         $this->post('/queue-monitor/unknown/jobs/123/retry', ['queue' => 'default'])
             ->assertNotFound();
