@@ -30,7 +30,10 @@
     </header>
 
     <main class="qm-main">
-    @php $visibleWidgets = session('queue-monitor.dashboard.widgets', ['analytics', 'workers', 'distribution', 'capabilities']); @endphp
+    @php
+        $visibleWidgets = session('queue-monitor.dashboard.widgets', ['analytics', 'workers', 'distribution', 'capabilities']);
+        $refreshInterval = (int) session('queue-monitor.dashboard.refresh', 0);
+    @endphp
         <section class="qm-heading">
             <div>
                 <p class="qm-eyebrow">OPERATIONS CENTER</p>
@@ -50,6 +53,7 @@
                 @foreach (['analytics' => 'Performance analytics', 'workers' => 'Worker status', 'distribution' => 'Queue distribution', 'capabilities' => 'Driver capabilities'] as $widget => $label)
                     <label><input type="checkbox" name="widgets[]" value="{{ $widget }}" @checked(in_array($widget, $visibleWidgets, true))> {{ $label }}</label>
                 @endforeach
+                <label class="qm-refresh-preference"><span>Auto refresh</span><select name="refresh"><option value="0" @selected($refreshInterval === 0)>Off</option><option value="15" @selected($refreshInterval === 15)>15 seconds</option><option value="30" @selected($refreshInterval === 30)>30 seconds</option><option value="60" @selected($refreshInterval === 60)>60 seconds</option></select></label>
                 <button type="submit">Save dashboard</button>
             </form>
         </details>
@@ -439,5 +443,10 @@
         <footer class="qm-footer"><span>Laravel Queue Monitor</span><span>Secure queue visibility for your application</span></footer>
     </main>
 </div>
+@if ($refreshInterval > 0)
+    <script>
+        window.setTimeout(() => window.location.reload(), {{ $refreshInterval * 1000 }});
+    </script>
+@endif
 </body>
 </html>

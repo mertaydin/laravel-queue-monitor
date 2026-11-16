@@ -19,16 +19,17 @@ class DashboardPreferenceTest extends TestCase
     {
         Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andReturn(true);
 
-        $this->post('/queue-monitor/preferences', ['widgets' => ['analytics', 'workers']])
+        $this->post('/queue-monitor/preferences', ['widgets' => ['analytics', 'workers'], 'refresh' => 30])
             ->assertRedirect('/queue-monitor')
-            ->assertSessionHas('queue-monitor.dashboard.widgets', ['analytics', 'workers']);
+            ->assertSessionHas('queue-monitor.dashboard.widgets', ['analytics', 'workers'])
+            ->assertSessionHas('queue-monitor.dashboard.refresh', 30);
     }
 
     public function test_dashboard_preferences_reject_unknown_widgets(): void
     {
         Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andReturn(true);
 
-        $this->from('/queue-monitor')->post('/queue-monitor/preferences', ['widgets' => ['unknown']])
-            ->assertSessionHasErrors('widgets.0');
+        $this->from('/queue-monitor')->post('/queue-monitor/preferences', ['widgets' => ['unknown'], 'refresh' => 90])
+            ->assertSessionHasErrors(['widgets.0', 'refresh']);
     }
 }

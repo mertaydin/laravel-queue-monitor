@@ -15,10 +15,12 @@ final class DashboardPreferenceController
         $validated = $request->validate([
             'widgets' => ['sometimes', 'array', 'max:4'],
             'widgets.*' => ['string', 'in:analytics,workers,distribution,capabilities'],
+            'refresh' => ['sometimes', 'integer', 'in:0,15,30,60'],
         ]);
 
         $widgets = array_values(array_unique($validated['widgets'] ?? []));
         $request->session()->put('queue-monitor.dashboard.widgets', $widgets);
+        $request->session()->put('queue-monitor.dashboard.refresh', (int) ($validated['refresh'] ?? 0));
 
         return redirect()
             ->route('queue-monitor.index')
