@@ -211,6 +211,29 @@ final class DashboardController
             }
         }
 
+        $workers = [];
+        $workerConnection = config('queue-monitor.workers.connection');
+
+        if ($connection !== null && Schema::connection($workerConnection)->hasTable('queue_monitor_workers')) {
+            $workers = DB::connection($workerConnection)->table('queue_monitor_workers')
+                ->where('connection', $connection)
+                ->orderByDesc('heartbeat_at')
+                ->limit(100)
+                ->get();
+
+            $staleAfter = max(1, (int) config('queue-monitor.workers.stale_after_seconds', 90));
+            $staleBefore = CarbonImmutable::now()->subSeconds($staleAfter);
+
+            foreach ($workers as $worker) {
+                $heartbeat = $worker->heartbeat_at === null
+                    ? null
+                    : CarbonImmutable::parse($worker->heartbeat_at);
+                $worker->display_status = $worker->status === 'stopped'
+                    ? 'stopped'
+                    : ($heartbeat !== null && $heartbeat->greaterThan($staleBefore) ? 'active' : 'stale');
+            }
+        }
+
         $connectionCards = [];
 
         foreach ($drivers as $name => $registeredDriver) {
@@ -247,6 +270,7 @@ final class DashboardController
             'health' => $health,
             'period' => $period,
             'search' => trim((string) $request->query('search', '')),
+            'workers' => $workers,
         ]);
     }
 }
