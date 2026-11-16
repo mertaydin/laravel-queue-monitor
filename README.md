@@ -117,8 +117,6 @@ These screenshots are captured from the package running inside a temporary Larav
 | --- | --- |
 | ![Queue dashboard](docs/screenshots/queue-dashboard.png) | ![Queue comparison](docs/screenshots/queue-comparison.png) |
 
-![Job details](docs/screenshots/job-details.png)
-
 ## Dashboard
 
 The package includes a responsive dashboard at `/queue-monitor`. Publish its stylesheet after installation:
