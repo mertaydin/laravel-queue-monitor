@@ -46,14 +46,14 @@ final class QueueAlertDispatcher
         foreach ((array) config('queue-monitor.notifications.webhooks', []) as $webhook) {
             $configuration = is_string($webhook) ? ['driver' => 'generic', 'url' => $webhook] : $webhook;
 
-            if (! is_array($configuration)) {
+            if (is_array($configuration) === false) {
                 continue;
             }
 
             $url = $configuration['url'] ?? null;
             $driver = $configuration['driver'] ?? 'generic';
 
-            if (! is_string($url) || filter_var($url, FILTER_VALIDATE_URL) === false) {
+            if (is_string($url) === false || filter_var($url, FILTER_VALIDATE_URL) === false) {
                 continue;
             }
 
@@ -64,7 +64,7 @@ final class QueueAlertDispatcher
                 'queue' => $payload['queue'] ?? null,
                 'job' => $payload['job_name'] ?? null,
             ]);
-            $text = $message.($context === [] ? '' : "\\n".implode(' · ', array_map(
+            $text = $message.($context === [] ? '' : PHP_EOL.implode(' · ', array_map(
                 static fn (string $key, mixed $value): string => $key.': '.$value,
                 array_keys($context),
                 array_values($context)
