@@ -3,6 +3,11 @@
 return [
     'path' => env('QUEUE_MONITOR_PATH', 'queue-monitor'),
 
+    'dashboard' => [
+        'locale' => 'en',
+        'available_locales' => ['tr', 'en', 'zh_CN', 'hi', 'es', 'ar'],
+    ],
+
     'authorization' => [
         'gate' => 'viewQueueMonitor',
     ],

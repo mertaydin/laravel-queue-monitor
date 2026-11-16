@@ -74,6 +74,7 @@ class QueueMonitorServiceProvider extends ServiceProvider
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'queue-monitor');
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'queue-monitor');
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         $this->publishes([
             __DIR__.'/../resources/css/queue-monitor.css' => public_path('vendor/queue-monitor/queue-monitor.css'),
