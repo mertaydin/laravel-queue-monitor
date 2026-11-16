@@ -69,6 +69,12 @@ jobs:
               public function boot(): void { Gate::before(static fn ($user, string $ability): bool => true); Gate::define('viewQueueMonitor', static fn (): bool => true); }
           }
           PHP
+          cat > bootstrap/providers.php <<'PHP'
+          <?php
+          return [
+              App\\Providers\\AppServiceProvider::class,
+          ];
+          PHP
           cat > database/seeders/ScreenshotSeeder.php <<'PHP'
           <?php
           namespace Database\Seeders;
