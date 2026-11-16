@@ -26,7 +26,7 @@ final class SupervisorController
                 static fn (array $process): bool => collect($allowedProcesses)->contains(static fn (string $allowed): bool => fnmatch($allowed, (string) ($process['name'] ?? '')))
             ));
         } catch (Throwable $exception) {
-            $error = $exception->getMessage();
+            report($exception);\n            $error = 'Unable to reach Supervisor. Check the endpoint, credentials and RPC settings.';
         }
 
         return view('queue-monitor::supervisor', [

@@ -167,6 +167,12 @@ On a failed queue job, the package dispatches a `QueueAlertTriggered` event for 
 - Amazon SQS
 - Sync (event-based visibility; no persistent queue depth)
 
+## More documentation
+
+- [Queue driver capabilities](docs/drivers.md)
+- [Supervisor setup and controls](docs/supervisor.md)
+- [Security guidance](docs/security.md)
+
 ## Development
 
 ```bash
