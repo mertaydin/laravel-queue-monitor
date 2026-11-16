@@ -72,7 +72,7 @@ jobs:
           cat > bootstrap/providers.php <<'PHP'
           <?php
           return [
-              App\\Providers\\AppServiceProvider::class,
+              App\Providers\AppServiceProvider::class,
           ];
           PHP
           cat > database/seeders/ScreenshotSeeder.php <<'PHP'
