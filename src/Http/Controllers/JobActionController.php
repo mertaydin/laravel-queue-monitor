@@ -48,7 +48,6 @@ final class JobActionController
     {
         $gate = (string) config('queue-monitor.authorization.gate', 'viewQueueMonitor');
 
-        abort_unless(Gate::has($gate), 403);
         Gate::authorize($gate);
         abort_unless($manager->has($connection), 404);
 

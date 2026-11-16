@@ -14,7 +14,6 @@ final class DashboardController
     {
         $gate = (string) config('queue-monitor.authorization.gate', 'viewQueueMonitor');
 
-        abort_unless(Gate::has($gate), 403);
         Gate::authorize($gate);
 
         $drivers = $manager->all();
