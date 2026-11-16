@@ -29,6 +29,20 @@ class DashboardTest extends TestCase
             ->assertSee('Queue overview');
     }
 
+    public function test_dashboard_language_can_be_changed_without_javascript_url_construction(): void
+    {
+        Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andReturn(true);
+
+        $this->get('/queue-monitor?locale=tr&connection=sync')
+            ->assertOk()
+            ->assertSee('Kuyruk özeti')
+            ->assertSee('name="locale"', false)
+            ->assertSee('value="tr" selected', false)
+            ->assertSee('name="connection" value="sync"', false)
+            ->assertSee('method="GET"', false)
+            ->assertDontSee('new URL(location.href)');
+    }
+
     public function test_dashboard_summarizes_active_stale_and_stopped_workers(): void
     {
         Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andReturn(true);
