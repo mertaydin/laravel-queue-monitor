@@ -26,7 +26,8 @@ final class SupervisorController
                 fn (array $process): bool => $this->isAllowedProcess((string) ($process['name'] ?? ''), $allowedProcesses)
             ));
         } catch (Throwable $exception) {
-            report($exception);\n            $error = 'Unable to reach Supervisor. Check the endpoint, credentials and RPC settings.';
+            report($exception);
+            $error = 'Unable to reach Supervisor. Check the endpoint, credentials and RPC settings.';
         }
 
         return view('queue-monitor::supervisor', [
