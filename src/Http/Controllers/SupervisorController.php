@@ -23,7 +23,7 @@ final class SupervisorController
             $client = new SupervisorClient($configuration);
             $processes = array_values(array_filter(
                 $client->processes(),
-                static fn (array $process): bool => collect($allowedProcesses)->contains(static fn (string $allowed): bool => fnmatch($allowed, (string) ($process['name'] ?? '')))
+                fn (array $process): bool => $this->isAllowedProcess((string) ($process['name'] ?? ''), $allowedProcesses)
             ));
         } catch (Throwable $exception) {
             report($exception);\n            $error = 'Unable to reach Supervisor. Check the endpoint, credentials and RPC settings.';
@@ -41,7 +41,7 @@ final class SupervisorController
         Gate::authorize((string) config('queue-monitor.authorization.manage_gate', 'manageQueueWorkers'));
 
         $configuration = $this->serverConfiguration($server);
-        abort_unless(collect((array) ($configuration['programs'] ?? []))->contains(static fn (string $allowed): bool => fnmatch($allowed, $process)), 404);
+        abort_unless($this->isAllowedProcess($process, (array) ($configuration['programs'] ?? [])), 404);
         abort_unless(in_array($action, ['start', 'stop', 'restart'], true), 404);
 
         $client = new SupervisorClient($configuration);
@@ -55,6 +55,17 @@ final class SupervisorController
         return redirect()
             ->route('queue-monitor.supervisor.index', ['server' => $server])
             ->with('status', sprintf('Supervisor process [%s] %s request completed.', $process, $action));
+    }
+
+    private function isAllowedProcess(string $process, array $patterns): bool
+    {
+        foreach ($patterns as $pattern) {
+            if (is_string($pattern) && fnmatch($pattern, $process)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function restart(SupervisorClient $client, string $process): void
