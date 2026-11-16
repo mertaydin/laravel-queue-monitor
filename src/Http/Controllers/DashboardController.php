@@ -55,6 +55,16 @@ final class DashboardController
             }
         }
 
+        $capabilities = [];
+
+        if ($driver !== null && $connectionError === false) {
+            try {
+                $capabilities = $driver->capabilities()->toArray();
+            } catch (Throwable) {
+                $connectionError = true;
+            }
+        }
+
         $connectionCards = [];
 
         foreach ($drivers as $name => $registeredDriver) {
@@ -86,7 +96,7 @@ final class DashboardController
             'queue' => $queue,
             'snapshot' => $snapshot,
             'status' => $status,
-            'capabilities' => $driver?->capabilities()->toArray() ?? [],
+            'capabilities' => $capabilities,
         ]);
     }
 }
