@@ -8,7 +8,7 @@ A Laravel package for monitoring and managing queues across supported queue conn
 
 - Database queues: pending, reserved, failed, and recorded completed jobs.
 - Redis queues: pending, reserved, delayed, and recorded completed jobs.
-- Beanstalkd queues: ready, reserved, delayed, buried, and recorded completed counts.
+- Beanstalkd queues: ready, reserved, delayed, buried, and recorded completed counts.\n- Optional Supervisor integration: process status, start, stop and restart for configured programs.
 - Queue depth snapshots, payload inspection, retry, and delete operations.
 - Driver-aware adapters and automatic registration of supported Laravel queue connections.
 - Optional lifecycle history and recursive masking of sensitive payload keys.
@@ -92,6 +92,30 @@ Gate::define('viewQueueMonitor', fn ($user) => $user !== null && $user->is_admin
 You can change the route path with `QUEUE_MONITOR_PATH` and the gate name with the `authorization.gate` setting. The dashboard includes searchable job lists, 25-item pagination and a dedicated job detail page. Search covers the job name, ID, masked payload and exception text. The dashboard adapts its available job states and actions to each driver's capabilities. Retry and delete controls are shown only when supported for the selected job state. Mutations use POST/DELETE routes, Laravel CSRF protection and the same authorization gate as dashboard access.
 
 Worker heartbeats are stored in the `queue_monitor_workers` table. Configure the database with `workers.connection` and the stale threshold with `workers.stale_after_seconds`. Worker visibility is based on Laravel worker lifecycle events and heartbeats, identifying processes by hostname and PID. It does not claim to read Supervisor program names or Supervisor's own process state; use Supervisor XML-RPC or a separately configured integration for that level of detail.
+
+## Supervisor worker management
+
+Supervisor integration is optional. It uses the Supervisor XML-RPC API. Configure each trusted server and explicitly list the process names that the dashboard may display or control:
+
+```php
+'supervisor' => [
+    'servers' => [
+        'app-workers' => [
+            'enabled' => true,
+            'url' => env('QUEUE_MONITOR_SUPERVISOR_URL'),
+            'username' => env('QUEUE_MONITOR_SUPERVISOR_USER'),
+            'password' => env('QUEUE_MONITOR_SUPERVISOR_PASSWORD'),
+            'verify_tls' => true,
+            'timeout' => 5,
+            'programs' => ['laravel-worker:*'],
+        ],
+    ],
+],
+```
+
+Open `/queue-monitor/supervisor/app-workers` to view the configured processes. Start, stop and restart commands are available only for names in the `programs` allowlist. Define a separate `manageQueueWorkers` gate for process control. The normal `viewQueueMonitor` gate protects the status page.
+
+Use HTTPS and valid TLS certificates. Plain HTTP is blocked unless `allow_insecure_http` is explicitly enabled for a trusted private endpoint. Do not expose Supervisor's RPC endpoint to the public internet. Store credentials in environment variables. Process actions use POST requests and Laravel CSRF protection.
 
 ## Retry policy
 

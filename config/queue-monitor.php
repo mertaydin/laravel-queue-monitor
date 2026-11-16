@@ -44,6 +44,10 @@ return [
         'webhooks' => [],
     ],
 
+    'supervisor' => [
+        'servers' => [],
+    ],
+
     'workers' => [
         'connection' => env('QUEUE_MONITOR_WORKERS_DB_CONNECTION'),
         'stale_after_seconds' => 90,

@@ -16,4 +16,8 @@ Route::middleware('web')
         Route::delete('/{connection}/jobs/{jobId}', [JobActionController::class, 'delete'])->name('jobs.delete');
         Route::post('/{connection}/jobs/bulk', [JobActionController::class, 'bulk'])->name('jobs.bulk');
         Route::post('/{connection}/jobs/compare', JobCompareController::class)->name('jobs.compare');
+        Route::get('/supervisor/{server}', [SupervisorController::class, 'index'])->name('supervisor.index');
+        Route::post('/supervisor/{server}/{process}/{action}', [SupervisorController::class, 'action'])
+            ->whereIn('action', ['start', 'stop', 'restart'])
+            ->name('supervisor.action');
     });

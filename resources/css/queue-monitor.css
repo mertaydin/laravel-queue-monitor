@@ -303,3 +303,20 @@ a { color: inherit; text-decoration: none; }
 .qm-compare-table tr.is-different td { background:#fff8ed; }
 .qm-compare-missing { color:#bd8b38 !important; font-style:italic; }
 @media(max-width:760px) { .qm-compare-layout { grid-template-columns:1fr; } }
+
+
+/* Supervisor process controls */
+.qm-supervisor-panel { padding:20px; }
+.qm-supervisor-notice,.qm-supervisor-error { margin:0 0 16px; padding:13px 16px; border-radius:10px; font-size:12px; }
+.qm-supervisor-notice { color:#187a5c; background:#eaf8f2; border:1px solid #d1eee2; }
+.qm-supervisor-error { color:#a64b53; background:#fff0f1; border:1px solid #f5d8db; }
+.qm-supervisor-error p { margin:6px 0 0; }
+.qm-table-subtitle { display:block; margin-top:4px; color:#9aa4b2; font-size:10px; }
+.qm-supervisor-actions { display:flex; flex-wrap:wrap; gap:6px; }
+.qm-supervisor-actions form { margin:0; }
+.qm-supervisor-button { padding:6px 9px; border:1px solid var(--qm-line); border-radius:6px; background:#fff; color:#667386; font:inherit; font-size:10px; font-weight:700; cursor:pointer; }
+.qm-supervisor-button:hover { border-color:#cbd2ff; color:var(--qm-primary); }
+.qm-supervisor-button.action-stop { color:#bd5a62; }
+.qm-supervisor-button.action-restart { color:#b17a25; }
+.qm-supervisor-footnote { margin:14px 2px; color:#929dad; font-size:11px; line-height:1.6; }
+@media(max-width:760px) { .qm-supervisor-panel { padding:14px; } .qm-supervisor-actions { min-width:150px; } }
