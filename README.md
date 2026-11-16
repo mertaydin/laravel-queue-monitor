@@ -91,6 +91,8 @@ Gate::define('viewQueueMonitor', fn ($user) => $user !== null && $user->is_admin
 
 You can change the route path with `QUEUE_MONITOR_PATH` and the gate name with the `authorization.gate` setting. The dashboard includes searchable job lists, 25-item pagination and a dedicated job detail page. Search covers the job name, ID, masked payload and exception text. The dashboard adapts its available job states and actions to each driver's capabilities. Retry and delete controls are shown only when supported for the selected job state. Mutations use POST/DELETE routes, Laravel CSRF protection and the same authorization gate as dashboard access.
 
+Worker heartbeats are stored in the `queue_monitor_workers` table. Configure the database with `workers.connection` and the stale threshold with `workers.stale_after_seconds`. Worker visibility is based on Laravel worker lifecycle events and heartbeats, identifying processes by hostname and PID. It does not claim to read Supervisor program names or Supervisor's own process state; use Supervisor XML-RPC or a separately configured integration for that level of detail.
+
 ## Design principles
 
 - **Capability-aware:** Unsupported features are not presented as available.

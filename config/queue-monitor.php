@@ -33,5 +33,10 @@ return [
         'failure_rate_warning' => 0.05,
     ],
 
+    'workers' => [
+        'connection' => env('QUEUE_MONITOR_WORKERS_DB_CONNECTION'),
+        'stale_after_seconds' => 90,
+    ],
+
     'connections' => [],
 ];

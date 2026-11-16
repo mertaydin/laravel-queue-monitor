@@ -273,3 +273,18 @@ a { color: inherit; text-decoration: none; }
 .qm-bulk-toolbar button { height:32px; padding:0 12px; border:0; border-radius:6px; background:#5268e8; color:#fff; font:inherit; font-size:10px; font-weight:700; cursor:pointer; }
 .qm-bulk-toolbar small { color:#a1aab6; font-size:9px; }
 .qm-job-select { width:14px; height:14px; accent-color:#5268e8; cursor:pointer; }
+
+
+/* Worker process monitoring */
+.qm-workers-panel { padding:19px 20px; margin-bottom:15px; }
+.qm-workers-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:10px; margin-top:16px; }
+.qm-worker-card { min-width:0; padding:13px; border:1px solid #edf0f4; border-radius:9px; background:#fcfdff; }
+.qm-worker-top { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.qm-worker-top strong { overflow:hidden; color:#465365; font-size:10px; text-overflow:ellipsis; white-space:nowrap; }
+.qm-worker-state { display:inline-flex; align-items:center; gap:5px; font-size:9px; font-weight:750; }
+.qm-worker-state i { width:6px; height:6px; border-radius:50%; background:currentColor; }
+.worker-active { color:#209b76; }
+.worker-stale { color:#c58b2e; }
+.worker-stopped { color:#8995a4; }
+.qm-worker-meta { display:flex; justify-content:space-between; gap:8px; margin-top:12px; color:#8793a2; font-size:9px; }
+.qm-worker-card > small { display:block; margin-top:10px; color:#a1aab6; font-size:9px; }

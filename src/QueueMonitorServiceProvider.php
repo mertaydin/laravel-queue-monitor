@@ -4,6 +4,9 @@ namespace MertAydin\LaravelQueueMonitor;
 
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Events\Looping;
+use Illuminate\Queue\Events\WorkerStarting;
+use Illuminate\Queue\Events\WorkerStopping;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -11,6 +14,7 @@ use MertAydin\LaravelQueueMonitor\Drivers\BeanstalkdQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Drivers\DatabaseQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Drivers\RedisQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Support\PayloadMasker;
+use MertAydin\LaravelQueueMonitor\WorkerHeartbeatRecorder;
 
 class QueueMonitorServiceProvider extends ServiceProvider
 {
@@ -24,6 +28,7 @@ class QueueMonitorServiceProvider extends ServiceProvider
         $this->app->singleton(RedisQueueDriverFactory::class);
         $this->app->singleton(PayloadMasker::class);
         $this->app->singleton(QueueLifecycleRecorder::class);
+        $this->app->singleton(WorkerHeartbeatRecorder::class);
     }
 
     private function registerConfiguredDrivers(): void
@@ -57,6 +62,22 @@ class QueueMonitorServiceProvider extends ServiceProvider
             __DIR__.'/../resources/css/queue-monitor.css' => public_path('vendor/queue-monitor/queue-monitor.css'),
         ], 'queue-monitor-assets');
         $this->registerConfiguredDrivers();
+
+        Event::listen(WorkerStarting::class, function (WorkerStarting $event): void {
+            $this->app->make(WorkerHeartbeatRecorder::class)->starting($event);
+        });
+
+        Event::listen(Looping::class, function (Looping $event): void {
+            $this->app->make(WorkerHeartbeatRecorder::class)->looping($event);
+        });
+
+        Event::listen(WorkerStopping::class, function (WorkerStopping $event): void {
+            $this->app->make(WorkerHeartbeatRecorder::class)->stopping($event);
+        });
+
+        Event::listen(JobProcessing::class, function (JobProcessing $event): void {
+            $this->app->make(WorkerHeartbeatRecorder::class)->jobProcessing($event);
+        });
 
         Event::listen(JobProcessing::class, function (JobProcessing $event): void {
             $this->app->make(QueueLifecycleRecorder::class)->processing($event);
