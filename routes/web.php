@@ -5,6 +5,7 @@ use MertAydin\LaravelQueueMonitor\Http\Controllers\DashboardController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\JobActionController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\JobDetailController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\JobCompareController;
+use MertAydin\LaravelQueueMonitor\Http\Controllers\SupervisorController;
 
 Route::middleware('web')
     ->prefix(trim((string) config('queue-monitor.path', 'queue-monitor'), '/'))
