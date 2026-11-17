@@ -35,7 +35,6 @@
             <span>{{ __('queue-monitor::messages.overview', [], $qmLocale) }}</span>
             <span class="qm-version">PACKAGE</span>
             @include('queue-monitor::partials.language')
-            @include('queue-monitor::partials.theme')
         </div>
     </header>
 
@@ -521,7 +520,10 @@
     </main>
 </div>
 @if ($refreshInterval > 0)
-    <div class="qm-auto-refresh" data-qm-refresh-ms="{{ $refreshInterval * 1000 }}" hidden></div>
+    <script>
+        window.setTimeout(() => window.location.reload(), {{ $refreshInterval * 1000 }});
+    </script>
 @endif
+    @include('queue-monitor::partials.theme')
 </body>
 </html>

@@ -61,6 +61,12 @@
         mountThemePicker();
     }
 
+    var refreshElement = document.querySelector('[data-qm-refresh-ms]');
+    if (refreshElement) {
+        var refreshDelay = parseInt(refreshElement.getAttribute('data-qm-refresh-ms'), 10);
+        if (refreshDelay > 0) window.setTimeout(function () { window.location.reload(); }, refreshDelay);
+    }
+
     if (window.matchMedia) {
         var media = window.matchMedia('(prefers-color-scheme: dark)');
         var onSystemThemeChange = function () { if (preference === 'system') applyTheme(); };
