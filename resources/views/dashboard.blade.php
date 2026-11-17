@@ -353,7 +353,7 @@
                     <small>{{ __('queue-monitor::messages.choose_connection', [], $qmLocale) }}</small>
                 </div>
             </div>
-            <form class="qm-filters" method="GET" action="{{ route('queue-monitor.index') }}#qm-jobs-results">
+            <form class="qm-filters" method="GET" action="{{ route('queue-monitor.index') }}#qm-explore-jobs">
                 <label>
                     <span>{{ __('queue-monitor::messages.connection', [], $qmLocale) }}</span>
                     <select name="connection" data-qm-auto-submit>
