@@ -4,6 +4,12 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- Move dashboard theme and language preference handling into published same-origin assets for strict Content Security Policy compatibility.
+
+## [0.1.13] - 2026-11-17
+
+- Fix dashboard theme and language selection on CSP-restricted deployments.
+
 - Render the language selector directly in the top navigation beside the theme selector, without relying on JavaScript to relocate it.
 
 - Make the dashboard authorization gate optional: access is allowed when the configured gate is not defined, and enforced across all dashboard routes when it is defined.
