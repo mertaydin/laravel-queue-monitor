@@ -12,15 +12,18 @@ use MertAydin\LaravelQueueMonitor\Tests\TestCase;
 
 class DashboardTest extends TestCase
 {
-    public function test_dashboard_is_denied_when_the_authorization_gate_is_not_defined(): void
+    public function test_dashboard_is_accessible_when_the_authorization_gate_is_not_defined(): void
     {
-        Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andThrow(new AuthorizationException);
+        Gate::shouldReceive('has')->once()->with('viewQueueMonitor')->andReturn(false);
 
-        $this->get('/queue-monitor')->assertForbidden();
+        $this->get('/queue-monitor')
+            ->assertOk()
+            ->assertSee('Queue Monitor');
     }
 
     public function test_dashboard_renders_when_the_authorization_gate_allows_access(): void
     {
+        Gate::shouldReceive('has')->once()->with('viewQueueMonitor')->andReturn(true);
         Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andReturn(true);
 
         $this->get('/queue-monitor')
@@ -31,6 +34,7 @@ class DashboardTest extends TestCase
 
     public function test_dashboard_language_can_be_changed_without_javascript_url_construction(): void
     {
+        Gate::shouldReceive('has')->once()->with('viewQueueMonitor')->andReturn(true);
         Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andReturn(true);
 
         $this->get('/queue-monitor?locale=tr&connection=sync')
@@ -45,6 +49,7 @@ class DashboardTest extends TestCase
 
     public function test_dashboard_summarizes_active_stale_and_stopped_workers(): void
     {
+        Gate::shouldReceive('has')->once()->with('viewQueueMonitor')->andReturn(true);
         Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andReturn(true);
 
         config(['queue-monitor.workers.connection' => null, 'queue-monitor.workers.stale_after_seconds' => 90]);
