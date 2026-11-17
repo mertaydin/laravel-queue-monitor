@@ -45,7 +45,7 @@
             <a class="qm-supervisor-nav" href="{{ route('queue-monitor.compare') }}">{{ __('queue-monitor::messages.compare', [], $qmLocale) }}</a>
             <a class="qm-supervisor-nav" href="{{ route('queue-monitor.health') }}">{{ __('queue-monitor::messages.health', [], $qmLocale) }}</a>
             @foreach ($supervisorServers as $supervisorServer)
-                <a class="qm-supervisor-nav" href="{{ route('queue-monitor.supervisor.index', ['server' => $supervisorServer]) }}">Supervisor · {{ $supervisorServer }}</a>
+                <a class="qm-supervisor-nav" href="{{ route('queue-monitor.supervisor.index', ['server' => $supervisorServer]) }}">Supervisor · {{ $qmDisplayValue($supervisorServer) }}</a>
             @endforeach
             <span class="qm-live-dot"></span>
             <span>{{ __('queue-monitor::messages.overview', [], $qmLocale) }}</span>
@@ -106,7 +106,7 @@
 
 
         @if (session('status'))
-            <div class="qm-alert qm-alert-success"><span class="qm-alert-icon">✓</span><div><strong>{{ session('status') }}</strong></div></div>
+            <div class="qm-alert qm-alert-success"><span class="qm-alert-icon">✓</span><div><strong>{{ $qmDisplayValue(session('status')) }}</strong></div></div>
         @endif
 
         @if ($connectionError)
@@ -129,7 +129,7 @@
             <section class="qm-section-heading">
                 <div>
                     <p class="qm-eyebrow">{{ __('queue-monitor::messages.current_workload', [], $qmLocale) }}</p>
-                    <h2>{{ $queue ?? 'All queues' }} <span class="qm-driver-tag">{{ ucfirst($driverName) }}</span></h2>
+                    <h2>{{ $queue ?? 'All queues' }} <span class="qm-driver-tag">{{ ucfirst($qmDisplayValue($driverName)) }}</span></h2>
                 </div>
                 <span class="qm-total-label">{{ number_format($totalJobs) }} {{ __('queue-monitor::messages.tracked_jobs', [], $qmLocale) }}</span>
             </section>
@@ -260,8 +260,8 @@
             </article>
             <article class="qm-panel qm-health-summary">
                 <div class="qm-panel-heading"><div><h3>{{ __('queue-monitor::messages.queue', [], $qmLocale) }} health</h3><p>Based on configured thresholds</p></div></div>
-                <div class="qm-health-state health-{{ $health['status'] }}"><span></span>{{ $health['label'] }}</div>
-                <p>{{ $health['message'] }}</p>
+                <div class="qm-health-state health-{{ $health['status'] }}"><span></span>{{ $qmDisplayValue($health['label']) }}</div>
+                <p>{{ $qmDisplayValue($health['message']) }}</p>
                 @if ($analytics['available'])
                     <div class="qm-health-metric"><span>Failed jobs in period</span><strong>{{ number_format($analytics['failed_count']) }}</strong></div>
                     <div class="qm-health-metric"><span>{{ __('queue-monitor::messages.pending', [], $qmLocale) }} now</span><strong>{{ number_format($snapshot->pending) }}</strong></div>
@@ -294,8 +294,8 @@
                     <div class="qm-workers-grid">
                         @foreach ($workers as $worker)
                             <article class="qm-worker-card">
-                                <div class="qm-worker-top"><strong>{{ $worker->hostname }}:{{ $worker->process_id }}</strong><span class="qm-worker-state worker-{{ $worker->display_status }}"><i></i>{{ ucfirst($worker->display_status) }}</span></div>
-                                <div class="qm-worker-meta"><span>{{ $worker->connection }}</span><span>{{ __('queue-monitor::messages.queue', [], $qmLocale) }}: {{ $worker->queue ?: '—' }}</span></div>
+                                <div class="qm-worker-top"><strong>{{ $qmDisplayValue($worker->hostname) }}:{{ $worker->process_id }}</strong><span class="qm-worker-state worker-{{ $worker->display_status }}"><i></i>{{ ucfirst($worker->display_status) }}</span></div>
+                                <div class="qm-worker-meta"><span>{{ $qmDisplayValue($worker->connection) }}</span><span>{{ __('queue-monitor::messages.queue', [], $qmLocale) }}: {{ $qmDisplayValue($worker->queue) ?: '—' }}</span></div>
                                 <small>Last heartbeat: {{ $worker->heartbeat_at ? \Illuminate\Support\Carbon::parse($worker->heartbeat_at)->diffForHumans() : 'Unknown' }}</small>
                             </article>
                         @endforeach
@@ -465,8 +465,8 @@
                                         <a class="qm-job-name" href="{{ route('queue-monitor.jobs.show', ['connection' => $connection, 'jobId' => $job->id, 'queue' => $queue]) }}">{{ $qmDisplayValue($job->name) ?: 'Unnamed job' }}</a>
                                         <code>{{ \Illuminate\Support\Str::limit($job->id, 22) }}</code>
                                     </td>
-                                    <td><span class="qm-status status-{{ $jobStatusClass }}"><i></i>{{ ucfirst($job->status) }}</span></td>
-                                    <td>{{ $job->attempts ?? '—' }}</td>
+                                    <td><span class="qm-status status-{{ $jobStatusClass }}"><i></i>{{ ucfirst($qmDisplayValue($job->status)) }}</span></td>
+                                    <td>{{ $qmDisplayValue($job->attempts) ?: '—' }}</td>
                                     <td>{{ $job->createdAt ? date('d M Y, H:i', $job->createdAt) : '—' }}</td>
                                     <td>
                                         @if ($job->payload !== null)
