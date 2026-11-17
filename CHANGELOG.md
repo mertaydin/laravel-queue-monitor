@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- Make the dashboard authorization gate optional: access is allowed when the configured gate is not defined, and enforced across all dashboard routes when it is defined.
+
 - Allow configuring dashboard route middleware through `queue-monitor.middleware`, while keeping `web` as the default.
 - Document and test custom middleware such as `super-admin` and `super-ip` on all dashboard routes.
 - Document and test the configurable dashboard URL prefix, including nested paths and slash normalization.

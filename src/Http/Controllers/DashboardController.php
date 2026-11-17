@@ -6,7 +6,6 @@ use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 use MertAydin\LaravelQueueMonitor\QueueDriverManager;
@@ -16,10 +15,6 @@ final class DashboardController
 {
     public function __invoke(Request $request, QueueDriverManager $manager): View
     {
-        $gate = (string) config('queue-monitor.authorization.gate', 'viewQueueMonitor');
-
-        Gate::authorize($gate);
-
         $drivers = $manager->all();
         $connectionNames = array_keys($drivers);
         $requestedConnection = $request->query('connection');

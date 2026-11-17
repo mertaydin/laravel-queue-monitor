@@ -122,7 +122,7 @@ These screenshots are captured from the package running inside a temporary Larav
 
 The package includes a responsive dashboard at `/queue-monitor` by default. Its stylesheet is published by the `queue-monitor-assets` command in the installation steps above.
 
-Access is denied by default unless the configured authorization gate exists and grants access. Define the default gate in your application, for example:
+Access is allowed by default when no authorization gate is defined. If you define the configured gate, only users allowed by that gate can access every dashboard route. Define the default gate in your application, for example:
 
 ```php
 use Illuminate\Support\Facades\Gate;
