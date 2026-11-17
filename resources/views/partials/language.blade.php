@@ -22,20 +22,14 @@ html[data-theme="dark"] #queue-monitor-language-picker select{background:#182437
 </style>
 <script>
 (function(){
-    function mount(){
-        var form=document.getElementById('queue-monitor-language-form');
-        var picker=document.getElementById('queue-monitor-language-picker');
-        var bar=document.querySelector('.qm-topbar-meta');
-        var select=form?form.querySelector('select[name="locale"]'):null;
-        if(form&&bar&&form.parentNode!==bar){bar.appendChild(form)}
-        if(select&&!select.dataset.queueMonitorBound){
-            select.dataset.queueMonitorBound='1';
-            select.addEventListener('change',function(){
-                document.cookie='queue_monitor_locale='+encodeURIComponent(select.value)+'; path=/; max-age=31536000; SameSite=Lax'+(location.protocol==='https:'?'; Secure':'');
-                form.submit();
-            });
-        }
+    var form=document.getElementById('queue-monitor-language-form');
+    var select=form?form.querySelector('select[name="locale"]'):null;
+    if(select&&!select.dataset.queueMonitorBound){
+        select.dataset.queueMonitorBound='1';
+        select.addEventListener('change',function(){
+            document.cookie='queue_monitor_locale='+encodeURIComponent(select.value)+'; path=/; max-age=31536000; SameSite=Lax'+(location.protocol==='https:'?'; Secure':'');
+            form.submit();
+        });
     }
-    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
 })();
 </script>

@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- Render the language selector directly in the top navigation beside the theme selector, without relying on JavaScript to relocate it.
+
 - Make the dashboard authorization gate optional: access is allowed when the configured gate is not defined, and enforced across all dashboard routes when it is defined.
 
 - Keep dashboard routes on the package's fixed `web` middleware instead of exposing middleware selection in package configuration.

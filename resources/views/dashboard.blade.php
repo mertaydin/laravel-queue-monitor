@@ -33,6 +33,7 @@
             <span class="qm-live-dot"></span>
             <span>{{ __('queue-monitor::messages.overview', [], $qmLocale) }}</span>
             <span class="qm-version">PACKAGE</span>
+            @include('queue-monitor::partials.language')
         </div>
     </header>
 
@@ -522,7 +523,6 @@
         window.setTimeout(() => window.location.reload(), {{ $refreshInterval * 1000 }});
     </script>
 @endif
-    @include('queue-monitor::partials.language')
     @include('queue-monitor::partials.theme')
 </body>
 </html>

@@ -28,7 +28,12 @@ class DashboardTest extends TestCase
         $this->get('/queue-monitor')
             ->assertOk()
             ->assertSee('Queue Monitor')
-            ->assertSee('Queue overview');
+            ->assertSee('Queue overview')
+            ->assertSeeInOrder([
+                'class="qm-topbar-meta"',
+                'id="queue-monitor-language-form"',
+                '<main class="qm-main">',
+            ]);
     }
 
     public function test_dashboard_language_can_be_changed_without_javascript_url_construction(): void
