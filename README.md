@@ -41,7 +41,9 @@ Laravel 10 and 11 are outside their security support windows. They are not inclu
 composer require mertaydin/laravel-queue-monitor
 php artisan vendor:publish --tag=queue-monitor-config
 php artisan migrate
-php artisan vendor:publish --tag=queue-monitor-assets
+php artisan vendor:publish --tag=queue-monitor-assets --force
+
+The dashboard loads both files externally (no inline theme or language handlers), so the controls work with a same-origin CSP policy. Re-publish with `--force` after package updates to replace previously published assets.
 ```
 
 Enable history in `config/queue-monitor.php`:

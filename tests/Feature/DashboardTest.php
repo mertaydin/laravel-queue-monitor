@@ -29,6 +29,8 @@ class DashboardTest extends TestCase
             ->assertOk()
             ->assertSee('Queue Monitor')
             ->assertSee('Queue overview')
+            ->assertSee('id="queue-monitor-theme-picker"', false)
+            ->assertSee('vendor/queue-monitor/queue-monitor.js', false)
             ->assertSeeInOrder([
                 'class="qm-topbar-meta"',
                 'id="queue-monitor-language-form"',
@@ -48,6 +50,8 @@ class DashboardTest extends TestCase
             ->assertSee('value="tr" selected', false)
             ->assertSee('name="connection" value="sync"', false)
             ->assertSee('method="GET"', false)
+            ->assertSee('id="queue-monitor-theme-picker"', false)
+            ->assertDontSee('onchange=', false)
             ->assertDontSee('new URL(location.href)');
     }
 
