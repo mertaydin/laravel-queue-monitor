@@ -86,7 +86,7 @@ final class HealthCheckController
                 'message' => $callback(),
             ];
         } catch (Throwable $exception) {
-            $missingPhpRedis = $exception instanceof \\Error
+            $missingPhpRedis = $exception instanceof \Error
                 && str_contains($exception->getMessage(), 'Class "Redis" not found')
                 && str_contains($exception->getFile(), 'PhpRedisConnector.php');
 
