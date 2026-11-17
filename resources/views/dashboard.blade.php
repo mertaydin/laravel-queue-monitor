@@ -26,6 +26,7 @@
             </span>
         </a>
         <div class="qm-topbar-meta">
+            @include('queue-monitor::partials.theme')
             <a class="qm-supervisor-nav" href="{{ route('queue-monitor.compare') }}">{{ __('queue-monitor::messages.compare', [], $qmLocale) }}</a>
             <a class="qm-supervisor-nav" href="{{ route('queue-monitor.health') }}">{{ __('queue-monitor::messages.health', [], $qmLocale) }}</a>
             @foreach ($supervisorServers as $supervisorServer)

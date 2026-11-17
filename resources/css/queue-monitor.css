@@ -439,3 +439,11 @@ html[data-theme="dark"] [class*="qm-"][class*="card"],html[data-theme="dark"] [c
 html[data-theme="dark"] #queue-monitor-language-picker{background:#182437;color:#e5eaf3;border-color:#39485e}
 @media(max-width:760px){.qm-topbar-meta #queue-monitor-language-form{margin-left:auto}}
 @media(max-width:430px){.qm-topbar-meta #queue-monitor-language-picker{padding:7px 8px}.qm-topbar-meta #queue-monitor-language-picker select{max-width:88px}}
+
+
+/* Keep the theme selector beside the language selector in the top bar. */
+#queue-monitor-theme-picker{position:static;flex:0 0 auto;display:flex;align-items:center;gap:8px;margin:0;padding:9px 11px;border:1px solid #d9e0ea;border-radius:12px;background:#fff;color:#263348;box-shadow:0 8px 28px #15223826;font:600 12px/1.2 system-ui,sans-serif}
+#queue-monitor-theme-picker select{max-width:120px;padding:0;border:0;background:transparent;color:inherit;font:inherit;outline:none;cursor:pointer}
+html[data-theme="dark"] #queue-monitor-theme-picker{background:#182437;color:#e5eaf3;border-color:#39485e}
+@media(max-width:760px){.qm-topbar-meta #queue-monitor-theme-picker{margin-left:0}}
+@media(max-width:430px){.qm-topbar-meta #queue-monitor-theme-picker{padding:7px 8px}.qm-topbar-meta #queue-monitor-theme-picker select{max-width:88px}}
