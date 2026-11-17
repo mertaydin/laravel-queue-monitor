@@ -402,7 +402,7 @@
                     <span>{{ $qmDisplayValue(__('queue-monitor::messages.search', [], $qmLocale)) }}</span>
                     <input type="search" name="search" value="{{ $qmDisplayValue($qmDisplayValue($search)) }}" placeholder="Name, ID, payload...">
                 </label>
-                <label>
+                <label class="qm-search-field">
                     <span>Job class</span>
                     <input type="search" name="job_class" value="{{ $qmDisplayValue($qmDisplayValue($jobClass)) }}" placeholder="App\\Jobs\\...">
                 </label>
