@@ -24,6 +24,7 @@ class SupervisorControllerTest extends TestCase
 
     public function test_process_controls_require_the_dedicated_management_gate(): void
     {
+        Gate::shouldReceive('has')->once()->with('viewQueueMonitor')->andReturn(false);
         Gate::shouldReceive('authorize')
             ->once()
             ->with('manageQueueWorkers')
@@ -35,6 +36,7 @@ class SupervisorControllerTest extends TestCase
 
     public function test_only_allowlisted_supervisor_processes_can_be_controlled(): void
     {
+        Gate::shouldReceive('has')->once()->with('viewQueueMonitor')->andReturn(false);
         Gate::shouldReceive('authorize')
             ->once()
             ->with('manageQueueWorkers')
@@ -48,6 +50,7 @@ class SupervisorControllerTest extends TestCase
 
     public function test_authorized_process_can_be_started(): void
     {
+        Gate::shouldReceive('has')->once()->with('viewQueueMonitor')->andReturn(false);
         Gate::shouldReceive('authorize')
             ->once()
             ->with('manageQueueWorkers')

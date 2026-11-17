@@ -12,8 +12,6 @@ final class SupervisorController
 {
     public function index(string $server): View
     {
-        Gate::authorize((string) config('queue-monitor.authorization.gate', 'viewQueueMonitor'));
-
         $configuration = $this->serverConfiguration($server);
         $allowedProcesses = array_values(array_filter((array) ($configuration['programs'] ?? []), 'is_string'));
         $processes = [];

@@ -2,7 +2,6 @@
 
 namespace MertAydin\LaravelQueueMonitor\Http\Controllers;
 
-use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use MertAydin\LaravelQueueMonitor\QueueDriverManager;
 use Throwable;
@@ -11,8 +10,6 @@ final class QueueComparisonController
 {
     public function __invoke(QueueDriverManager $manager): View
     {
-        Gate::authorize((string) config('queue-monitor.authorization.gate', 'viewQueueMonitor'));
-
         $rows = [];
 
         foreach ($manager->all() as $connection => $driver) {

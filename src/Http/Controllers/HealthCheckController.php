@@ -3,7 +3,6 @@
 namespace MertAydin\LaravelQueueMonitor\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 use MertAydin\LaravelQueueMonitor\QueueDriverManager;
@@ -14,8 +13,6 @@ final class HealthCheckController
 {
     public function __invoke(QueueDriverManager $manager): View
     {
-        Gate::authorize((string) config('queue-monitor.authorization.gate', 'viewQueueMonitor'));
-
         $checks = [];
         $this->check($checks, 'Application database', function (): string {
             DB::connection()->getPdo();

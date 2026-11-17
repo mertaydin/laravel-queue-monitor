@@ -4,7 +4,6 @@ namespace MertAydin\LaravelQueueMonitor\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use MertAydin\LaravelQueueMonitor\Contracts\QueueDriver;
 use MertAydin\LaravelQueueMonitor\Data\QueueJob;
 use MertAydin\LaravelQueueMonitor\QueueDriverManager;
@@ -110,9 +109,6 @@ final class JobActionController
 
     private function authorizedDriver(string $connection, QueueDriverManager $manager): QueueDriver
     {
-        $gate = (string) config('queue-monitor.authorization.gate', 'viewQueueMonitor');
-
-        Gate::authorize($gate);
         abort_unless($manager->has($connection), 404);
 
         return $manager->driver($connection);
