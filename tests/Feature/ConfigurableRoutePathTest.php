@@ -10,7 +10,6 @@ class ConfigurableRoutePathTest extends TestCase
     {
         config([
             'queue-monitor.path' => '/panel/super/queue-monitor/',
-            'queue-monitor.middleware' => ['web', 'super-admin', 'super-ip'],
         ]);
 
         require dirname(__DIR__, 2).'/routes/web.php';
@@ -21,7 +20,7 @@ class ConfigurableRoutePathTest extends TestCase
         );
 
         $this->assertNotNull($route);
-        $this->assertContains('super-admin', $route->middleware());
-        $this->assertContains('super-ip', $route->middleware());
+        $this->assertContains('web', $route->middleware());
+        $this->assertNotContains('super-admin', $route->middleware());
     }
 }

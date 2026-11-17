@@ -2,7 +2,6 @@
 
 return [
     'path' => env('QUEUE_MONITOR_PATH', 'queue-monitor'),
-    'middleware' => ['web'],
 
     'dashboard' => [
         'locale' => 'en',
