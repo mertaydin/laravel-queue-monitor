@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+## v0.1.18 - 2026-11-17
+
 - Normalize every dashboard value that may originate from driver, worker, history, request or session data before rendering it, preventing arrays from reaching Blade's HTML escaping layer.
 - Place Explore jobs filters directly above the matching results and keep both in view after applying filters or navigating between result pages.
 - Rework the Explore jobs filter layout into a responsive grid so controls and the Apply button stay within the dashboard at desktop, tablet and mobile widths.
