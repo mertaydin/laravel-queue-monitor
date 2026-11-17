@@ -88,63 +88,7 @@
             </section>
         @endif
 
-        <section class="qm-filter-panel">
-            <div class="qm-filter-intro">
-                <span class="qm-filter-icon">⌕</span>
-                <div>
-                    <strong>{{ __('queue-monitor::messages.explore', [], $qmLocale) }}</strong>
-                    <small>{{ __('queue-monitor::messages.choose_connection', [], $qmLocale) }}</small>
-                </div>
-            </div>
-            <form class="qm-filters" method="GET" action="{{ route('queue-monitor.index') }}#qm-jobs-results">
-                <label>
-                    <span>{{ __('queue-monitor::messages.connection', [], $qmLocale) }}</span>
-                    <select name="connection" data-qm-auto-submit>
-                        @forelse ($connectionNames as $connectionName)
-                            <option value="{{ $connectionName }}" @selected($connectionName === $connection)>{{ $connectionName }}</option>
-                        @empty
-                            <option value="">{{ __('queue-monitor::messages.no_connections', [], $qmLocale) }}</option>
-                        @endforelse
-                    </select>
-                </label>
-                <label>
-                    <span>{{ __('queue-monitor::messages.queue', [], $qmLocale) }}</span>
-                    <select name="queue">
-                        @forelse ($queues as $queueName)
-                            <option value="{{ $queueName }}" @selected($queueName === $queue)>{{ $queueName }}</option>
-                        @empty
-                            <option value="">No queues found</option>
-                        @endforelse
-                    </select>
-                </label>
-                <label>
-                    <span>{{ __('queue-monitor::messages.status', [], $qmLocale) }}</span>
-                    <select name="status">
-                        <option value="">{{ __('queue-monitor::messages.all_states', [], $qmLocale) }}</option>
-                        @foreach (['pending' => __('queue-monitor::messages.pending', [], $qmLocale), 'running' => __('queue-monitor::messages.running', [], $qmLocale), 'delayed' => __('queue-monitor::messages.delayed', [], $qmLocale), 'failed' => __('queue-monitor::messages.failed', [], $qmLocale), 'completed' => __('queue-monitor::messages.completed', [], $qmLocale)] as $value => $label)
-                            <option value="{{ $value }}" @selected($status === $value)>{{ $label }}</option>
-                        @endforeach
-                    </select>
-                </label>
-                <label class="qm-search-field">
-                    <span>{{ __('queue-monitor::messages.search', [], $qmLocale) }}</span>
-                    <input type="search" name="search" value="{{ $search }}" placeholder="Name, ID, payload...">
-                </label>
-                <label>
-                    <span>Job class</span>
-                    <input type="search" name="job_class" value="{{ $jobClass }}" placeholder="App\\Jobs\\...">
-                </label>
-                <label>
-                    <span>From</span>
-                    <input type="date" name="date_from" value="{{ $dateFrom }}">
-                </label>
-                <label>
-                    <span>To</span>
-                    <input type="date" name="date_to" value="{{ $dateTo }}">
-                </label>
-                <button class="qm-filter-button" type="submit">{{ __('queue-monitor::messages.apply', [], $qmLocale) }} <span>→</span></button>
-            </form>
-        </section>
+
 
         @if (session('status'))
             <div class="qm-alert qm-alert-success"><span class="qm-alert-icon">✓</span><div><strong>{{ session('status') }}</strong></div></div>
@@ -401,6 +345,64 @@
                 <div class="qm-info-note"><strong>Beanstalkd visibility:</strong> reserved job counts are available, but the Beanstalkd protocol does not expose reserved job payloads for listing. Only the next ready, delayed and buried job can be inspected per tube.</div>
             @endif
 
+                    <section id="qm-explore-jobs" class="qm-filter-panel" tabindex="-1">
+            <div class="qm-filter-intro">
+                <span class="qm-filter-icon">⌕</span>
+                <div>
+                    <strong>{{ __('queue-monitor::messages.explore', [], $qmLocale) }}</strong>
+                    <small>{{ __('queue-monitor::messages.choose_connection', [], $qmLocale) }}</small>
+                </div>
+            </div>
+            <form class="qm-filters" method="GET" action="{{ route('queue-monitor.index') }}#qm-jobs-results">
+                <label>
+                    <span>{{ __('queue-monitor::messages.connection', [], $qmLocale) }}</span>
+                    <select name="connection" data-qm-auto-submit>
+                        @forelse ($connectionNames as $connectionName)
+                            <option value="{{ $connectionName }}" @selected($connectionName === $connection)>{{ $connectionName }}</option>
+                        @empty
+                            <option value="">{{ __('queue-monitor::messages.no_connections', [], $qmLocale) }}</option>
+                        @endforelse
+                    </select>
+                </label>
+                <label>
+                    <span>{{ __('queue-monitor::messages.queue', [], $qmLocale) }}</span>
+                    <select name="queue">
+                        @forelse ($queues as $queueName)
+                            <option value="{{ $queueName }}" @selected($queueName === $queue)>{{ $queueName }}</option>
+                        @empty
+                            <option value="">No queues found</option>
+                        @endforelse
+                    </select>
+                </label>
+                <label>
+                    <span>{{ __('queue-monitor::messages.status', [], $qmLocale) }}</span>
+                    <select name="status">
+                        <option value="">{{ __('queue-monitor::messages.all_states', [], $qmLocale) }}</option>
+                        @foreach (['pending' => __('queue-monitor::messages.pending', [], $qmLocale), 'running' => __('queue-monitor::messages.running', [], $qmLocale), 'delayed' => __('queue-monitor::messages.delayed', [], $qmLocale), 'failed' => __('queue-monitor::messages.failed', [], $qmLocale), 'completed' => __('queue-monitor::messages.completed', [], $qmLocale)] as $value => $label)
+                            <option value="{{ $value }}" @selected($status === $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </label>
+                <label class="qm-search-field">
+                    <span>{{ __('queue-monitor::messages.search', [], $qmLocale) }}</span>
+                    <input type="search" name="search" value="{{ $search }}" placeholder="Name, ID, payload...">
+                </label>
+                <label>
+                    <span>Job class</span>
+                    <input type="search" name="job_class" value="{{ $jobClass }}" placeholder="App\\Jobs\\...">
+                </label>
+                <label>
+                    <span>From</span>
+                    <input type="date" name="date_from" value="{{ $dateFrom }}">
+                </label>
+                <label>
+                    <span>To</span>
+                    <input type="date" name="date_to" value="{{ $dateTo }}">
+                </label>
+                <button class="qm-filter-button" type="submit">{{ __('queue-monitor::messages.apply', [], $qmLocale) }} <span>→</span></button>
+            </form>
+        </section>
+
             <section id="qm-jobs-results" class="qm-panel qm-jobs-panel" tabindex="-1">
                 <div class="qm-panel-heading qm-jobs-heading">
                     <div><h3>Recent jobs</h3><p>Inspect payloads and execution details for {{ $queue ?? 'this connection' }}</p></div>
@@ -497,10 +499,10 @@
                                 @if ($jobs->onFirstPage())
                                     <span class="is-disabled">Previous</span>
                                 @else
-                                    <a href="{{ $jobs->previousPageUrl() }}#qm-jobs-results">Previous</a>
+                                    <a href="{{ $jobs->previousPageUrl() }}#qm-explore-jobs">Previous</a>
                                 @endif
                                 @if ($jobs->hasMorePages())
-                                    <a href="{{ $jobs->nextPageUrl() }}#qm-jobs-results">Next</a>
+                                    <a href="{{ $jobs->nextPageUrl() }}#qm-explore-jobs">Next</a>
                                 @else
                                     <span class="is-disabled">Next</span>
                                 @endif
