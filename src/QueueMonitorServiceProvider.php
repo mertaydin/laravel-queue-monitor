@@ -78,6 +78,7 @@ class QueueMonitorServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         $this->publishes([
             __DIR__.'/../resources/css/queue-monitor.css' => public_path('vendor/queue-monitor/queue-monitor.css'),
+            __DIR__.'/../resources/js/queue-monitor.js' => public_path('vendor/queue-monitor/queue-monitor.js'),
         ], 'queue-monitor-assets');
         $this->registerConfiguredDrivers();
 

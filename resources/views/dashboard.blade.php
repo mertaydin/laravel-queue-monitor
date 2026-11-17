@@ -13,6 +13,7 @@
     <meta name="color-scheme" content="light dark">
     <title>Queue Monitor</title>
     <link rel="stylesheet" href="{{ asset('vendor/queue-monitor/queue-monitor.css') }}">
+    <script src="{{ asset('vendor/queue-monitor/queue-monitor.js') }}" defer></script>
 </head>
 <body>
 <div class="qm-shell">
@@ -97,7 +98,7 @@
             <form class="qm-filters" method="GET" action="{{ route('queue-monitor.index') }}">
                 <label>
                     <span>{{ __('queue-monitor::messages.connection', [], $qmLocale) }}</span>
-                    <select name="connection" onchange="this.form.submit()">
+                    <select name="connection" data-qm-auto-submit>
                         @forelse ($connectionNames as $connectionName)
                             <option value="{{ $connectionName }}" @selected($connectionName === $connection)>{{ $connectionName }}</option>
                         @empty
@@ -248,7 +249,7 @@
                         <input type="hidden" name="connection" value="{{ $connection }}">
                         <input type="hidden" name="queue" value="{{ $queue }}">
                         <input type="hidden" name="status" value="{{ $status }}">
-                        <select name="period" aria-label="Analytics period" onchange="this.form.submit()">
+                        <select name="period" aria-label="Analytics period" data-qm-auto-submit>
                             <option value="24h" @selected($period === '24h')>{{ __('queue-monitor::messages.last_24_hours', [], $qmLocale) }}</option>
                             <option value="7d" @selected($period === '7d')>{{ __('queue-monitor::messages.last_7_days', [], $qmLocale) }}</option>
                             <option value="30d" @selected($period === '30d')>{{ __('queue-monitor::messages.last_30_days', [], $qmLocale) }}</option>
