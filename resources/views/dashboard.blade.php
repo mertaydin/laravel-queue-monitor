@@ -1,4 +1,19 @@
 @php
+    $qmDisplayValue = static function ($value): string {
+        if ($value === null) {
+            return '';
+        }
+
+        if (is_string($value) || is_numeric($value)) {
+            return (string) $value;
+        }
+
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
+
+        return json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '';
+    };
     $qmAvailableLocales = config('queue-monitor.dashboard.available_locales', ['tr', 'en', 'zh_CN', 'hi', 'es', 'ar']);
     $qmDefaultLocale = config('queue-monitor.dashboard.locale', 'en');
     $qmRequestedLocale = request()->query('locale', request()->cookie('queue_monitor_locale', $qmDefaultLocale));
@@ -447,7 +462,7 @@
                                     <td><input class="qm-job-select" type="checkbox" name="compare_ids[]" value="{{ $job->id }}" form="qm-compare-form" aria-label="Compare {{ $job->name ?: $job->id }}"></td>
                                     <td><input class="qm-job-select" type="checkbox" name="job_ids[]" value="{{ $job->id }}" form="qm-bulk-form" aria-label="Select {{ $job->name ?: $job->id }}"></td>
                                     <td>
-                                        <a class="qm-job-name" href="{{ route('queue-monitor.jobs.show', ['connection' => $connection, 'jobId' => $job->id, 'queue' => $queue]) }}">{{ $job->name ?: 'Unnamed job' }}</a>
+                                        <a class="qm-job-name" href="{{ route('queue-monitor.jobs.show', ['connection' => $connection, 'jobId' => $job->id, 'queue' => $queue]) }}">{{ $qmDisplayValue($job->name) ?: 'Unnamed job' }}</a>
                                         <code>{{ \Illuminate\Support\Str::limit($job->id, 22) }}</code>
                                     </td>
                                     <td><span class="qm-status status-{{ $jobStatusClass }}"><i></i>{{ ucfirst($job->status) }}</span></td>
@@ -462,7 +477,7 @@
                                         @elseif ($job->exception)
                                             <details class="qm-payload">
                                                 <summary>{{ __('queue-monitor::messages.view_exception', [], $qmLocale) }} <span>↗</span></summary>
-                                                <pre>{{ $job->exception }}</pre>
+                                                <pre>{{ $qmDisplayValue($job->exception) }}</pre>
                                             </details>
                                         @else
                                             <span class="qm-muted">{{ __('queue-monitor::messages.no_details', [], $qmLocale) }}</span>
