@@ -96,7 +96,7 @@
                     <small>{{ __('queue-monitor::messages.choose_connection', [], $qmLocale) }}</small>
                 </div>
             </div>
-            <form class="qm-filters" method="GET" action="{{ route('queue-monitor.index') }}">
+            <form class="qm-filters" method="GET" action="{{ route('queue-monitor.index') }}#qm-jobs-results">
                 <label>
                     <span>{{ __('queue-monitor::messages.connection', [], $qmLocale) }}</span>
                     <select name="connection" data-qm-auto-submit>
@@ -401,7 +401,7 @@
                 <div class="qm-info-note"><strong>Beanstalkd visibility:</strong> reserved job counts are available, but the Beanstalkd protocol does not expose reserved job payloads for listing. Only the next ready, delayed and buried job can be inspected per tube.</div>
             @endif
 
-            <section class="qm-panel qm-jobs-panel">
+            <section id="qm-jobs-results" class="qm-panel qm-jobs-panel" tabindex="-1">
                 <div class="qm-panel-heading qm-jobs-heading">
                     <div><h3>Recent jobs</h3><p>Inspect payloads and execution details for {{ $queue ?? 'this connection' }}</p></div>
                     <span class="qm-results-count">{{ $jobs->total() }} results <span>·</span> {{ $jobs->perPage() }} per page</span>
@@ -497,10 +497,10 @@
                                 @if ($jobs->onFirstPage())
                                     <span class="is-disabled">Previous</span>
                                 @else
-                                    <a href="{{ $jobs->previousPageUrl() }}">Previous</a>
+                                    <a href="{{ $jobs->previousPageUrl() }}#qm-jobs-results">Previous</a>
                                 @endif
                                 @if ($jobs->hasMorePages())
-                                    <a href="{{ $jobs->nextPageUrl() }}">Next</a>
+                                    <a href="{{ $jobs->nextPageUrl() }}#qm-jobs-results">Next</a>
                                 @else
                                     <span class="is-disabled">Next</span>
                                 @endif

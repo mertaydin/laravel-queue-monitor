@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- Keep job results in view after applying Explore jobs filters and when navigating between result pages.
+- Rework the Explore jobs filter layout into a responsive grid so controls and the Apply button stay within the dashboard at desktop, tablet and mobile widths.
 - Move dashboard theme and language preference handling into published same-origin assets for strict Content Security Policy compatibility.
 
 ## [0.1.13] - 2026-11-17
