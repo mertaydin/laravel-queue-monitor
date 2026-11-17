@@ -76,7 +76,7 @@
             <form method="POST" action="{{ route('queue-monitor.preferences') }}">
                 @csrf
                 @foreach (['analytics' => __('queue-monitor::messages.performance', [], $qmLocale), 'workers' => __('queue-monitor::messages.workers', [], $qmLocale), 'distribution' => __('queue-monitor::messages.distribution', [], $qmLocale), 'capabilities' => __('queue-monitor::messages.capabilities', [], $qmLocale)] as $widget => $label)
-                    <label><input type="checkbox" name="widgets[]" value="{{ $widget }}" @checked(in_array($widget, $visibleWidgets, true))> {{ $label }}</label>
+                    <label><input type="checkbox" name="widgets[]" value="{{ $widget }}" @checked(in_array($widget, $visibleWidgets, true))> {{ $qmDisplayValue($label) }}</label>
                 @endforeach
                 <label class="qm-refresh-preference"><span>{{ __('queue-monitor::messages.auto_refresh', [], $qmLocale) }}</span><select name="refresh"><option value="0" @selected($refreshInterval === 0)>Off</option><option value="15" @selected($refreshInterval === 15)>15 seconds</option><option value="30" @selected($refreshInterval === 30)>30 seconds</option><option value="60" @selected($refreshInterval === 60)>60 seconds</option></select></label>
                 <button type="submit">{{ __('queue-monitor::messages.save', [], $qmLocale) }}</button>
@@ -90,8 +90,8 @@
                        href="{{ route('queue-monitor.index', ['connection' => $card['connection']]) }}">
                         <span class="qm-connection-icon">{{ strtoupper(substr($card['driver'], 0, 1)) }}</span>
                         <span class="qm-connection-copy">
-                            <strong>{{ $card['connection'] }}</strong>
-                            <small>{{ ucfirst($card['driver']) }} driver</small>
+                            <strong>{{ $qmDisplayValue($card['connection'] ?? null) }}</strong>
+                            <small>{{ ucfirst($qmDisplayValue($card['driver'] ?? null)) }} driver</small>
                         </span>
                         @if ($card['error'])
                             <span class="qm-connection-state is-error">{{ __('queue-monitor::messages.unavailable', [], $qmLocale) }}</span>
@@ -129,7 +129,7 @@
             <section class="qm-section-heading">
                 <div>
                     <p class="qm-eyebrow">{{ __('queue-monitor::messages.current_workload', [], $qmLocale) }}</p>
-                    <h2>{{ $queue ?? 'All queues' }} <span class="qm-driver-tag">{{ ucfirst($qmDisplayValue($driverName)) }}</span></h2>
+                    <h2>{{ $qmDisplayValue($queue ?? 'All queues') }} <span class="qm-driver-tag">{{ ucfirst($qmDisplayValue($driverName)) }}</span></h2>
                 </div>
                 <span class="qm-total-label">{{ number_format($totalJobs) }} {{ __('queue-monitor::messages.tracked_jobs', [], $qmLocale) }}</span>
             </section>
@@ -206,9 +206,9 @@
                 <div class="qm-panel-heading">
                     <div><h3>{{ __('queue-monitor::messages.job_activity', [], $qmLocale) }}</h3><p>{{ __('queue-monitor::messages.completed', [], $qmLocale) }} and failed jobs from persistent history</p></div>
                     <form method="GET" action="{{ route('queue-monitor.index') }}" class="qm-period-form">
-                        <input type="hidden" name="connection" value="{{ $connection }}">
-                        <input type="hidden" name="queue" value="{{ $queue }}">
-                        <input type="hidden" name="status" value="{{ $status }}">
+                        <input type="hidden" name="connection" value="{{ $qmDisplayValue($connection) }}">
+                        <input type="hidden" name="queue" value="{{ $qmDisplayValue($queue) }}">
+                        <input type="hidden" name="status" value="{{ $qmDisplayValue($status) }}">
                         <select name="period" aria-label="Analytics period" data-qm-auto-submit>
                             <option value="24h" @selected($period === '24h')>{{ __('queue-monitor::messages.last_24_hours', [], $qmLocale) }}</option>
                             <option value="7d" @selected($period === '7d')>{{ __('queue-monitor::messages.last_7_days', [], $qmLocale) }}</option>
@@ -226,13 +226,13 @@
                     @php $chartMax = max(1, ...$analytics['completed'], ...$analytics['failed']); @endphp
                     <div class="qm-activity-chart" role="img" aria-label="{{ __('queue-monitor::messages.completed', [], $qmLocale) }} and failed job activity">
                         @foreach ($analytics['labels'] as $index => $label)
-                            <div class="qm-chart-column" title="{{ $label }}: {{ $analytics['completed'][$index] }} completed, {{ $analytics['failed'][$index] }} failed">
+                            <div class="qm-chart-column" title="{{ $qmDisplayValue($label) }}: {{ $analytics['completed'][$index] }} completed, {{ $analytics['failed'][$index] }} failed">
                                 <div class="qm-chart-bars">
                                     <i class="qm-chart-completed" style="height: {{ max(2, ($analytics['completed'][$index] / $chartMax) * 100) }}%"></i>
                                     <i class="qm-chart-failed" style="height: {{ max(2, ($analytics['failed'][$index] / $chartMax) * 100) }}%"></i>
                                 </div>
                                 @if (count($analytics['labels']) <= 7 || $index % 3 === 0)
-                                    <small>{{ $label }}</small>
+                                    <small>{{ $qmDisplayValue($label) }}</small>
                                 @endif
                             </div>
                         @endforeach
@@ -294,7 +294,7 @@
                     <div class="qm-workers-grid">
                         @foreach ($workers as $worker)
                             <article class="qm-worker-card">
-                                <div class="qm-worker-top"><strong>{{ $qmDisplayValue($worker->hostname) }}:{{ $worker->process_id }}</strong><span class="qm-worker-state worker-{{ $worker->display_status }}"><i></i>{{ ucfirst($worker->display_status) }}</span></div>
+                                <div class="qm-worker-top"><strong>{{ $qmDisplayValue($worker->hostname) }}:{{ $qmDisplayValue($worker->process_id) }}</strong><span class="qm-worker-state worker-{{ $worker->display_status }}"><i></i>{{ ucfirst($worker->display_status) }}</span></div>
                                 <div class="qm-worker-meta"><span>{{ $qmDisplayValue($worker->connection) }}</span><span>{{ __('queue-monitor::messages.queue', [], $qmLocale) }}: {{ $qmDisplayValue($worker->queue) ?: '—' }}</span></div>
                                 <small>Last heartbeat: {{ $worker->heartbeat_at ? \Illuminate\Support\Carbon::parse($worker->heartbeat_at)->diffForHumans() : 'Unknown' }}</small>
                             </article>
@@ -348,7 +348,7 @@
                             'can_delete' => 'Delete jobs',
                             'has_persistent_history' => 'Persistent history',
                         ] as $key => $label)
-                            <div><span>{{ $label }}</span><b class="{{ ($capabilities[$key] ?? false) ? 'is-enabled' : 'is-disabled' }}">{{ ($capabilities[$key] ?? false) ? 'Available' : 'Not available' }}</b></div>
+                            <div><span>{{ $qmDisplayValue($label) }}</span><b class="{{ ($capabilities[$key] ?? false) ? 'is-enabled' : 'is-disabled' }}">{{ ($capabilities[$key] ?? false) ? 'Available' : 'Not available' }}</b></div>
                         @endforeach
                     </div>
                 </article>
@@ -373,7 +373,7 @@
                     <span>{{ __('queue-monitor::messages.connection', [], $qmLocale) }}</span>
                     <select name="connection" data-qm-auto-submit>
                         @forelse ($connectionNames as $connectionName)
-                            <option value="{{ $connectionName }}" @selected($connectionName === $connection)>{{ $connectionName }}</option>
+                            <option value="{{ $qmDisplayValue($connectionName) }}" @selected($connectionName === $connection)>{{ $qmDisplayValue($connectionName) }}</option>
                         @empty
                             <option value="">{{ __('queue-monitor::messages.no_connections', [], $qmLocale) }}</option>
                         @endforelse
@@ -383,7 +383,7 @@
                     <span>{{ __('queue-monitor::messages.queue', [], $qmLocale) }}</span>
                     <select name="queue">
                         @forelse ($queues as $queueName)
-                            <option value="{{ $queueName }}" @selected($queueName === $queue)>{{ $queueName }}</option>
+                            <option value="{{ $qmDisplayValue($queueName) }}" @selected($queueName === $queue)>{{ $qmDisplayValue($queueName) }}</option>
                         @empty
                             <option value="">No queues found</option>
                         @endforelse
@@ -394,25 +394,25 @@
                     <select name="status">
                         <option value="">{{ __('queue-monitor::messages.all_states', [], $qmLocale) }}</option>
                         @foreach (['pending' => __('queue-monitor::messages.pending', [], $qmLocale), 'running' => __('queue-monitor::messages.running', [], $qmLocale), 'delayed' => __('queue-monitor::messages.delayed', [], $qmLocale), 'failed' => __('queue-monitor::messages.failed', [], $qmLocale), 'completed' => __('queue-monitor::messages.completed', [], $qmLocale)] as $value => $label)
-                            <option value="{{ $value }}" @selected($status === $value)>{{ $label }}</option>
+                            <option value="{{ $value }}" @selected($status === $value)>{{ $qmDisplayValue($label) }}</option>
                         @endforeach
                     </select>
                 </label>
                 <label class="qm-search-field">
                     <span>{{ __('queue-monitor::messages.search', [], $qmLocale) }}</span>
-                    <input type="search" name="search" value="{{ $search }}" placeholder="Name, ID, payload...">
+                    <input type="search" name="search" value="{{ $qmDisplayValue($search) }}" placeholder="Name, ID, payload...">
                 </label>
                 <label>
                     <span>Job class</span>
-                    <input type="search" name="job_class" value="{{ $jobClass }}" placeholder="App\\Jobs\\...">
+                    <input type="search" name="job_class" value="{{ $qmDisplayValue($jobClass) }}" placeholder="App\\Jobs\\...">
                 </label>
                 <label>
                     <span>From</span>
-                    <input type="date" name="date_from" value="{{ $dateFrom }}">
+                    <input type="date" name="date_from" value="{{ $qmDisplayValue($dateFrom) }}">
                 </label>
                 <label>
                     <span>To</span>
-                    <input type="date" name="date_to" value="{{ $dateTo }}">
+                    <input type="date" name="date_to" value="{{ $qmDisplayValue($dateTo) }}">
                 </label>
                 <button class="qm-filter-button" type="submit">{{ __('queue-monitor::messages.apply', [], $qmLocale) }} <span>→</span></button>
             </form>
@@ -432,13 +432,13 @@
                 @else
                     <form id="qm-compare-form" method="POST" action="{{ route('queue-monitor.jobs.compare', ['connection' => $connection]) }}" class="qm-compare-toolbar">
                         @csrf
-                        <input type="hidden" name="queue" value="{{ $queue }}">
+                        <input type="hidden" name="queue" value="{{ $qmDisplayValue($queue) }}">
                         <span>{{ __('queue-monitor::messages.payload', [], $qmLocale) }} comparison</span>
                         <button type="submit" onclick="return confirm('Compare the two selected job payloads?')">Compare selected (choose 2)</button>
                     </form>
                     <form id="qm-bulk-form" method="POST" action="{{ route('queue-monitor.jobs.bulk', ['connection' => $connection]) }}" class="qm-bulk-toolbar">
                         @csrf
-                        <input type="hidden" name="queue" value="{{ $queue }}">
+                        <input type="hidden" name="queue" value="{{ $qmDisplayValue($queue) }}">
                         <label><span>Selected jobs</span><select name="action" required><option value="retry">Retry selected</option><option value="delete">Delete selected</option></select></label>
                         <button type="submit" onclick="return confirm('Apply this action to the selected jobs?')">Run bulk action</button>
                         <small>Up to 100 jobs per operation</small>
@@ -459,15 +459,15 @@
                                     };
                                 @endphp
                                 <tr>
-                                    <td><input class="qm-job-select" type="checkbox" name="compare_ids[]" value="{{ $job->id }}" form="qm-compare-form" aria-label="Compare {{ $job->name ?: $job->id }}"></td>
-                                    <td><input class="qm-job-select" type="checkbox" name="job_ids[]" value="{{ $job->id }}" form="qm-bulk-form" aria-label="Select {{ $job->name ?: $job->id }}"></td>
+                                    <td><input class="qm-job-select" type="checkbox" name="compare_ids[]" value="{{ $qmDisplayValue($job->id) }}" form="qm-compare-form" aria-label="Compare {{ $qmDisplayValue($job->name) ?: $qmDisplayValue($job->id) }}"></td>
+                                    <td><input class="qm-job-select" type="checkbox" name="job_ids[]" value="{{ $qmDisplayValue($job->id) }}" form="qm-bulk-form" aria-label="Select {{ $qmDisplayValue($job->name) ?: $qmDisplayValue($job->id) }}"></td>
                                     <td>
                                         <a class="qm-job-name" href="{{ route('queue-monitor.jobs.show', ['connection' => $connection, 'jobId' => $job->id, 'queue' => $queue]) }}">{{ $qmDisplayValue($job->name) ?: 'Unnamed job' }}</a>
                                         <code>{{ \Illuminate\Support\Str::limit($job->id, 22) }}</code>
                                     </td>
                                     <td><span class="qm-status status-{{ $jobStatusClass }}"><i></i>{{ ucfirst($qmDisplayValue($job->status)) }}</span></td>
                                     <td>{{ $qmDisplayValue($job->attempts) ?: '—' }}</td>
-                                    <td>{{ $job->createdAt ? date('d M Y, H:i', $job->createdAt) : '—' }}</td>
+                                    <td>{{ $job->createdAt ? date('d M Y, H:i', (int) $job->createdAt) : '—' }}</td>
                                     <td>
                                         @if ($job->payload !== null)
                                             <details class="qm-payload">
@@ -488,7 +488,7 @@
                                             @if (($capabilities['can_retry'] ?? false) && in_array($job->status, ['failed', 'delayed', 'running'], true))
                                                 <form method="POST" action="{{ route('queue-monitor.jobs.retry', ['connection' => $connection, 'jobId' => $job->id]) }}">
                                                     @csrf
-                                                    <input type="hidden" name="queue" value="{{ $queue }}">
+                                                    <input type="hidden" name="queue" value="{{ $qmDisplayValue($queue) }}">
                                                     <button class="qm-action-button action-retry" type="submit">Retry</button>
                                                 </form>
                                             @endif
@@ -496,7 +496,7 @@
                                                 <form method="POST" action="{{ route('queue-monitor.jobs.delete', ['connection' => $connection, 'jobId' => $job->id]) }}" onsubmit="return confirm('Delete this job?')">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <input type="hidden" name="queue" value="{{ $queue }}">
+                                                    <input type="hidden" name="queue" value="{{ $qmDisplayValue($queue) }}">
                                                     <button class="qm-action-button action-delete" type="submit">Delete</button>
                                                 </form>
                                             @endif
