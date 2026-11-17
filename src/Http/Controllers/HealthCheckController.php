@@ -86,6 +86,20 @@ final class HealthCheckController
                 'message' => $callback(),
             ];
         } catch (Throwable $exception) {
+            $missingPhpRedis = $exception instanceof \\Error
+                && str_contains($exception->getMessage(), 'Class "Redis" not found')
+                && str_contains($exception->getFile(), 'PhpRedisConnector.php');
+
+            if ($missingPhpRedis) {
+                $checks[] = [
+                    'name' => $name,
+                    'status' => 'warning',
+                    'message' => 'The PHP Redis extension (phpredis) is not installed or enabled for this PHP runtime. Install/enable it to inspect this Redis queue connection.',
+                ];
+
+                return;
+            }
+
             report($exception);
 
             $checks[] = [
