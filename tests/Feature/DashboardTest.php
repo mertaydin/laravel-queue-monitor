@@ -36,6 +36,17 @@ class DashboardTest extends TestCase
             ]);
     }
 
+    public function test_dashboard_renders_array_flash_status_without_htmlspecialchars_error(): void
+    {
+        Gate::shouldReceive('has')->once()->with('viewQueueMonitor')->andReturn(true);
+        Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andReturn(true);
+
+        $this->withSession(['status' => ['message' => 'Preferences saved']])
+            ->get('/queue-monitor')
+            ->assertOk()
+            ->assertSee('Preferences saved');
+    }
+
     public function test_dashboard_language_can_be_changed_without_javascript_url_construction(): void
     {
         Gate::shouldReceive('has')->once()->with('viewQueueMonitor')->andReturn(true);
