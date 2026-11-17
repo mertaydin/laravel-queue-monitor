@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- Treat a missing PhpRedis extension as a Redis health-check warning instead of logging an application error with a full stack trace.
+
 ## v0.1.21 - 2026-11-17
 
 - Normalize every dashboard value that may originate from driver, worker, history, request or session data before rendering it, preventing arrays from reaching Blade's HTML escaping layer.
