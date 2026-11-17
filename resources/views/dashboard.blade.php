@@ -188,7 +188,7 @@
                         <div class="qm-sla-queues">
                             @foreach ($sla['queues'] as $slaQueue)
                                 <div class="qm-sla-queue-row">
-                                    <div><strong>{{ $slaQueue['queue'] }}</strong><small>Target: {{ $slaQueue['threshold'] }} sec</small></div>
+                                    <div><strong>{{ $qmDisplayValue($slaQueue['queue'] ?? null) }}</strong><small>Target: {{ $qmDisplayValue($slaQueue['threshold'] ?? null) }} sec</small></div>
                                     <span>{{ number_format($slaQueue['within']) }} / {{ number_format($slaQueue['total']) }} within target</span>
                                     <strong>{{ number_format($slaQueue['rate'], 1) }}%</strong>
                                 </div>
@@ -242,7 +242,7 @@
                         <div class="qm-slowest-jobs">
                             <strong>Slowest job classes by average duration</strong>
                             @foreach ($analytics['top_classes'] as $jobClass)
-                                <div><span>{{ $jobClass['name'] }} <small>· {{ number_format($jobClass['count']) }} jobs</small></span><b>{{ number_format($jobClass['average_duration']) }} ms avg.</b></div>
+                                <div><span>{{ $qmDisplayValue($jobClass['name'] ?? null) }} <small>· {{ number_format($jobClass['count']) }} jobs</small></span><b>{{ number_format($jobClass['average_duration']) }} ms avg.</b></div>
                             @endforeach
                         </div>
                     @endif
@@ -250,7 +250,7 @@
                         <div class="qm-slowest-jobs">
                             <strong>Slowest completed jobs</strong>
                             @foreach ($analytics['slowest'] as $slowJob)
-                                <div><span>{{ $slowJob->job_name ?: $slowJob->job_id }}</span><b>{{ number_format((int) $slowJob->duration_ms) }} ms</b></div>
+                                <div><span>{{ $qmDisplayValue($slowJob->job_name) ?: $qmDisplayValue($slowJob->job_id) }}</span><b>{{ number_format((int) $slowJob->duration_ms) }} ms</b></div>
                             @endforeach
                         </div>
                     @endif
@@ -274,7 +274,7 @@
         @if (in_array('workers', $visibleWidgets, true) && $workerCapacity['available'])
             <section class="qm-panel qm-workers-panel">
                 <div class="qm-panel-heading">
-                    <div><h3>Worker capacity</h3><p>Live heartbeat counts · {{ $queue ? 'Queue: '.$queue : 'All queues' }}</p></div>
+                    <div><h3>Worker capacity</h3><p>Live heartbeat counts · {{ $qmDisplayValue($queue ? 'Queue: '.$queue : 'All queues') }}</p></div>
                     <span class="qm-results-count">{{ count($workers) }} tracked</span>
                 </div>
                 <div class="qm-worker-capacity-grid">
@@ -296,7 +296,7 @@
                             <article class="qm-worker-card">
                                 <div class="qm-worker-top"><strong>{{ $qmDisplayValue($worker->hostname) }}:{{ $qmDisplayValue($worker->process_id) }}</strong><span class="qm-worker-state worker-{{ $worker->display_status }}"><i></i>{{ ucfirst($worker->display_status) }}</span></div>
                                 <div class="qm-worker-meta"><span>{{ $qmDisplayValue($worker->connection) }}</span><span>{{ __('queue-monitor::messages.queue', [], $qmLocale) }}: {{ $qmDisplayValue($worker->queue) ?: '—' }}</span></div>
-                                <small>Last heartbeat: {{ $worker->heartbeat_at ? \Illuminate\Support\Carbon::parse($worker->heartbeat_at)->diffForHumans() : 'Unknown' }}</small>
+                                <small>Last heartbeat: {{ $worker->heartbeat_at ? \Illuminate\Support\Carbon::parse($qmDisplayValue($worker->heartbeat_at))->diffForHumans() : 'Unknown' }}</small>
                             </article>
                         @endforeach
                     </div>
@@ -420,7 +420,7 @@
 
             <section id="qm-jobs-results" class="qm-panel qm-jobs-panel" tabindex="-1">
                 <div class="qm-panel-heading qm-jobs-heading">
-                    <div><h3>Recent jobs</h3><p>Inspect payloads and execution details for {{ $queue ?? 'this connection' }}</p></div>
+                    <div><h3>Recent jobs</h3><p>Inspect payloads and execution details for {{ $qmDisplayValue($queue ?? 'this connection') }}</p></div>
                     <span class="qm-results-count">{{ $jobs->total() }} results <span>·</span> {{ $jobs->perPage() }} per page</span>
                 </div>
                 @if ($jobs === [])
