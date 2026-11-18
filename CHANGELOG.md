@@ -4,6 +4,11 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+
+## v0.1.23 - 2026-11-18
+
+- Publish a patch release; no functional code changes.
+
 ## v0.1.22 - 2026-11-17
 
 - Treat a missing PhpRedis extension as a Redis health-check warning instead of logging an application error with a full stack trace.
