@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+## v0.1.24 - 2026-11-18
+
+- Refresh the README with newly captured screenshots of the live queue dashboard and queue comparison pages.
+
 
 ## v0.1.23 - 2026-11-18
 
