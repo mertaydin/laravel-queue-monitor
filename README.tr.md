@@ -142,7 +142,7 @@ public function boot(): void
 }
 ```
 
-Erişime izin vermek için `true`, HTTP 403 döndürmek için `false` döndürün. Callback tanımlanmazsa erişim uygulamanızın kimlik doğrulama middleware yapılandırmasına bağlıdır.
+Erişime izin vermek için `true`, HTTP 403 döndürmek için `false` döndürün. Yetkilendirme callback'i açıkça kaydedilene kadar erişim HTTP 403 ile reddedilir. Bu kasıtlıdır: panel işleri yeniden deneyebilir/silebilir ve Supervisor süreçlerini yönetebilir. Kullanıcıyı ve uygun yönetici rolünü kontrol eden bir callback tanımlayın.
 
 `config/queue-monitor.php` içindeki `path` ile panel URL'sini değiştirebilirsiniz. Örneğin `'path' => 'panel/super/queue-monitor'` ayarı paneli `/panel/super/queue-monitor` adresine taşır. Aynı değer `QUEUE_MONITOR_PATH` ortam değişkeniyle de verilebilir; baştaki ve sondaki eğik çizgiler otomatik normalize edilir. Panelde `/queue-monitor/compare` adresinde bağlantılar arası kuyruk karşılaştırması, aranabilir iş listeleri, 25 kayıtlı sayfalama ve özel iş detay sayfası bulunur. Filtreler durum, kuyruk, iş sınıfı, oluşturulma tarih aralığı ve serbest metin aramasını kapsar. Arama iş adı, kimliği, maskelenmiş payload ve exception metnini tarar. Panel bölümleri oturum tabanlı tercihlerle gösterilip gizlenebilir. Otomatik yenileme 15, 30 veya 60 saniyeye ayarlanabilir ya da kapatılabilir. Panel, kullanılabilir iş durumlarını ve işlemleri sürücünün yeteneklerine göre gösterir. Yeniden deneme ve silme kontrolleri yalnızca seçilen durum/sürücü destekliyorsa sunulur. Değişiklikler POST/DELETE rotaları, Laravel CSRF koruması ve aynı callback yetkilendirmesiyle gerçekleştirilir.
 
