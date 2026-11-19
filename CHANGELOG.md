@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.25 - 2026-11-19
+
+- Document all six supported dashboard languages and Arabic right-to-left layout.
+
 ## v0.1.26 - 2026-11-19
 
 - Update the README project status to accurately describe the published pre-1.0 package.
