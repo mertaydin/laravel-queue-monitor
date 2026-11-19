@@ -13,7 +13,8 @@
   "require-dev": {
     "orchestra/testbench": "^10.0|^11.0",
     "phpunit/phpunit": "^10.5|^11.0",
-    "laravel/pint": "^1.0"
+    "laravel/pint": "^1.0",
+    "larastan/larastan": "^2.9 || ^3.0"
   },
   "autoload": {
     "psr-4": {
@@ -34,7 +35,9 @@
   },
   "scripts": {
     "test": "phpunit",
-    "format": "pint"
+    "format": "pint",
+    "analyse": "phpstan analyse --no-progress",
+    "pint-test": "pint --test"
   },
   "config": {
     "sort-packages": true
