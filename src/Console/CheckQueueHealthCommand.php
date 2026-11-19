@@ -74,7 +74,7 @@ final class CheckQueueHealthCommand extends Command
                 ->count();
 
             if ($staleCount > 0) {
-                $this->alert($dispatcher, 'stale-workers', [
+                $this->sendAlert($dispatcher, 'stale-workers', [
                     'event' => 'queue.stale_workers',
                     'message' => 'One or more queue workers have stale heartbeats.',
                     'stale_workers' => $staleCount,
@@ -159,7 +159,7 @@ final class CheckQueueHealthCommand extends Command
             $limit = max(0, min(1, (float) config('queue-monitor.health.failure_rate_warning', 0.05)));
 
             if ($total > 0 && $failed / $total >= $limit) {
-                $this->alert($dispatcher, 'failure-rate', [
+                $this->sendAlert($dispatcher, 'failure-rate', [
                     'event' => 'queue.failure_rate_threshold',
                     'message' => 'Queue job failure rate exceeded the configured threshold.',
                     'completed' => $completed,
