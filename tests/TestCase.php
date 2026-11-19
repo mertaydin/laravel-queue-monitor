@@ -2,10 +2,16 @@
 
 namespace MertAydin\LaravelQueueMonitor\Tests;
 
+use MertAydin\LaravelQueueMonitor\Facades\QueueMonitor;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
 {
+    protected function authorizeDashboard(bool $allowed): void
+    {
+        QueueMonitor::auth(static fn (): bool => $allowed);
+    }
+
     protected function getEnvironmentSetUp($app): void
     {
         $app['config']->set('app.key', 'base64:YWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWE=');
