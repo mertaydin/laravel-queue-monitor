@@ -7,3 +7,7 @@ parameters:
         - src
     tmpDir: .phpstan
     treatPhpDocTypesAsCertain: false
+
+    ignoreErrors:
+        - identifier: class.notFound
+          path: src/Drivers/BeanstalkdQueueDriver.php
