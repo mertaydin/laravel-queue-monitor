@@ -41,6 +41,18 @@ jobs:
         run: |
           composer config repositories.queue-monitor '{"type":"path","url":"../","options":{"symlink":false}}'
           composer require mertaydin/laravel-queue-monitor:@dev --no-interaction
+          cat > app/Providers/AppServiceProvider.php <<'PHP'
+          <?php
+          namespace App\\Providers;
+          use Illuminate\\Http\\Request;
+          use Illuminate\\Support\\ServiceProvider;
+          use MertAydin\\LaravelQueueMonitor\\Facades\\QueueMonitor;
+          class AppServiceProvider extends ServiceProvider {
+              public function boot(): void {
+                  QueueMonitor::auth(static fn (Request $request): bool => true);
+              }
+          }
+          PHP
           find vendor/mertaydin/laravel-queue-monitor/src/Http/Controllers -type f -name '*.php' -exec sed -i '/Gate::authorize(/s/^/\/\/ Authorization bypassed in isolated screenshot host: /' {} +
           php artisan key:generate
           touch database/database.sqlite
