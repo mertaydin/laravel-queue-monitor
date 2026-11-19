@@ -221,6 +221,10 @@ Slack and Teams receive a `text` message. Discord receives `content`. Telegram r
 - **Laravel-native:** Uses Laravel queue events, configuration, and service container.
 
 
+## Dashboard languages
+
+The dashboard includes English, Turkish, Arabic, Spanish, Hindi and Simplified Chinese translations. Arabic uses a right-to-left layout.
+
 ## More documentation
 
 - [Health checks](docs/health-checks.md)
