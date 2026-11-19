@@ -10,15 +10,12 @@ use MertAydin\LaravelQueueMonitor\Tests\TestCase;
 
 class DashboardTest extends TestCase
 {
-    public function test_dashboard_is_accessible_when_the_authorization_gate_is_not_defined(): void
+    public function test_dashboard_is_forbidden_when_no_authorization_callback_is_registered(): void
     {
-
-        $this->get('/queue-monitor')
-            ->assertOk()
-            ->assertSee('Queue Monitor');
+        $this->get('/queue-monitor')->assertForbidden();
     }
 
-    public function test_dashboard_renders_when_the_authorization_gate_allows_access(): void
+    public function test_dashboard_renders_when_the_authorization_callback_allows_access(): void
     {
         $this->authorizeDashboard(true);
 
