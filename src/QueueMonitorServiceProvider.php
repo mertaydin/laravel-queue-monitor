@@ -19,6 +19,7 @@ use MertAydin\LaravelQueueMonitor\Drivers\RedisQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Drivers\SqsQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Drivers\SyncQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Support\PayloadMasker;
+use MertAydin\LaravelQueueMonitor\Services\DashboardAuthorizer;
 
 class QueueMonitorServiceProvider extends ServiceProvider
 {
@@ -27,6 +28,7 @@ class QueueMonitorServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/queue-monitor.php', 'queue-monitor');
 
         $this->app->singleton(QueueDriverManager::class);
+        $this->app->singleton(DashboardAuthorizer::class);
         $this->app->singleton(BeanstalkdQueueDriverFactory::class);
         $this->app->singleton(DatabaseQueueDriverFactory::class);
         $this->app->singleton(RedisQueueDriverFactory::class);
