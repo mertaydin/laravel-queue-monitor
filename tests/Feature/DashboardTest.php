@@ -5,7 +5,6 @@ namespace MertAydin\LaravelQueueMonitor\Tests\Feature;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use MertAydin\LaravelQueueMonitor\Tests\TestCase;
 
