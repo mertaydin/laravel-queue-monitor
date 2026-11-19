@@ -1,11 +1,12 @@
 # Laravel Queue Monitor
 
-[![Tests](https://github.com/mertaydin/laravel-queue-monitor/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/mertaydin/laravel-queue-monitor/actions/workflows/tests.yml)
-[![Latest Version](https://img.shields.io/packagist/v/mertaydin/laravel-queue-monitor.svg?style=flat-square)](https://packagist.org/packages/mertaydin/laravel-queue-monitor)
-[![Total Downloads](https://img.shields.io/packagist/dt/mertaydin/laravel-queue-monitor.svg?style=flat-square)](https://packagist.org/packages/mertaydin/laravel-queue-monitor)
-[![Monthly Downloads](https://img.shields.io/packagist/dm/mertaydin/laravel-queue-monitor.svg?style=flat-square)](https://packagist.org/packages/mertaydin/laravel-queue-monitor)
-[![Daily Downloads](https://img.shields.io/packagist/dd/mertaydin/laravel-queue-monitor.svg?style=flat-square)](https://packagist.org/packages/mertaydin/laravel-queue-monitor)
-[![License](https://img.shields.io/github/license/mertaydin/laravel-queue-monitor.svg?style=flat-square)](LICENSE)
+[![Latest Version](https://img.shields.io/packagist/v/laravel-queue-monitor?label=Packagist)](https://packagist.org/packages/laravel-queue-monitor)
+[![Total Downloads](https://img.shields.io/packagist/dt/laravel-queue-monitor?label=downloads)](https://packagist.org/packages/laravel-queue-monitor)
+[![PHP](https://img.shields.io/packagist/php-v/laravel-queue-monitor?label=PHP)](https://packagist.org/packages/laravel-queue-monitor)
+[![Laravel](https://img.shields.io/badge/Laravel-12%20%7C%2013-FF2D20?logo=laravel&logoColor=white)](https://laravel.com)
+[![CI](https://github.com/mertaydin/laravel-queue-monitor/actions/workflows/tests.yml/badge.svg?branch=main&label=CI)](https://github.com/mertaydin/laravel-queue-monitor/actions/workflows/tests.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 
 A Laravel package for monitoring and managing queues across supported queue connections.
 
