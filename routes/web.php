@@ -11,7 +11,7 @@ use MertAydin\LaravelQueueMonitor\Http\Controllers\JobDetailController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\JobCompareController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\SupervisorController;
 
-Route::middleware(['web', 'auth', AuthorizeDashboard::class])
+Route::middleware(['web', AuthorizeDashboard::class])
     ->prefix(trim((string) config('queue-monitor.path', 'queue-monitor'), '/'))
     ->name('queue-monitor.')
     ->group(function (): void {
