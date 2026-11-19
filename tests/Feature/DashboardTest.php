@@ -13,7 +13,6 @@ class DashboardTest extends TestCase
 {
     public function test_dashboard_is_accessible_when_the_authorization_gate_is_not_defined(): void
     {
-        Gate::shouldReceive('has')->once()->with('viewQueueMonitor')->andReturn(false);
 
         $this->get('/queue-monitor')
             ->assertOk()
@@ -22,8 +21,7 @@ class DashboardTest extends TestCase
 
     public function test_dashboard_renders_when_the_authorization_gate_allows_access(): void
     {
-        Gate::shouldReceive('has')->once()->with('viewQueueMonitor')->andReturn(true);
-        Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andReturn(true);
+        $this->authorizeDashboard(true);
 
         $this->get('/queue-monitor')
             ->assertOk()
@@ -38,8 +36,7 @@ class DashboardTest extends TestCase
 
     public function test_dashboard_renders_array_flash_status_without_htmlspecialchars_error(): void
     {
-        Gate::shouldReceive('has')->once()->with('viewQueueMonitor')->andReturn(true);
-        Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andReturn(true);
+        $this->authorizeDashboard(true);
 
         $this->withSession(['status' => ['message' => 'Preferences saved']])
             ->get('/queue-monitor')
@@ -49,8 +46,7 @@ class DashboardTest extends TestCase
 
     public function test_dashboard_language_can_be_changed_without_javascript_url_construction(): void
     {
-        Gate::shouldReceive('has')->once()->with('viewQueueMonitor')->andReturn(true);
-        Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andReturn(true);
+        $this->authorizeDashboard(true);
 
         $this->get('/queue-monitor?locale=tr&connection=sync')
             ->assertOk()
@@ -64,8 +60,7 @@ class DashboardTest extends TestCase
 
     public function test_dashboard_summarizes_active_stale_and_stopped_workers(): void
     {
-        Gate::shouldReceive('has')->once()->with('viewQueueMonitor')->andReturn(true);
-        Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andReturn(true);
+        $this->authorizeDashboard(true);
 
         config(['queue-monitor.workers.connection' => null, 'queue-monitor.workers.stale_after_seconds' => 90]);
 
