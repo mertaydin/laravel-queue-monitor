@@ -18,8 +18,8 @@ use MertAydin\LaravelQueueMonitor\Drivers\DatabaseQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Drivers\RedisQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Drivers\SqsQueueDriverFactory;
 use MertAydin\LaravelQueueMonitor\Drivers\SyncQueueDriverFactory;
-use MertAydin\LaravelQueueMonitor\Support\PayloadMasker;
 use MertAydin\LaravelQueueMonitor\Services\DashboardAuthorizer;
+use MertAydin\LaravelQueueMonitor\Support\PayloadMasker;
 
 class QueueMonitorServiceProvider extends ServiceProvider
 {
