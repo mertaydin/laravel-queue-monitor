@@ -4,18 +4,16 @@ namespace MertAydin\LaravelQueueMonitor\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
+use MertAydin\LaravelQueueMonitor\Services\DashboardAuthorizer;
 use Symfony\Component\HttpFoundation\Response;
 
 final class AuthorizeDashboard
 {
+    public function __construct(private readonly DashboardAuthorizer $authorizer) {}
+
     public function handle(Request $request, Closure $next): Response
     {
-        $ability = (string) config('queue-monitor.authorization.gate', 'viewQueueMonitor');
-
-        if (Gate::has($ability)) {
-            Gate::authorize($ability);
-        }
+        abort_unless($this->authorizer->allows($request), 403);
 
         return $next($request);
     }
