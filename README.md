@@ -287,3 +287,7 @@ Existing installations should run `php artisan migrate` to add enqueue-time trac
 - [Changelog](CHANGELOG.md)
 - [GitHub releases](https://github.com/mertaydin/laravel-queue-monitor/releases)
 - [Report an issue or request a feature](https://github.com/mertaydin/laravel-queue-monitor/issues)
+
+---
+
+**Dil / Language:** [Türkçe README](README.tr.md) · [English README](README.md)
