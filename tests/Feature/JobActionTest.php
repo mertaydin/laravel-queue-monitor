@@ -14,8 +14,7 @@ class JobActionTest extends TestCase
 {
     public function test_retry_action_is_denied_without_the_authorization_gate(): void
     {
-        Gate::shouldReceive('has')->once()->with('viewQueueMonitor')->andReturn(true);
-        Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andThrow(new AuthorizationException);
+        $this->authorizeDashboard(false);
 
         $this->post('/queue-monitor/unknown/jobs/123/retry', ['queue' => 'default'])
             ->assertForbidden();
@@ -23,8 +22,7 @@ class JobActionTest extends TestCase
 
     public function test_delete_action_is_denied_without_the_authorization_gate(): void
     {
-        Gate::shouldReceive('has')->once()->with('viewQueueMonitor')->andReturn(true);
-        Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andThrow(new AuthorizationException);
+        $this->authorizeDashboard(false);
 
         $this->delete('/queue-monitor/unknown/jobs/123', ['queue' => 'default'])
             ->assertForbidden();
@@ -32,8 +30,7 @@ class JobActionTest extends TestCase
 
     public function test_retry_action_is_denied_when_the_driver_does_not_support_it(): void
     {
-        Gate::shouldReceive('has')->once()->with('viewQueueMonitor')->andReturn(true);
-        Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andReturn(true);
+        $this->authorizeDashboard(true);
 
         $this->post('/queue-monitor/unknown/jobs/123/retry', ['queue' => 'default'])
             ->assertNotFound();
@@ -41,8 +38,7 @@ class JobActionTest extends TestCase
 
     public function test_queue_specific_retry_limit_blocks_manual_retry(): void
     {
-        Gate::shouldReceive('has')->once()->with('viewQueueMonitor')->andReturn(true);
-        Gate::shouldReceive('authorize')->once()->with('viewQueueMonitor')->andReturn(true);
+        $this->authorizeDashboard(true);
 
         config([
             'queue-monitor.retry.max_attempts' => 0,
