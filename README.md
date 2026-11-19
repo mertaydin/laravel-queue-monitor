@@ -142,7 +142,7 @@ public function boot(): void
 }
 ```
 
-Return `true` to allow access and `false` to respond with HTTP 403. If no callback is registered, access follows your application's configured authentication middleware.
+Return `true` to allow access and `false` to respond with HTTP 403. Access is denied with HTTP 403 until an authorization callback is explicitly registered. This is intentional: the dashboard can retry/delete jobs and control Supervisor processes, so it must not be exposed by default. Register a callback that checks the current user and an appropriate administrator role.
 
 Change the dashboard URL in `config/queue-monitor.php` by setting `path`. For example, use `'path' => 'panel/super/queue-monitor'` to open the dashboard at `/panel/super/queue-monitor`. The same value can be supplied through the `QUEUE_MONITOR_PATH` environment variable. Leading and trailing slashes are normalized automatically. The dashboard includes a cross-connection queue comparison at `/queue-monitor/compare`, searchable job lists, 25-item pagination and a dedicated job detail page. Filters include status, queue, job class, creation date range and free-text search. Search covers the job name, ID, masked payload and exception text. Dashboard panels can be shown or hidden with session-based preferences. Auto-refresh can be set to 15, 30 or 60 seconds, or disabled. The dashboard adapts its available job states and actions to each driver's capabilities. Retry and delete controls are shown only when supported for the selected job state. Mutations use POST/DELETE routes, Laravel CSRF protection and the same callback authorization check as dashboard access.
 
