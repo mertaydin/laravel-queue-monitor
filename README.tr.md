@@ -1,5 +1,13 @@
 # Laravel Queue Monitor
 
+[![Latest Version](https://img.shields.io/packagist/v/laravel-queue-monitor?label=Packagist)](https://packagist.org/packages/laravel-queue-monitor)
+[![Total Downloads](https://img.shields.io/packagist/dt/laravel-queue-monitor?label=downloads)](https://packagist.org/packages/laravel-queue-monitor)
+[![PHP](https://img.shields.io/packagist/php-v/laravel-queue-monitor?label=PHP)](https://packagist.org/packages/laravel-queue-monitor)
+[![Laravel](https://img.shields.io/badge/Laravel-12%20%7C%2013-FF2D20?logo=laravel&logoColor=white)](https://laravel.com)
+[![CI](https://github.com/mertaydin/laravel-queue-monitor/actions/workflows/tests.yml/badge.svg?branch=main&label=CI)](https://github.com/mertaydin/laravel-queue-monitor/actions/workflows/tests.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+
 Laravel uygulamalarındaki desteklenen kuyruk bağlantılarını izlemek ve yönetmek için geliştirilmiş bir pakettir.
 
 > **Durum:** 1.0 öncesi sürüm. Kararlı 1.0 sürümünden önce API'ler ve yapılandırma seçenekleri değişebilir.
