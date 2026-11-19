@@ -1,3 +1,9 @@
+## v0.2.2 - 2026-11-19
+
+- Fix stale-worker and failure-rate health alerts to dispatch through QueueAlertDispatcher.
+- Add the shared security CI baseline: Composer audit, PHPStan/Larastan, changed-file Pint checks, PHP syntax validation, and automated tests.
+- Add weekly Dependabot updates and resilient Composer dependency resolution.
+
 ## v0.2.1 - 2026-11-19
 
 - Fix stale-worker and failure-rate health alerts to use the queue alert dispatcher instead of Laravel's console alert method.
