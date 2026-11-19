@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.1.28 - 2026-11-19
+
+- Recapture the current queue dashboard and cross-connection comparison screenshots from a temporary Laravel application.
+- Keep the README screenshot references aligned with the current package UI.
+
+
 ## v0.1.27 - 2026-11-19
 
 - Document force-refreshing published dashboard assets after package updates.
