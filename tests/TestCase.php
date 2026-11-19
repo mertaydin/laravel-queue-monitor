@@ -2,6 +2,7 @@
 
 namespace MertAydin\LaravelQueueMonitor\Tests;
 
+use Illuminate\Http\Request;
 use MertAydin\LaravelQueueMonitor\Facades\QueueMonitor;
 use Orchestra\Testbench\TestCase as Orchestra;
 
@@ -9,7 +10,7 @@ abstract class TestCase extends Orchestra
 {
     protected function authorizeDashboard(bool $allowed): void
     {
-        QueueMonitor::auth(static fn (): bool => $allowed);
+        QueueMonitor::auth(static fn (Request $request): bool => $allowed);
     }
 
     protected function getEnvironmentSetUp($app): void
