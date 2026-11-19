@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.1.29 - 2026-11-19
+
+- Refresh the real queue dashboard and queue-comparison screenshots; align README screenshot documentation.
+
+
 ## v0.1.28 - 2026-11-19
 
 - Recapture the current queue dashboard and cross-connection comparison screenshots from a temporary Laravel application.
