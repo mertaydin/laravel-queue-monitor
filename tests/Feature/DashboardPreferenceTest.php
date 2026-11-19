@@ -2,8 +2,6 @@
 
 namespace MertAydin\LaravelQueueMonitor\Tests\Feature;
 
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Support\Facades\Gate;
 use MertAydin\LaravelQueueMonitor\Tests\TestCase;
 
 class DashboardPreferenceTest extends TestCase
