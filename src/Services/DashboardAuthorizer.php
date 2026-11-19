@@ -16,6 +16,8 @@ class DashboardAuthorizer
 
     public function allows(Request $request): bool
     {
-        return $this->callback === null || (bool) ($this->callback)($request);
+        // Queue actions can retry, delete, or control workers. Never expose the
+        // dashboard unless the host application explicitly authorizes the request.
+        return $this->callback !== null && (bool) ($this->callback)($request);
     }
 }
