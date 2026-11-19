@@ -168,7 +168,7 @@ Supervisor integration is optional. It uses the Supervisor XML-RPC API. Configur
 ],
 ```
 
-Open `/queue-monitor/supervisor/app-workers` to view the configured processes. Start, stop and restart commands are available only for names matching the `programs` allowlist. Wildcards are supported. For example, `laravel-worker:*` allows all processes in that Supervisor group. Define a separate `manageQueueWorkers` gate for process control. The normal `viewQueueMonitor` gate protects the status page.
+Open `/queue-monitor/supervisor/app-workers` to view the configured processes. Start, stop and restart commands are available only for names matching the `programs` allowlist. Wildcards are supported. For example, `laravel-worker:*` allows all processes in that Supervisor group. Define a separate `manageQueueWorkers` gate for process control. Use a separate callback to authorize worker management actions.
 
 Use HTTPS and valid TLS certificates. Plain HTTP is blocked unless `allow_insecure_http` is explicitly enabled for a trusted private endpoint. Do not expose Supervisor's RPC endpoint to the public internet. Store credentials in environment variables. Process actions use POST requests and Laravel CSRF protection.
 
