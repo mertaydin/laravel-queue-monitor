@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.1.25 - 2026-11-19
+
+- Patch release; retain the latest captured queue dashboard and comparison screenshots.
+
+
 All notable changes to this project are documented here.
 
 ## Unreleased
