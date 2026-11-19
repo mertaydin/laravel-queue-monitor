@@ -15,6 +15,13 @@ class DashboardTest extends TestCase
         $this->get('/queue-monitor')->assertForbidden();
     }
 
+    public function test_dashboard_is_forbidden_when_the_authorization_callback_denies_access(): void
+    {
+        $this->authorizeDashboard(false);
+
+        $this->get('/queue-monitor')->assertForbidden();
+    }
+
     public function test_dashboard_renders_when_the_authorization_callback_allows_access(): void
     {
         $this->authorizeDashboard(true);
