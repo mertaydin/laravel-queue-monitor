@@ -8,9 +8,6 @@ return [
         'available_locales' => ['tr', 'en', 'zh_CN', 'hi', 'es', 'ar'],
     ],
 
-    'authorization' => [
-        'gate' => 'viewQueueMonitor',
-    ],
 
     'history' => [
         'enabled' => false,
