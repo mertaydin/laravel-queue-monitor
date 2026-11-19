@@ -9,7 +9,7 @@
 
 A Laravel package for monitoring and managing queues across supported queue connections.
 
-> **Status:** Early development. APIs and configuration may change.
+> **Status:** Pre-1.0 release. APIs and configuration may change before the stable 1.0 release.
 
 ## Current capabilities
 
@@ -264,3 +264,9 @@ Configure a default target and optional per-queue overrides:
 The dashboard shows SLA compliance, measured jobs and breaches for the selected connection and queue. A job breaches its target only when its queue wait is greater than the configured limit. Pending jobs use their current wait time; started jobs use their recorded wait duration. When notifications are enabled, `queue-monitor:check-health` also reports pending jobs that exceed their queue target. Schedule the command every minute to receive these alerts.
 
 Existing installations should run `php artisan migrate` to add enqueue-time tracking columns. SLA measurements begin as jobs are queued after the migration; older history entries are not backfilled.
+
+## Documentation and support
+
+- [Changelog](CHANGELOG.md)
+- [GitHub releases](https://github.com/mertaydin/laravel-queue-monitor/releases)
+- [Report an issue or request a feature](https://github.com/mertaydin/laravel-queue-monitor/issues)
