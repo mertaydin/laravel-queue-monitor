@@ -11,8 +11,7 @@ final class QueueSnapshot
         public readonly int $failed = 0,
         public readonly ?string $queue = null,
         public readonly array $metadata = [],
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {

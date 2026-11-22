@@ -1,15 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use MertAydin\LaravelQueueMonitor\Http\Middleware\AuthorizeDashboard;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\DashboardController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\DashboardPreferenceController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\HealthCheckController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\JobActionController;
-use MertAydin\LaravelQueueMonitor\Http\Controllers\QueueComparisonController;
-use MertAydin\LaravelQueueMonitor\Http\Controllers\JobDetailController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\JobCompareController;
+use MertAydin\LaravelQueueMonitor\Http\Controllers\JobDetailController;
+use MertAydin\LaravelQueueMonitor\Http\Controllers\QueueComparisonController;
 use MertAydin\LaravelQueueMonitor\Http\Controllers\SupervisorController;
+use MertAydin\LaravelQueueMonitor\Http\Middleware\AuthorizeDashboard;
 
 Route::middleware(['web', AuthorizeDashboard::class])
     ->prefix(trim((string) config('queue-monitor.path', 'queue-monitor'), '/'))

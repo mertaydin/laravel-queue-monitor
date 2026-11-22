@@ -18,7 +18,7 @@ class PayloadMaskerTest extends TestCase
             ],
         ];
 
-        $masked = (new PayloadMasker())->mask($payload, ['token', 'password']);
+        $masked = (new PayloadMasker)->mask($payload, ['token', 'password']);
 
         $this->assertSame('SendNotification', $masked['displayName']);
         $this->assertSame('person@example.com', $masked['data']['email']);

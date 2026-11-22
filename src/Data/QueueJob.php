@@ -17,6 +17,5 @@ final class QueueJob
         public readonly ?int $completedAt = null,
         public readonly ?int $durationMilliseconds = null,
         public readonly ?string $exception = null,
-    ) {
-    }
+    ) {}
 }

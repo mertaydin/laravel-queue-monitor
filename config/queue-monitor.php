@@ -8,7 +8,6 @@ return [
         'available_locales' => ['tr', 'en', 'zh_CN', 'hi', 'es', 'ar'],
     ],
 
-
     'history' => [
         'enabled' => false,
         'connection' => env('QUEUE_MONITOR_DB_CONNECTION'),

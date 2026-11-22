@@ -13,8 +13,7 @@ final class QueueCapabilities
         public readonly bool $canRetry = false,
         public readonly bool $canDelete = false,
         public readonly bool $hasPersistentHistory = false,
-    ) {
-    }
+    ) {}
 
     /** @return array<string, bool> */
     public function toArray(): array

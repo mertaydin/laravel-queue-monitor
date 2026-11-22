@@ -2,8 +2,10 @@
 
 namespace MertAydin\LaravelQueueMonitor\Tests;
 
+use Illuminate\Auth\AuthServiceProvider;
 use Illuminate\Http\Request;
 use MertAydin\LaravelQueueMonitor\Facades\QueueMonitor;
+use MertAydin\LaravelQueueMonitor\QueueMonitorServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
@@ -21,8 +23,8 @@ abstract class TestCase extends Orchestra
     protected function getPackageProviders($app): array
     {
         return [
-            \Illuminate\Auth\AuthServiceProvider::class,
-            \MertAydin\LaravelQueueMonitor\QueueMonitorServiceProvider::class,
+            AuthServiceProvider::class,
+            QueueMonitorServiceProvider::class,
         ];
     }
 }
