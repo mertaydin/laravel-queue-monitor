@@ -414,6 +414,15 @@
                     <span>To</span>
                     <input type="date" name="date_to" value="{{ $qmDisplayValue($qmDisplayValue($dateTo)) }}">
                 </label>
+                <label>
+                    <span>Waiting longer than</span>
+                    <select name="waiting_minutes">
+                        <option value="">Any wait time</option>
+                        @foreach ([5, 15, 30, 60] as $minutes)
+                            <option value="{{ $minutes }}" @selected((int) request()->query('waiting_minutes') === $minutes)>{{ $minutes }} minutes</option>
+                        @endforeach
+                    </select>
+                </label>
                 <button class="qm-filter-button" type="submit">{{ $qmDisplayValue(__('queue-monitor::messages.apply', [], $qmLocale)) }} <span>→</span></button>
             </form>
         </section>

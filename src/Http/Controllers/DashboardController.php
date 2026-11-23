@@ -87,6 +87,20 @@ final class DashboardController
                         }));
                     }
 
+                    $waitingMinutes = filter_var($request->query('waiting_minutes'), FILTER_VALIDATE_INT);
+                    $waitingMinutes = $waitingMinutes !== false && in_array($waitingMinutes, [5, 15, 30, 60], true)
+                        ? $waitingMinutes
+                        : null;
+
+                    if ($waitingMinutes !== null) {
+                        $waitingBefore = CarbonImmutable::now()->subMinutes($waitingMinutes)->timestamp;
+                        $allJobs = array_values(array_filter($allJobs, static function ($job) use ($waitingBefore): bool {
+                            return in_array($job->status, ['pending', 'delayed'], true)
+                                && $job->createdAt !== null
+                                && (int) $job->createdAt <= $waitingBefore;
+                        }));
+                    }
+
                     $perPage = 25;
                     $currentPage = max(1, LengthAwarePaginator::resolveCurrentPage());
                     $pageItems = array_slice($allJobs, ($currentPage - 1) * $perPage, $perPage);

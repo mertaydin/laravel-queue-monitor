@@ -74,3 +74,32 @@
         else if (media.addListener) media.addListener(onSystemThemeChange);
     }
 })();
+
+/* Download the currently displayed, already-masked job details without another server request. */
+(function () {
+    'use strict';
+    function addJobDetailDownloads() {
+        document.querySelectorAll('.qm-payload').forEach(function (details) {
+            if (details.querySelector('[data-qm-download]')) return;
+            var pre = details.querySelector('pre');
+            if (!pre) return;
+            var button = document.createElement('button');
+            button.type = 'button'; button.dataset.qmDownload = 'true';
+            button.className = 'qm-action-button'; button.textContent = 'Download details';
+            button.style.marginTop = '8px';
+            button.addEventListener('click', function (event) {
+                event.preventDefault(); event.stopPropagation();
+                var text = pre.textContent || '', isJson = false;
+                try { JSON.parse(text); isJson = true; } catch (error) {}
+                var blob = new Blob([text], {type:isJson ? 'application/json;charset=utf-8' : 'text/plain;charset=utf-8'});
+                var url = URL.createObjectURL(blob), link = document.createElement('a');
+                link.href = url;
+                link.download = 'queue-job-details-' + new Date().toISOString().replace(/[:.]/g, '-') + (isJson ? '.json' : '.txt');
+                document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+            });
+            details.appendChild(button);
+        });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', addJobDetailDownloads, {once:true});
+    else addJobDetailDownloads();
+})();
