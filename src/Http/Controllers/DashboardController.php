@@ -94,11 +94,11 @@ final class DashboardController
 
                     if ($waitingMinutes !== null) {
                         $waitingBefore = CarbonImmutable::now()->subMinutes($waitingMinutes)->timestamp;
-                        $allJobs = array_values(array_filter($allJobs, static fn ($job): bool =>
-                            in_array($job->status, ['pending', 'delayed'], true)
-                            && $job->createdAt !== null
-                            && (int) $job->createdAt <= $waitingBefore
-                        ));
+                        $allJobs = array_values(array_filter($allJobs, static function ($job) use ($waitingBefore): bool {
+                            return in_array($job->status, ['pending', 'delayed'], true)
+                                && $job->createdAt !== null
+                                && (int) $job->createdAt <= $waitingBefore;
+                        }));
                     }
 
                     $perPage = 25;
