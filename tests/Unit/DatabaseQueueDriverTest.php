@@ -155,6 +155,16 @@ class DatabaseQueueDriverTest extends TestCase
         $this->assertSame(0, DB::table('queue_monitor_jobs')->count());
     }
 
+    public function test_it_deletes_a_failed_job_by_uuid_without_querying_the_integer_jobs_table(): void
+    {
+        $driver = $this->driver();
+
+        $driver->delete('failed-uuid', 'emails');
+
+        $this->assertSame(0, DB::table('failed_jobs')->count());
+        $this->assertSame(2, DB::table('jobs')->count());
+    }
+
     public function test_it_rejects_a_zero_job_limit(): void
     {
         $this->expectException(\InvalidArgumentException::class);
