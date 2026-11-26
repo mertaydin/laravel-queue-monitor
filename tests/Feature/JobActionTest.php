@@ -34,6 +34,25 @@ class JobActionTest extends TestCase
             ->assertNotFound();
     }
 
+    public function test_failed_job_detail_uses_the_failed_state_to_find_its_payload(): void
+    {
+        $this->authorizeDashboard(true);
+
+        $driver = \\Mockery::mock(QueueDriver::class);
+        $driver->shouldReceive('queues')->andReturn(['emails']);
+        $driver->shouldReceive('name')->andReturn('fake');
+        $driver->shouldReceive('capabilities')->andReturn(new QueueCapabilities(canInspectFailed: true));
+        $driver->shouldReceive('jobs')->once()->with('emails', 'failed', 500)->andReturn([
+            new QueueJob('failed-1', 'fake', 'emails', 'failed', payload: ['displayName' => 'PayloadVisibleJob']),
+        ]);
+
+        app(QueueDriverManager::class)->register('fake', $driver);
+
+        $this->get('/queue-monitor/fake/jobs/failed-1?queue=emails&status=failed')
+            ->assertOk()
+            ->assertSee('PayloadVisibleJob');
+    }
+
     public function test_queue_specific_retry_limit_blocks_manual_retry(): void
     {
         $this->authorizeDashboard(true);
