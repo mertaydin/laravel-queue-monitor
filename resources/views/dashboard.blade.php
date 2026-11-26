@@ -471,7 +471,7 @@
                                     <td><input class="qm-job-select" type="checkbox" name="compare_ids[]" value="{{ $qmDisplayValue($qmDisplayValue($job->id)) }}" form="qm-compare-form" aria-label="Compare {{ $qmDisplayValue($qmDisplayValue($job->name) ?: $qmDisplayValue($job->id)) }}"></td>
                                     <td><input class="qm-job-select" type="checkbox" name="job_ids[]" value="{{ $qmDisplayValue($qmDisplayValue($job->id)) }}" form="qm-bulk-form" aria-label="Select {{ $qmDisplayValue($qmDisplayValue($job->name) ?: $qmDisplayValue($job->id)) }}"></td>
                                     <td>
-                                        <a class="qm-job-name" href="{{ $qmDisplayValue(route('queue-monitor.jobs.show', ['connection' => $connection, 'jobId' => $job->id, 'queue' => $queue])) }}">{{ $qmDisplayValue($qmDisplayValue($job->name) ?: 'Unnamed job') }}</a>
+                                        <a class="qm-job-name" href="{{ $qmDisplayValue(route('queue-monitor.jobs.show', ['connection' => $connection, 'jobId' => $job->id, 'queue' => $queue, 'status' => $job->status])) }}">{{ $qmDisplayValue($qmDisplayValue($job->name) ?: 'Unnamed job') }}</a>
                                         <code>{{ $qmDisplayValue(\Illuminate\Support\Str::limit($job->id, 22)) }}</code>
                                     </td>
                                     <td><span class="qm-status status-{{ $qmDisplayValue($jobStatusClass) }}"><i></i>{{ $qmDisplayValue(ucfirst($qmDisplayValue($job->status))) }}</span></td>
