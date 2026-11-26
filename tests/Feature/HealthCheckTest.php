@@ -21,6 +21,11 @@ class HealthCheckTest extends TestCase
             ->assertOk()
             ->assertSee('System health')
             ->assertSee('Application database')
-            ->assertSee('Worker heartbeat storage');
+            ->assertSee('Worker heartbeat storage')
+            ->assertSee('vendor/queue-monitor/queue-monitor.js')
+            ->assertSee('id="queue-monitor-theme-picker"', false)
+            ->assertSee('<option value="light">Light</option>', false)
+            ->assertSee('<option value="dark">Dark</option>', false)
+            ->assertSee('<option value="system">System</option>', false);
     }
 }
