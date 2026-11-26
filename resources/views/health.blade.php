@@ -13,6 +13,7 @@
     <meta name="color-scheme" content="light dark">
     <title>{{ __('queue-monitor::messages.health', [], $qmLocale) }} · Queue Monitor</title>
     <link rel="stylesheet" href="{{ asset('vendor/queue-monitor/queue-monitor.css') }}">
+    <script src="{{ asset('vendor/queue-monitor/queue-monitor.js') }}" defer></script>
 </head>
 <body>
 <div class="qm-shell">
@@ -21,7 +22,12 @@
             <span class="qm-brand-mark"><span></span><span></span><span></span></span>
             <span><strong>Queue Monitor</strong><small>Laravel queue operations</small></span>
         </a>
-        <div class="qm-topbar-meta"><a class="qm-supervisor-nav" href="{{ route('queue-monitor.index') }}">{{ __('queue-monitor::messages.dashboard', [], $qmLocale) }}</a><span>{{ __('queue-monitor::messages.diagnostics', [], $qmLocale) }}</span></div>
+        <div class="qm-topbar-meta">
+            <a class="qm-supervisor-nav" href="{{ route('queue-monitor.index') }}">{{ __('queue-monitor::messages.dashboard', [], $qmLocale) }}</a>
+            <span>{{ __('queue-monitor::messages.diagnostics', [], $qmLocale) }}</span>
+            @include('queue-monitor::partials.theme')
+            @include('queue-monitor::partials.language')
+        </div>
     </header>
     <main class="qm-main">
         <section class="qm-heading">
@@ -54,7 +60,5 @@
         <p class="qm-diagnostics-note">This page performs read-only checks. It does not restart workers, modify jobs or change queue configuration.</p>
     </main>
 </div>
-    @include('queue-monitor::partials.language')
-    @include('queue-monitor::partials.theme')
 </body>
 </html>
