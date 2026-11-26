@@ -28,7 +28,12 @@ final class JobDetailController
 
         abort_unless(is_string($queue) && in_array($queue, $queues, true), 404);
 
-        $job = collect($driver->jobs($queue, null, 500))->first(
+        $status = $request->query('status');
+        $supportedStatuses = ['pending', 'running', 'delayed', 'failed', 'completed'];
+
+        abort_unless($status === null || (is_string($status) && in_array($status, $supportedStatuses, true)), 422);
+
+        $job = collect($driver->jobs($queue, $status, 500))->first(
             static fn ($candidate): bool => $candidate->id === $jobId
         );
 
