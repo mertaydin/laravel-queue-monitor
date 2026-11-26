@@ -1,3 +1,9 @@
+## v0.2.4 - 2026-11-26
+
+- Fix failed-job payload inspection by looking up the selected job state instead of searching only the first 500 mixed-state jobs.
+- Fix deletion of database failed jobs by UUID without comparing UUIDs against the integer jobs table primary key.
+- Add regression coverage for failed-job detail payloads and UUID-based deletion.
+
 ## v0.2.3 - 2026-11-22
 
 - Add `barryvdh/laravel-ide-helper` as a development dependency, selecting a compatible release for the supported Laravel versions.
