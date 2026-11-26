@@ -202,11 +202,15 @@ final class DatabaseQueueDriver implements QueueDriver
 
     public function delete(string $jobId, ?string $queue = null): void
     {
-        $jobQuery = $this->jobsQuery()->where('id', $jobId);
-        if ($queue !== null) {
-            $jobQuery->where('queue', $queue);
+        // Laravel failed-job IDs are UUIDs, while the jobs table uses an integer primary key.
+        // Comparing a UUID against an integer column can raise a MySQL conversion error.
+        if (ctype_digit($jobId)) {
+            $jobQuery = $this->jobsQuery()->where('id', $jobId);
+            if ($queue !== null) {
+                $jobQuery->where('queue', $queue);
+            }
+            $jobQuery->delete();
         }
-        $jobQuery->delete();
 
         if ($this->failedTableExists()) {
             $failedQuery = $this->failedJobs()->where('uuid', $jobId);
