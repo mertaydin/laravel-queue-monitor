@@ -4,7 +4,6 @@ namespace MertAydin\LaravelQueueMonitor\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 use MertAydin\LaravelQueueMonitor\QueueDriverManager;
@@ -18,9 +17,6 @@ final class JobDetailController
         string $jobId,
         QueueDriverManager $manager
     ): View {
-        $gate = (string) config('queue-monitor.authorization.gate', 'viewQueueMonitor');
-        Gate::authorize($gate);
-
         abort_unless($manager->has($connection), 404);
         $driver = $manager->driver($connection);
         $queue = $request->query('queue');
