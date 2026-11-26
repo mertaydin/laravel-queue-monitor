@@ -37,6 +37,7 @@ class JobActionTest extends TestCase
     public function test_failed_job_detail_uses_the_failed_state_to_find_its_payload(): void
     {
         $this->authorizeDashboard(true);
+        \Illuminate\Support\Facades\Gate::define('viewQueueMonitor', static fn (): bool => true);
 
         $driver = \Mockery::mock(QueueDriver::class);
         $driver->shouldReceive('queues')->andReturn(['emails']);
