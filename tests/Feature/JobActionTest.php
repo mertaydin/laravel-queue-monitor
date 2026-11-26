@@ -38,7 +38,7 @@ class JobActionTest extends TestCase
     {
         $this->authorizeDashboard(true);
 
-        $driver = \\Mockery::mock(QueueDriver::class);
+        $driver = \Mockery::mock(QueueDriver::class);
         $driver->shouldReceive('queues')->andReturn(['emails']);
         $driver->shouldReceive('name')->andReturn('fake');
         $driver->shouldReceive('capabilities')->andReturn(new QueueCapabilities(canInspectFailed: true));
